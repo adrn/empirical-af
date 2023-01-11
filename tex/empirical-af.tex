@@ -1,0 +1,157 @@
+% Notes:
+% -
+
+% \begin{figure}[!t]
+% \begin{center}
+% % \includegraphics[width=0.9\textwidth]{visitstats.pdf}
+% {\color{red} Figure placeholder}
+% \end{center}
+% \caption{%
+% TODO
+% \label{fig:chiplots}
+% }
+% \end{figure}
+
+\PassOptionsToPackage{usenames,dvipsnames}{xcolor}
+\documentclass[modern]{aastex631}
+% \documentclass[twocolumn]{aastex631}
+
+% Load common packages
+\usepackage{microtype}  % ALWAYS!
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+% \usepackage{color}
+
+\usepackage{enumitem}
+\setlist[description]{style=unboxed}
+
+% Some style hacks:
+\renewcommand{\twocolumngrid}{\onecolumngrid}
+\setlength{\parindent}{1.1\baselineskip}
+\addtolength{\topmargin}{-0.2in}
+\addtolength{\textheight}{0.4in}
+\sloppy\sloppypar\raggedbottom\frenchspacing
+
+\graphicspath{{figures/}}
+% \input{preamble.tex}
+
+\shorttitle{}
+\shortauthors{Price-Whelan et al.}
+
+\begin{document}
+
+\title{BLAH}
+
+\newcommand{\affcca}{
+    Center for Computational Astrophysics, Flatiron Institute, \\
+    162 Fifth Ave, New York, NY 10010, USA
+}
+
+\author[0000-0003-0872-7098]{Adrian~M.~Price-Whelan}
+\affiliation{\affcca}
+\email{aprice-whelan@flatironinstitute.org}
+\correspondingauthor{Adrian M. Price-Whelan}
+
+% TODO: orcid
+\author{Jason A. S. Hunt}
+\affiliation{\affcca}
+
+\author{Kathryn Johnston}
+% \affiliation{\affcolumbia}
+
+% TODO: orcid, affs
+\author{David~W.~Hogg}
+% \affiliation{\affcca}
+% \affiliation{\affnyu}
+% \affiliation{\affmpia}
+
+\author{+ more}
+
+
+\begin{abstract}\noindent
+% Context
+% Aims.
+% Methods
+% Results
+% Conclusions
+\end{abstract}
+
+% \keywords{}
+
+\section*{~}\clearpage
+
+\section{Introduction} \label{sec:intro}
+
+
+\section{Methods} \label{sec:methods}
+
+
+
+
+\section{Data} \label{sec:data}
+
+
+\section{Results} \label{sec:results}
+
+
+\section{Discussion} \label{sec:discussion}
+
+
+\section{Conclusions} \label{sec:conclusions}
+
+
+\begin{acknowledgements}
+
+It is a pleasure to thank ...
+
+% Funding for the Sloan Digital Sky Survey IV has been provided by the Alfred P.
+% Sloan Foundation, the U.S. Department of Energy Office of Science, and the
+% Participating Institutions. SDSS-IV acknowledges support and resources from the
+% Center for High-Performance Computing at the University of Utah. The SDSS web
+% site is www.sdss.org.
+
+% SDSS-IV is managed by the Astrophysical Research Consortium for the
+% Participating Institutions of the SDSS Collaboration including the Brazilian
+% Participation Group, the Carnegie Institution for Science, Carnegie Mellon
+% University, the Chilean Participation Group, the French Participation Group,
+% Harvard-Smithsonian Center for Astrophysics, Instituto de Astrof\'isica de
+% Canarias, The Johns Hopkins University, Kavli Institute for the Physics and
+% Mathematics of the Universe (IPMU) / University of Tokyo, Lawrence Berkeley
+% National Laboratory, Leibniz Institut f\"ur Astrophysik Potsdam (AIP),
+% Max-Planck-Institut f\"ur Astronomie (MPIA Heidelberg), Max-Planck-Institut
+% f\"ur Astrophysik (MPA Garching), Max-Planck-Institut f\"ur Extraterrestrische
+% Physik (MPE), National Astronomical Observatories of China, New Mexico State
+% University, New York University, University of Notre Dame, Observat\'ario
+% Nacional / MCTI, The Ohio State University, Pennsylvania State University,
+% Shanghai Astronomical Observatory, United Kingdom Participation Group,
+% Universidad Nacional Aut\'onoma de M\'exico, University of Arizona, University
+% of Colorado Boulder, University of Oxford, University of Portsmouth, University
+% of Utah, University of Virginia, University of Washington, University of
+% Wisconsin, Vanderbilt University, and Yale University.
+
+This work has made use of data from the European Space Agency (ESA) mission
+{\it Gaia} (\url{https://www.cosmos.esa.int/gaia}), processed by the {\it Gaia}
+Data Processing and Analysis Consortium (DPAC,
+\url{https://www.cosmos.esa.int/web/gaia/dpac/consortium}). Funding for the DPAC
+has been provided by national institutions, in particular the institutions
+participating in the {\it Gaia} Multilateral Agreement.
+
+\end{acknowledgements}
+
+\software{
+    Astropy \citep{astropy:2013, astropy:2018, astropy:2022},
+    gala \citep{gala},
+    IPython \citep{ipython},
+    numpy \citep{numpy},
+    % pymc3 \citep{Salvatier2016},
+    % schwimmbad \citep{schwimmbad:2017},
+    scipy \citep{scipy}.
+}
+
+\bibliographystyle{aasjournal}
+\bibliography{empirical-af}
+
+\end{document}
