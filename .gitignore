@@ -127,3 +127,22 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Other generated files
+*/version.py
+
+# Visual Studio Code project files
+.vscode
+
+# Mac OSX
+.DS_Store
+
+tex/figures/*
+
+# Miscellaneous
+*.synctex.gz
+
+# Custom:
+plots
+*.fits
+*.ecsv
