@@ -1,2 +1,3 @@
-# empirical-af
-Frequencies, actions, and angles from phase-space density
+# Empirical AF
+
+Estimate angles, actions, and frequencies directly from data.
