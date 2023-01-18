@@ -1,4 +1,5 @@
 import agama
+import astropy.table as at
 import astropy.units as u
 import numpy as np
 from schwimmbad.utils import batch_tasks
@@ -74,13 +75,17 @@ def main(pool):
         zvz_batches.append(res)
 
     all_zvz = np.row_stack(zvz_batches)
-    print(all_zvz)
-    print(all_zvz.shape)
+
+    tbl = at.Table()
+    tbl["z"] = all_zvz[:, 0]
+    tbl["vz"] = all_zvz[:, 1]
+    tbl.write("zvz-random.fits")
 
 
 if __name__ == "__main__":
-    #from schwimmbad import SerialPool
-    #with SerialPool() as pool:
+    # from schwimmbad import SerialPool
+    # with SerialPool() as pool:
     from schwimmbad import MPIPool
+
     with MPIPool() as pool:
         main(pool)
