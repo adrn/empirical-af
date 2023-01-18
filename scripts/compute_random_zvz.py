@@ -47,10 +47,6 @@ def worker(task):
         dict(type="dehnen", mass=1.71e9, scaleradius=0.07),
         dict(type="nfw", mass=5.4e11, scaleradius=15.62),
     )
-
-    Jz_scale = 15 * u.km / u.s * 0.25 * u.kpc
-
-    Jzs = (rng.exponential(scale=1.0, size=1000) + 1e-3) * Jz_scale
     zvz = get_random_z_vz(agama_pot, Jzs, rng=rng)
 
     return zvz
@@ -61,7 +57,6 @@ def main(pool):
 
     rng = np.random.default_rng(42)
     Jzs = (rng.exponential(scale=1.0, size=1_000_000) + 1e-3) * Jz_scale
-    # Jzs = (rng.exponential(scale=1.0, size=1_000) + 1e-3) * Jz_scale
 
     batches = batch_tasks(8 * max(1, pool.size), arr=Jzs)
 
