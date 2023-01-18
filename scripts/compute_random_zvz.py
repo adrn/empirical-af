@@ -19,7 +19,7 @@ def get_random_z_vz(pot, Jzs, Jphi=None, rng=None):
 
     JR = 0 * u.km / u.s * u.kpc
 
-    thzs = rng.uniform(0, 2 * np.pi, size=len(Jzs))
+    thzs = rng.uniform(-2 * np.pi, 2 * np.pi, size=len(Jzs))
     xvs = []
     for Jz, thz in zip(Jzs, thzs):
         act = u.Quantity([JR, Jz, Jphi]).to_value(u.kpc**2 / u.Myr)
@@ -53,10 +53,10 @@ def worker(task):
 
 
 def main(pool):
-    Jz_scale = 15 * u.km / u.s * 0.25 * u.kpc
+    Jz_scale = 25 * u.km / u.s * 0.25 * u.kpc
 
     rng = np.random.default_rng(42)
-    Jzs = (rng.exponential(scale=1.0, size=1_000_000) + 1e-3) * Jz_scale
+    Jzs = (rng.exponential(scale=1.0, size=1_000_000) + 5e-4) * Jz_scale
 
     batches = batch_tasks(8 * max(1, pool.size), arr=Jzs)
 
@@ -74,7 +74,7 @@ def main(pool):
     tbl = at.Table()
     tbl["z"] = all_zvz[:, 0]
     tbl["vz"] = all_zvz[:, 1]
-    tbl.write("zvz-random.fits")
+    tbl.write("zvz-random.fits", overwrite=True)
 
 
 if __name__ == "__main__":
