@@ -59,10 +59,10 @@ def main(pool):
     Jz_scale = 15 * u.km / u.s * 0.25 * u.kpc
 
     rng = np.random.default_rng(42)
-    # Jzs = (rng.exponential(scale=1.0, size=1_000_000) + 1e-3) * Jz_scale
-    Jzs = (rng.exponential(scale=1.0, size=1_000) + 1e-3) * Jz_scale
+    Jzs = (rng.exponential(scale=1.0, size=1_000_000) + 1e-3) * Jz_scale
+    # Jzs = (rng.exponential(scale=1.0, size=1_000) + 1e-3) * Jz_scale
 
-    batches = batch_tasks(8 * pool.size, arr=Jzs)
+    batches = batch_tasks(8 * max(1, pool.size), arr=Jzs)
 
     ss = np.random.SeedSequence(42)
     child_seeds = ss.spawn(len(batches))
@@ -79,7 +79,8 @@ def main(pool):
 
 
 if __name__ == "__main__":
-    from schwimmbad import SerialPool
-
-    with SerialPool() as pool:
+    #from schwimmbad import SerialPool
+    #with SerialPool() as pool:
+    from schwimmbad import MPIPool
+    with MPIPool() as pool:
         main(pool)
