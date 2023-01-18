@@ -19,17 +19,23 @@ def get_random_z_vz(pot, Jzs, Jphi=None, rng=None):
 
     JR = 0 * u.km / u.s * u.kpc
 
-    thzs = rng.uniform(-2 * np.pi, 2 * np.pi, size=len(Jzs))
+    thzs = rng.uniform(0, 2 * np.pi, size=len(Jzs))
     xvs = []
     for Jz, thz in zip(Jzs, thzs):
         act = u.Quantity([JR, Jz, Jphi]).to_value(u.kpc**2 / u.Myr)
-        torus_mapper = agama.ActionMapper(pot, act)
+        torus_mapper = agama.ActionMapper(pot, act, tol=1e-6)
         ang = [0.0, thz, 0.0]
         xv_torus = torus_mapper(ang)
         xvs.append(xv_torus)
     xvs = np.array(xvs)
 
-    return xvs[:, [2, 5]].reshape(in_shape + (2,))
+    tbl = at.QTable()
+    tbl["z"] = xvs[:, 2].reshape(in_shape) * u.kpc
+    tbl["vz"] = xvs[:, 5].reshape(in_shape) * u.kpc / u.Myr
+    tbl["Jz"] = Jzs
+    tbl["thetaz"] = thzs * u.rad
+
+    return tbl
 
 
 def worker(task):
@@ -56,7 +62,7 @@ def main(pool):
     Jz_scale = 25 * u.km / u.s * 0.25 * u.kpc
 
     rng = np.random.default_rng(42)
-    Jzs = (rng.exponential(scale=1.0, size=1_000_000) + 5e-4) * Jz_scale
+    Jzs = (rng.exponential(scale=1.0, size=1_000_000) + 1e-3) * Jz_scale
 
     batches = batch_tasks(8 * max(1, pool.size), arr=Jzs)
 
@@ -65,16 +71,12 @@ def main(pool):
     rngs = [np.random.default_rng(s) for s in child_seeds]
     batches = [batch + (rng,) for batch, rng in zip(batches, rngs)]
 
-    zvz_batches = []
+    tbls = []
     for res in pool.map(worker, batches):
-        zvz_batches.append(res)
+        tbls.append(res)
 
-    all_zvz = np.row_stack(zvz_batches)
-
-    tbl = at.Table()
-    tbl["z"] = all_zvz[:, 0]
-    tbl["vz"] = all_zvz[:, 1]
-    tbl.write("zvz-random.fits", overwrite=True)
+    full_tbl = at.vstack(tbls)
+    full_tbl.write("zvz-random.fits", overwrite=True)
 
 
 if __name__ == "__main__":
