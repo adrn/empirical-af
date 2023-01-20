@@ -43,7 +43,7 @@
 
 \begin{document}
 
-\title{BLAH}
+\title{A flexible model for 1D kinematics for data-driven dynamical quantities}
 
 \newcommand{\affcca}{
     Center for Computational Astrophysics, Flatiron Institute, \\
@@ -90,39 +90,49 @@
 
 \section{Methods} \label{sec:methods}
 
-Our goal is to use the phase-space density (or statistics computed from stellar
+Our goal is to use the stellar phase-space density (or statistics computed from stellar
 invariants) to infer a local transformation to actions, angles, and frequencies directly
 from the data.
 To do this, we make several assumptions or choice to simplify the problem:
 \begin{description}
-    \item[Axisymmetry] The potential the stars orbit in is axisymmetric and smooth.
-    \item[1D phase-space / vertical kinematics] We will work with just one position and
-    one velocity component, for simplicity. In the demonstrations below, we use the
-    vertical kinematics $z, v_z$, but this could equally be applied to radial
+    \item[Axisymmetry] The gravitational potential that the stars orbit in is
+    axisymmetric and smooth.
+    \item[No interactions] The stars do not interact and act effectively as test
+    particles orbiting within the galaxy.
+    \item[1D phase-space / vertical kinematics] Here, for simplicity, we will work with
+    just one position and one velocity component. In the demonstrations below, we use
+    the vertical kinematics $z, v_z$, but this could equally be applied to radial
     kinematics $R, v_R$.
     \item[Circular orbits] For the previous assumption to be a valid simplification, we
-    technically also require that stars have negligible eccentricity (or radial action
-    $J_R$) and have the same $z$-component of the angular momentum $L_z$ (or azimuthal
-    action $J_\phi$).
+    also require that stars have negligible eccentricity (or zero radial action $J_R=0$)
+    and have the same $z$-component of the angular momentum $L_z$ (or azimuthal action
+    $J_\phi$).
     \item[Phase-mixed] The stellar distribution function in any vertical slice of
-    phase-space is fully phase-mixed.
+    the full phase-space is phase-mixed.
 \end{description}
 Under these assumptions, level sets of the phase-space density of a collection of stars,
 or contours of common stellar invariants (i.e., abundances), correspond to orbits in
 this projection of phase-space.
 Conceptually, this provides a path toward empirically extracting orbit shapes from the
-observed phase-space density or stellar labels (e.g., \citealt{Price-Whelan:2021}).
-From the orbit shapes, one can directly estimate dynamical quantities like the orbital
-actions, angles, and frequencies.
-For example, in terms of the vertical kinematics, the vertical action $J_z$ and period $T_z$ for an orbit are given by
+observed phase-space density or from statistics of stellar labels computed in a slice of
+phase-space (e.g., \citealt{Price-Whelan:2021}).
+Given an orbit in a 1D phase-space, we can directly estimate dynamical quantities like
+the orbital actions, angles, and frequencies.
+For example, in terms of the vertical position and velocity $z, v_z$, where an orbital
+trajectory can be parametrized as $v_z(z)$, the vertical action $J_z$ and period $T_z$
+for an orbit are given by
 \begin{align}
     J_z &= \frac{2}{\pi} \, \int_0^{z_{\textrm{max}}} \dd z \, v_z(z) \\
     T_z &= 4 \, \int_0^{z_{\textrm{max}}} \frac{\dd z}{v_z(z)}\quad .
 \end{align}
 For a given stellar position and velocity $z, v_z$, we can compute the vertical angle $\theta_z$ as
 \begin{equation}
-    \theta_z = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd z'}{v_z(z')} \quad .
+    \theta_z = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd w}{v_z(w)}
 \end{equation}
+where $w$ is an integration variable.
+
+Our goal then is to constrain a number density $n(\cdot)$ or stellar label function $f(\cdot)$ that depends only on a quantity that is related to the orbital action $J_z$ that can capture the complex orbital
+
 
 \begin{align}
     r_z' &= \sqrt{z^2 \, \nu_0 + v_z^2 / \nu_0} \\
