@@ -36,7 +36,7 @@
 \sloppy\sloppypar\raggedbottom\frenchspacing
 
 \graphicspath{{figures/}}
-% \input{preamble.tex}
+\input{preamble.tex}
 
 \shorttitle{}
 \shortauthors{Price-Whelan et al.}
@@ -55,8 +55,10 @@
 \email{aprice-whelan@flatironinstitute.org}
 \correspondingauthor{Adrian M. Price-Whelan}
 
-% TODO: orcid
 \author{Jason A. S. Hunt}
+\affiliation{\affcca}
+
+\author{Daniel~Horta~Darrington}
 \affiliation{\affcca}
 
 \author{Kathryn Johnston}
@@ -88,7 +90,58 @@
 
 \section{Methods} \label{sec:methods}
 
+Our goal is to use the phase-space density (or statistics computed from stellar
+invariants) to infer a local transformation to actions, angles, and frequencies directly
+from the data.
+To do this, we make several assumptions or choice to simplify the problem:
+\begin{description}
+    \item[Axisymmetry] The potential the stars orbit in is axisymmetric and smooth.
+    \item[1D phase-space / vertical kinematics] We will work with just one position and
+    one velocity component, for simplicity. In the demonstrations below, we use the
+    vertical kinematics $z, v_z$, but this could equally be applied to radial
+    kinematics $R, v_R$.
+    \item[Circular orbits] For the previous assumption to be a valid simplification, we
+    technically also require that stars have negligible eccentricity (or radial action
+    $J_R$) and have the same $z$-component of the angular momentum $L_z$ (or azimuthal
+    action $J_\phi$).
+    \item[Phase-mixed] The stellar distribution function in any vertical slice of
+    phase-space is fully phase-mixed.
+\end{description}
+Under these assumptions, level sets of the phase-space density of a collection of stars,
+or contours of common stellar invariants (i.e., abundances), correspond to orbits in
+this projection of phase-space.
+Conceptually, this provides a path toward empirically extracting orbit shapes from the
+observed phase-space density or stellar labels (e.g., \citealt{Price-Whelan:2021}).
+From the orbit shapes, one can directly estimate dynamical quantities like the orbital
+actions, angles, and frequencies.
+For example, in terms of the vertical kinematics, the vertical action $J_z$ and period $T_z$ for an orbit are given by
+\begin{align}
+    J_z &= \frac{2}{\pi} \, \int_0^{z_{\textrm{max}}} \dd z \, v_z(z) \\
+    T_z &= 4 \, \int_0^{z_{\textrm{max}}} \frac{\dd z}{v_z(z)}\quad .
+\end{align}
+For a given stellar position and velocity $z, v_z$, we can compute the vertical angle $\theta_z$ as
+\begin{equation}
+    \theta_z = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd z'}{v_z(z')} \quad .
+\end{equation}
 
+\begin{align}
+    r_z' &= \sqrt{z^2 \, \nu_0 + v_z^2 / \nu_0} \\
+    \theta_z' &= \arctan{\left(\frac{z}{v_z} \, \nu_0 \right)} \\
+    r_z &= r_z' \, \left[1 + \sum_m \epsilon_m(r_z') \, \cos{\left(m\,\theta_z'\right)}\right]
+\end{align}
+
+Choice of $n(r_z)$ or $f(r_z)$, choice of $\epsilon_m(r_z')$.
+
+\begin{align}
+    J_z &= \frac{2}{\pi} \, \int_0^{\pi/2} \dd \theta_z' \, v_z(\theta_z')
+        \, \left|\frac{\dd r_z'}{\dd \theta_z'}\right| \\
+    T_z &= 4 \, \int_0^{\pi/2} \frac{\dd \theta_z'}{v_z(\theta_z')}
+        \, \left|\frac{\dd r_z'}{\dd \theta_z'}\right| \quad
+\end{align}
+where
+\begin{equation}
+    v_z(\theta_z') = r_z'(r_z, \theta_z') \, \cos{(\theta_z')}
+\end{equation}
 
 
 \section{Data} \label{sec:data}
