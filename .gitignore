@@ -69,7 +69,7 @@ pip-wheel-metadata/
 **/.showyourwork*
 
 # Miscellaneous
-*.synctex.gz
+test-data
 
 # Latex
 *.aux
