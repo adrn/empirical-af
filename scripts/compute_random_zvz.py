@@ -17,7 +17,7 @@ def get_random_z_vz(pot, Jzs, Jphi=None, rng=None):
     if Jphi is None:
         Jphi = 220 * u.km / u.s * 8 * u.kpc
 
-    JR = 0 * u.km / u.s * u.kpc
+    JR = 0.5 * u.km / u.s * u.kpc
 
     thzs = rng.uniform(0, 2 * np.pi, size=len(Jzs))
     xvs = []
