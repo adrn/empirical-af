@@ -43,7 +43,9 @@
 
 \begin{document}
 
-\title{A flexible model for 1D kinematics for data-driven dynamical quantities}
+\title{Data-driven Dynamics: \\
+       Estimating Actions, Frequencies, and Angles Directly from 1D Kinematics
+} %  Flexible Model for 1D Kinematics
 
 \newcommand{\affcca}{
     Center for Computational Astrophysics, Flatiron Institute, \\
@@ -116,6 +118,7 @@ this projection of phase-space.
 Conceptually, this provides a path toward empirically extracting orbit shapes from the
 observed phase-space density or from statistics of stellar labels computed in a slice of
 phase-space (e.g., \citealt{Price-Whelan:2021}).
+
 Given an orbit in a 1D phase-space, we can directly estimate dynamical quantities like
 the orbital actions, angles, and frequencies.
 For example, in terms of the vertical position and velocity $z, v_z$, where an orbital
@@ -123,20 +126,86 @@ trajectory can be parametrized as $v_z(z)$, the vertical action $J_z$ and period
 for an orbit are given by
 \begin{align}
     J_z &= \frac{2}{\pi} \, \int_0^{z_{\textrm{max}}} \dd z \, v_z(z) \\
-    T_z &= 4 \, \int_0^{z_{\textrm{max}}} \frac{\dd z}{v_z(z)}\quad .
+    T_z &= 4 \, \int_0^{z_{\textrm{max}}} \frac{\dd z}{v_z(z)}\quad ,
 \end{align}
-For a given stellar position and velocity $z, v_z$, we can compute the vertical angle $\theta_z$ as
+which can then be used to compute the vertical (angular) frequency $\Omega_z =
+\frac{2\pi}{T_z}$.
+For a given stellar position and velocity $z, v_z$, the vertical angle $\theta_z$ can be
+computed as the fraction of an orbital period traversed,
 \begin{equation}
-    \theta_z = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd w}{v_z(w)}
+    \theta_z = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd w}{v_z(w)} \quad ,
 \end{equation}
 where $w$ is an integration variable.
 
-Our goal then is to constrain a number density $n(\cdot)$ or stellar label function $f(\cdot)$ that depends only on a quantity that is related to the orbital action $J_z$ that can capture the complex orbital
+\subsection{Phase-space Number Density}
+
+Given a distribution of $N$ stellar positions and velocity $\{z, v_z\}_N$, our task is
+to infer the parameters of a functional model for the number density $n(z, v_z)$ so
+that, conceptually, we can use levels of constant density to compute the dynamical
+quantities discussed above ($J_z$, $\Omega_z$, $\theta_z$) for any individual $z, v_z$.
+At fixed $z$, say $z=0$, we expect that $J_z$ increases with increasing $v_z$ (orbits
+with larger velocity at the midplane will reach larger heights) and $\Omega_z$
+decreases with increasing $v_z$ (orbits that reach larger heights above the midplane
+have longer periods).
+The same is true at fixed $v_z=0$, now considering how $J_z$ and $\Omega_z$ vary with
+increasing $z$.
+It is therefore useful to construct a radius coordinate $r_z'$ in the $z, v_z$ plane,
+defined as
+\begin{equation}
+    r_z' = \sqrt{z^2 \, \omega_0 + v_z^2 \, \omega_0^{-1}}
+\end{equation}
+where $\omega_0$ is a frequency:
+The vertical action $J_z$ and frequency $\Omega_z$ should be monotonic functions of this
+radius $r_z'$.
+
+For example, in a simple harmonic oscillator (SHO) potential,
+\begin{equation}
+    \Phi(z) = \frac{1}{2} \, \omega^2 \, z^2
+\end{equation}
+the Hamiltonian (total energy per unit mass) is
+\begin{equation}
+    H(z, v_z) = E = \frac{1}{2} \, v_z^2 + \frac{1}{2} \, \omega^2 \,z^2
+\end{equation}
+and the orbital action $J$ is given by
+\begin{equation}
+    J = \frac{E}{\omega} \quad .
+\end{equation}
+All orbits have the same frequency $\omega$ and are elliptical in the 1D phase-space.
+In this case, the scale frequency $\omega_0$ in $r_z'$ corresponds to the frequency of
+the oscillator $\omega_0=\omega$, and the radius $r_z'$ is related to the action $J$ as
+\begin{equation}
+    J = \frac{1}{2} r_z'^2 \quad .
+\end{equation}
+
+\begin{figure}[!t]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{illustrate-zvz.pdf}
+\end{center}
+\caption{%
+TODO
+\label{fig:zvz}
+}
+\end{figure}
+
+Orbits in the vertical coordinate in a Galactic disk embedded in a dark matter halo are
+more complex.
+Figure~\ref{fig:zvz} is an illustration that shows several sample orbits with different
+values of the vertical action (spaced uniformly in $\sqrt{J_z}$), all with $J_R=0$ and
+the same $J_\phi$ in a two-component galaxy model consisting of a Miyamoyo--Nagai disk
+component \citep{Miyamoto:1975} and a Navarro--Frenk--White (NFW) halo component
+\citep{NFW:1996} with parameters chosen to roughly match a Milky Way-like configuration
+(but this potential model is only used for illustrative purposes).
+For smaller values of the vertical action, orbits are close to elliptical in shape with
+a frequency (axis ratio) that changes with action.
+For orbits with larger vertical action (i.e. for orbits that feel the influence of the
+dark matter halo), the orbital trajectory shapes become more ``diamond''-like.
+To describe the density distribution resulting from a mixture of stars drawn from
+
+
 
 
 \begin{align}
-    r_z' &= \sqrt{z^2 \, \nu_0 + v_z^2 / \nu_0} \\
-    \theta_z' &= \arctan{\left(\frac{z}{v_z} \, \nu_0 \right)} \\
+    \theta_z' &= \arctan{\left(\frac{z}{v_z} \, \omega_0 \right)} \\
     r_z &= r_z' \, \left[1 + \sum_m \epsilon_m(r_z') \, \cos{\left(m\,\theta_z'\right)}\right]
 \end{align}
 
