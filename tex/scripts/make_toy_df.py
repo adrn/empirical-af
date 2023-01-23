@@ -44,9 +44,9 @@ def main():
     vcirc = gala_pot.circular_velocity(R0 * [1.0, 0, 0])[0]
 
     Jphi0 = (vcirc * R0).to_value(u.kpc**2 / u.Myr)
-    dJphi = 5e-3
-    dJr = 5e-3
-    dJz = 0.08
+    dJphi = 1e-2
+    dJr = 1e-2
+    dJz = 0.06
 
     def df(J):
         # Gaussian in JR, Jphi - exp in Jz
