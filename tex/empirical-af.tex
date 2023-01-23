@@ -43,9 +43,10 @@
 
 \begin{document}
 
-\title{Data-driven Dynamics: \\
-       Estimating Actions, Frequencies, and Angles Directly from 1D Kinematics
-} %  Flexible Model for 1D Kinematics
+\title{
+    Empirical Actions, Frequencies, and Angles: \\
+    Data-driven Dynamics with 1D Kinematics
+}
 
 \newcommand{\affcca}{
     Center for Computational Astrophysics, Flatiron Institute, \\
@@ -94,13 +95,13 @@
 
 Our goal is to use the stellar phase-space density (or statistics computed from stellar
 invariants) to infer a local transformation to actions, angles, and frequencies directly
-from the data.
-To do this, we make several assumptions or choice to simplify the problem:
+from the data, i.e. without assuming the form of a gravitational potential model.
+To do this, we make several assumptions or choices to simplify the problem:
 \begin{description}
     \item[Axisymmetry] The gravitational potential that the stars orbit in is
     axisymmetric and smooth.
-    \item[No interactions] The stars do not interact and act effectively as test
-    particles orbiting within the galaxy.
+    \item[No interactions] The stars do not interact with one another and act
+    effectively as test particles orbiting within the galactic mass distribution.
     \item[1D phase-space / vertical kinematics] Here, for simplicity, we will work with
     just one position and one velocity component. In the demonstrations below, we use
     the vertical kinematics $z, v_z$, but this could equally be applied to radial
@@ -109,54 +110,83 @@ To do this, we make several assumptions or choice to simplify the problem:
     also require that stars have negligible eccentricity (or zero radial action $J_R=0$)
     and have the same $z$-component of the angular momentum $L_z$ (or azimuthal action
     $J_\phi$).
-    \item[Phase-mixed] The stellar distribution function in any vertical slice of
+    \item[Phase-mixed] The stellar distribution function (\df) in any vertical slice of
     the full phase-space is phase-mixed.
+    % TODO: note the assumptions above mean we are working at many R's to have J_R=0 but
+    % constant L_z
 \end{description}
-Under these assumptions, level sets of the phase-space density of a collection of stars,
-or contours of common stellar invariants (i.e., abundances), correspond to orbits in
-this projection of phase-space.
-Conceptually, this provides a path toward empirically extracting orbit shapes from the
-observed phase-space density or from statistics of stellar labels computed in a slice of
-phase-space (e.g., \citealt{Price-Whelan:2021}).
+Under these assumptions --- and importantly in a slice of phase-space at fixed values of
+the other actions --- contours of fixed phase-space density (or of fixed stellar
+invariant statistics, like stellar abundances; \citealt{Price-Whelan:2021}) delineate
+orbital trajectories.
+% Argument is: E = 1/2 v_z^2 + Phi(z) -> v_z(z) is an orbit, so f(E) = const. -> v_z(z)
+% is also an orbit
+This motivates a conceptual path toward empirically determining dynamical quantities of
+interest directly from the observed phase-space density or from statistics of stellar
+labels computed in a slice of phase-space.
+% TODO: figure 1 should be referenced here
 
-Given an orbit in a 1D phase-space, we can directly estimate dynamical quantities like
-the orbital actions, angles, and frequencies.
-For example, in terms of the vertical position and velocity $z, v_z$, where an orbital
-trajectory can be parametrized as $v_z(z)$, the vertical action $J_z$ and period $T_z$
-for an orbit are given by
+\begin{figure*}[!th]
+\begin{center}
+\includegraphics[width=\textwidth]{illustrate-zvz.pdf}
+\end{center}
+\caption{%
+TODO
+\label{fig:zvz}
+}
+\end{figure*}
+
+Given a closed orbital trajectory in a 1D phase-space, we can estimate dynamical
+quantities like the orbital actions, angles, and frequencies.
+For example, in terms of the vertical position and velocity $z, v_z$, where an orbit can
+be parametrized as $v_z(z)$, the vertical action $J_z$ and period $T_z$ are given by
 \begin{align}
     J_z &= \frac{2}{\pi} \, \int_0^{z_{\textrm{max}}} \dd z \, v_z(z) \\
     T_z &= 4 \, \int_0^{z_{\textrm{max}}} \frac{\dd z}{v_z(z)}\quad ,
 \end{align}
 which can then be used to compute the vertical (angular) frequency $\Omega_z =
 \frac{2\pi}{T_z}$.
-For a given stellar position and velocity $z, v_z$, the vertical angle $\theta_z$ can be
-computed as the fraction of an orbital period traversed,
+For a given stellar position and velocity $z, v_z$ along an orbit, the vertical angle
+$\theta_z$ can be computed as the fraction of an orbital period traversed up to that
+point,
 \begin{equation}
     \theta_z = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd w}{v_z(w)} \quad ,
 \end{equation}
 where $w$ is an integration variable.
+In principle, with infinite particle resolution, one could extract contours of constant
+density (or stellar labels) from an observed phase-space distribution and numerically
+estimate the integrals above.
+In practice, however, this would be noisy and unstable in regions of low phase-space
+density, which are often the most interesting (e.g., the transition from disk-dominated
+to halo-dominated kinematics).
+Instead, in what follows we outline a method for modeling the continuous phase-space
+density that enables computing the dynamical quantities.
 
-\subsection{Phase-space Number Density}
 
-Given a distribution of $N$ stellar positions and velocity $\{z, v_z\}_N$, our task is
-to infer the parameters of a functional model for the number density $n(z, v_z)$ so
-that, conceptually, we can use levels of constant density to compute the dynamical
-quantities discussed above ($J_z$, $\Omega_z$, $\theta_z$) for any individual $z, v_z$.
+\subsection{Estimating Dynamical Quantities from the Phase-space Density}
+
+Given a distribution of $N$ stellar positions and velocities $\{z, v_z\}_N$, our task is
+to infer the parameters of a functional model for the number density $n(z, v_z)$ that
+also allows use to compute the dynamical quantities ($J_z$, $\Omega_z$, $\theta_z$) for
+any individual $z, v_z$.
+With our assumption that the \df\ is phase-mixed, the number density should only depend
+on the phase-space coordinates through the action, so that $n(z, v_z) = n(J_z(z, v_z))$
 At fixed $z$, say $z=0$, we expect that $J_z$ increases with increasing $v_z$ (orbits
 with larger velocity at the midplane will reach larger heights) and $\Omega_z$
 decreases with increasing $v_z$ (orbits that reach larger heights above the midplane
 have longer periods).
-The same is true at fixed $v_z=0$, now considering how $J_z$ and $\Omega_z$ vary with
-increasing $z$.
-It is therefore useful to construct a radius coordinate $r_z'$ in the $z, v_z$ plane,
-defined as
-\begin{equation}
-    r_z' = \sqrt{z^2 \, \omega_0 + v_z^2 \, \omega_0^{-1}}
-\end{equation}
-where $\omega_0$ is a frequency:
-The vertical action $J_z$ and frequency $\Omega_z$ should be monotonic functions of this
-radius $r_z'$.
+Similar arguments can be made at fixed $v_z=0$ in considering how $J_z$ and $\Omega_z$
+vary with increasing $z$.
+It is therefore useful to construct an ellipsoidal polar coordinate system in the $z,
+v_z$ plane with a radius coordinate $r_z'$ and a corresponding angle coordinates
+$\theta_z'$ defined as
+\begin{align}
+    r_z' &= \sqrt{z^2 \, \omega_0 + v_z^2 \, \omega_0^{-1}} \label{eq:rzp} \\
+    \theta_z' &= \tan^{-1}\left(\frac{z}{v_z}\,\omega_0\right) \label{eq:thetazp}
+\end{align}
+where $\omega_0$ is a scale frequency.
+The vertical action $J_z$ and frequency $\Omega_z$ should be close to monotonic
+functions of this polar radius $r_z'$.
 
 For example, in a simple harmonic oscillator (SHO) potential,
 \begin{equation}
@@ -164,75 +194,122 @@ For example, in a simple harmonic oscillator (SHO) potential,
 \end{equation}
 the Hamiltonian (total energy per unit mass) is
 \begin{equation}
-    H(z, v_z) = E = \frac{1}{2} \, v_z^2 + \frac{1}{2} \, \omega^2 \,z^2
+    H(z, v_z) = E_z = \frac{1}{2} \, v_z^2 + \frac{1}{2} \, \omega^2 \,z^2
 \end{equation}
-and the orbital action $J$ is given by
+and the orbital action $J_z$ is given by
 \begin{equation}
-    J = \frac{E}{\omega} \quad .
+    J_z = \frac{E_z}{\omega} \quad .
 \end{equation}
 All orbits have the same frequency $\omega$ and are elliptical in the 1D phase-space.
 In this case, the scale frequency $\omega_0$ in $r_z'$ corresponds to the frequency of
-the oscillator $\omega_0=\omega$, and the radius $r_z'$ is related to the action $J$ as
+the oscillator $\omega_0=\omega$, the radius $r_z'$ is related to the action $J_z$ as
 \begin{equation}
-    J = \frac{1}{2} r_z'^2 \quad .
+    J_z = \frac{1}{2} r_z'^2
+\end{equation}
+and the conjugate angle $\theta_z$ (conjugate to the action $J_z$) is equal to the
+ellipsoidal angle $\theta_z = \theta_z'$.
+The phase-mixed \df\ $f(J_z)$ can therefore be expressed as some
+function of the polar radius alone $f(J_z)=g(r_z')$.
+
+Orbits in even simple galactic mass models are more complex.
+For example, in a two-component mass model consisting of a Galactic disk embedded in a
+dark matter halo, the morphology of an orbit will depend on whether it is confined to
+the disk or whether it feels the transition from the disk- to the halo-dominated region
+of the mass distribution.
+Figure~\ref{fig:zvz} (left panel) is an illustration that shows several sample orbits
+with different values of the vertical action (spaced uniformly in $\sqrt{J_z}$), all
+with $J_R=0$ and the same $J_\phi$ in a two-component galaxy model consisting of a
+Miyamoyo--Nagai disk component \citep{Miyamoto:1975} and a Navarro--Frenk--White (NFW)
+halo component \citep{NFW:1996}.
+For this toy galaxy model, parameters are chosen to roughly match the local circular
+velocity and scale height of the Milky Way disk, but this potential model is only used
+for illustrative purposes (the parameter values are not important).
+For smaller values of the vertical action, orbits are close to elliptical in shape.
+Moving out in ``radius'' or vertical action $J_z$, orbits have frequencies that decrease
+with increasing action (which manifests as a changing axis ratio of the orbits).
+For orbits with larger vertical action (i.e. orbits that reach scale heights more than a
+few times the adopted scale height $h_z=0.25~\kpc$), the orbits begin to significantly
+feel the influence of the dark matter halo and the orbital trajectory shapes become more
+``pinched'' or ``diamond''-like near $z=0$.
+We expect these features to be generic for slices of the vertical kinematics in galaxies
+like the Milky Way: The vertical frequency should be a smooth function of the vertical
+action, and orbits will have more complex morphologies (i.e. more complex than
+ellipses).
+
+Whereas in a SHO potential the orbital trajectories are functionally equivalent
+(ellipses) and scaled by the value of the action, in a more generic galactic mass model
+we expect the trajectories to distort away from ellipses.
+As we saw in Figure~\ref{fig:zvz}, this distortion changes the orbital frequency of
+orbits with increased size or vertical action (i.e., changes the scale frequency of the
+ellipse), but also introduces a morphological change by making the orbits more
+diamond-shaped, especially close to $z=0$.
+In terms of action--angle coordinates, this means that the ellipsoidal angle introduced
+above (Equation~\ref{eq:thetazp}) is no longer equal to the conjugate angle $\theta_z$,
+and any functional model for the phase-mixed \df\ $f(J)$ must be a function of both the
+ellipsoidal radius and angle:
+\begin{equation}
+    f(J) = g(r_z', \theta_z') \quad .
+\end{equation}
+We choose to express this density model as a function of an auxiliary variable $r_z$
+that is defined as a low-order Fourier expansion distortion to the ellipsoidal radius
+$r_z'$:
+\begin{align}
+    r_z &= r_z' \, \left[1 + \sum_m \epsilon_m(r_z') \, \cos{\left(m\,\theta_z'\right)}\right] \label{eq:rz} \\
+    n(z, v_z) &= n(r_z(r_z', \theta_z'))
+\end{align}
+where $n(\cdot)$ represents a density function and $\epsilon_m(r_z')$ represents a
+distortion amplitude, whose magnitude is hopefully must smaller than one for all
+relevant values of $r_z'$ --- that is, we assume that
+\begin{equation}
+    |\epsilon_m(r_z')| \ll 1 \,\, \forall r_z', m \quad .
 \end{equation}
 
-\begin{figure}[!t]
-\begin{center}
-\includegraphics[width=0.8\textwidth]{illustrate-zvz.pdf}
-\end{center}
-\caption{%
-TODO
-\label{fig:zvz}
-}
-\end{figure}
-
-Orbits in the vertical coordinate in a Galactic disk embedded in a dark matter halo are
-more complex.
-Figure~\ref{fig:zvz} is an illustration that shows several sample orbits with different
-values of the vertical action (spaced uniformly in $\sqrt{J_z}$), all with $J_R=0$ and
-the same $J_\phi$ in a two-component galaxy model consisting of a Miyamoyo--Nagai disk
-component \citep{Miyamoto:1975} and a Navarro--Frenk--White (NFW) halo component
-\citep{NFW:1996} with parameters chosen to roughly match a Milky Way-like configuration
-(but this potential model is only used for illustrative purposes).
-For smaller values of the vertical action, orbits are close to elliptical in shape with
-a frequency (axis ratio) that changes with action.
-For orbits with larger vertical action (i.e. for orbits that feel the influence of the
-dark matter halo), the orbital trajectory shapes become more ``diamond''-like.
-To describe the density distribution resulting from a mixture of stars drawn from
-
-
-
-
+With this parametrization, the action and frequency are monotonic and smooth functions
+of the distorted radius $r_z$: $J_z = J_z(r_z)$ and $\Omega_z = \Omega_z(r_z)$.
+We can also now compute the dynamical quantities with integrals over the ellipsoidal
+angle $\theta_z'$
 \begin{align}
-    \theta_z' &= \arctan{\left(\frac{z}{v_z} \, \omega_0 \right)} \\
-    r_z &= r_z' \, \left[1 + \sum_m \epsilon_m(r_z') \, \cos{\left(m\,\theta_z'\right)}\right]
-\end{align}
-
-Choice of $n(r_z)$ or $f(r_z)$, choice of $\epsilon_m(r_z')$.
-
-\begin{align}
-    J_z &= \frac{2}{\pi} \, \int_0^{\pi/2} \dd \theta_z' \, v_z(\theta_z')
-        \, \left|\frac{\dd r_z'}{\dd \theta_z'}\right| \\
+    J_z(r_z) &= \frac{2}{\pi} \, \int_0^{\pi/2} \dd \theta_z' \, v_z(\theta_z')
+        \, \left|\frac{\dd z}{\dd \theta_z'}\right| \\
     T_z &= 4 \, \int_0^{\pi/2} \frac{\dd \theta_z'}{v_z(\theta_z')}
-        \, \left|\frac{\dd r_z'}{\dd \theta_z'}\right| \quad
+        \, \left|\frac{\dd z}{\dd \theta_z'}\right|
 \end{align}
 where
-\begin{equation}
-    v_z(\theta_z') = r_z'(r_z, \theta_z') \, \cos{(\theta_z')}
-\end{equation}
+\begin{align}
+    v_z(\theta_z') &= r_z'(r_z, \theta_z') \, \cos{(\theta_z')} \\
+    z(\theta_z') &= r_z'(r_z, \theta_z') \, \sin{(\theta_z')}
+\end{align}
+and $r_z'(r_z, \theta_z')$ in general has to be found by numerical root-finding of
+Equation~\ref{eq:rz}.
 
 
-\section{Data} \label{sec:data}
+\subsection{Estimating Dynamical Quantities from Statistics of Stellar Labels}
+
+TODO: same thing as previous subsection, but $F(r_z)$ instead of $n(r_z)$
 
 
 \section{Results} \label{sec:results}
+
+For our implementation used in this article, we adopt the following:
+\begin{align}
+    m &= \left\{2, 4\right\} \\
+    e_2(r_z') &\geq 0 \,\,\forall r_z'\\
+    e_4(r_z') &\leq 0 \,\,\forall r_z'
+\end{align}
+and we use linear splines to represent the functions $n(r_z)$, $e_2(r_z')$, and
+$e_4(r_z')$.
+
+
+\subsection{Demonstration with a Simple Equilibrium Model}
+
+
+\subsection{Tests with a Perturbed Disk}
 
 
 \section{Discussion} \label{sec:discussion}
 
 
-\section{Conclusions} \label{sec:conclusions}
+\section{Summary and Conclusions} \label{sec:conclusions}
 
 
 \begin{acknowledgements}
