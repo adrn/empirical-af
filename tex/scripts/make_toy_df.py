@@ -45,7 +45,7 @@ def main():
 
     Jphi0 = (vcirc * R0).to_value(u.kpc**2 / u.Myr)
     dJphi = 1e-2
-    dJr = 1e-2
+    dJr = 5e-3
     dJz = 0.06
 
     def df(J):
@@ -57,7 +57,7 @@ def main():
             - np.abs(Jz) / dJz
         )
 
-    N = 100_000_000
+    N = 500_000_000
 
     gm = agama.GalaxyModel(agama_pot, df)
     xv_samples = gm.sample(N)[0]
