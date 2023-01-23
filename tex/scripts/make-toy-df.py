@@ -68,6 +68,7 @@ mask = (act[:, 0] < thresh) & (np.abs(act[:, 2] - np.median(act[:, 2])) < thresh
 tbl = at.QTable()
 tbl["R"] = np.sqrt(xv_samples[:, 0] ** 2 + xv_samples[:, 1] ** 2) * galactic["length"]
 tbl["z"] = xv_samples[:, 2] * galactic["length"]
+tbl["vz"] = xv_samples[:, 5] * galactic["length"] / galactic["time"]
 tbl["J"] = act * galactic["length"] ** 2 / galactic["time"]
 tbl["Omega"] = freq * u.rad / galactic["time"]
 tbl["theta"] = ang * u.rad
