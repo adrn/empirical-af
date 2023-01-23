@@ -57,7 +57,7 @@ def main():
             - np.abs(Jz) / dJz
         )
 
-    N = 10_000_000
+    N = 50_000_000
 
     gm = agama.GalaxyModel(agama_pot, df)
     xv_samples = gm.sample(N)[0]
@@ -66,7 +66,7 @@ def main():
     act, ang, freq = act_finder(xv_samples, angles=True)
 
     # Impose some masks:
-    thresh = 0.005  # ~15 km/s * 300 pc
+    thresh = 0.05  # ~15 km/s * 300 pc
     mask = (act[:, 0] < thresh) & (np.abs(act[:, 2] - np.median(act[:, 2])) < thresh)
 
     tbl = at.QTable()

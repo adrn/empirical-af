@@ -1,7 +1,7 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: py:light
+#     formats: ipynb,py
 #     text_representation:
 #       extension: .py
 #       format_name: light
@@ -108,4 +108,3 @@ for ax in axes:
 axes[0].set_ylabel(f"$z$ [{u.kpc:latex_inline}]")
 
 # fig.savefig("../tex/figures/illustrate-zvz.pdf")
-# -
