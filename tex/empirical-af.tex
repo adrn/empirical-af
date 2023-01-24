@@ -73,6 +73,8 @@
 % \affiliation{\affnyu}
 % \affiliation{\affmpia}
 
+\author{Benjamin~Cassese}
+
 \author{+ more}
 
 
@@ -313,8 +315,8 @@ angle $\theta_z'$
 \end{align}
 where
 \begin{align}
-    v_z(\theta_z') &= r_z'(r_z, \theta_z') \, \cos{(\theta_z')} \\
-    z(\theta_z') &= r_z'(r_z, \theta_z') \, \sin{(\theta_z')}
+    v_z(\theta_z') &= \sqrt{\omega_0} \, r_z'(r_z, \theta_z') \, \cos{(\theta_z')} \\
+    z(\theta_z') &= \frac{1}{\sqrt{\omega_0}} \, r_z'(r_z, \theta_z') \, \sin{(\theta_z')}
 \end{align}
 and $r_z'(r_z, \theta_z')$ in general has to be found by numerical root-finding of
 Equation~\ref{eq:rz}.
