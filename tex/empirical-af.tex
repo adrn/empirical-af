@@ -78,27 +78,33 @@
 
 \begin{abstract}\noindent
 % Context
+Orbital dynamics is complex in six-dimensional phase-space, making it a challenge to
+interpret the rich and structured kinematic data of stars in the Milky Way revealed in
+recent data releases from the \gaia\ Mission.
+In a symmetric, steady-state galaxy, or in the presence of only weak perturbations, the
+dynamical interpretation and investigation of kinematic data is often simplified by
+using dynamical invariants such as orbital actions.
+However, computing many such quantities (e.g., the energy, actions, fundamental
+frequencies, etc.) require having a model for the gravitational potential and, even so,
+are either slow to compute or imprecise.
 % Aims.
+To mitigate at least one of these limitations, we aim to demonstrate a method for
+estimating fundamental galactic orbital properties for stars directly from the kinematic
+and stellar label data (e.g., element abundances) without requiring a gravitational
+potential model.
 % Methods
+This method still assumes a symmetric and steady-state distribution function, but uses
+either the number density of stars in a slice of phase-space (e.g., vertical $z$--$v_z$
+kinematics) or a statistic computed from other stellar invariants in this slice (e.g.,
+element abundances) to empirically estimate orbital actions, frequencies, and angles for
+the stars.
 % Results
+We demonstrate the method using a toy equilibrium model where orbital properties are
+known, and then show applications of this method even in the presence of disequilibrium.
+As a last demonstration, we use data from the \gaia\ Mission to estimate the total mass
+density at the Galactic midplane as a function of radius near the sun.
 % Conclusions
-
-Measurements of all six dimensions of phase-space co- ordinates of tens of millions of
-stars in the Milky Way have enabled estimates of their orbital properties. The meaning
-of these estimates is limited by the measurement errors, our knowledge of the Galactic
-potential and the validity of the assumptions necessary to derive orbital properties in
-the first place (eg. a static, axisymmetric mass distribution). Price-Whelan et al
-showed how 6-D phase-space mea- surements of stars in the Galactic disk allow us to see
-orbital tori images (OTI) projected as isopleths and iso-abundance contours in the Z--vZ
-plane. This promises the opportunity to gain potential- independent knowledge of orbital
-properties, mitigating one of these limitations. This paper explores to what extent
-these OTI can be used to estimate fundamental orbital properties of stars — actions,
-frequencies and angles — directly from these contours. Estimates are made by contouring
-projections of simulated data drawn from a static, equilibrium axisymmetric galaxy
-model. Compared to the true orbital properties calculated in the known potential of the
-realization the estimates are found to ....??? For a snapshot of a simulation of a
-Milky-Way-like Galaxy perturbed by a massive, infalling satellite, the estimates
-????Applying our method to the Gaia DR3 data.... We conclude
+We conclude :shrugs:.
 
 \end{abstract}
 
@@ -108,6 +114,7 @@ Milky-Way-like Galaxy perturbed by a massive, infalling satellite, the estimates
 
 \section{Introduction} \label{sec:intro}
 
+KVJ/JASH intro sketch:
 The power and peril of actions. The promise of frequencies. Much can be learned without
 actions. Soliloquy on frequencies. The Galaxy is a clock. Frequencies set how things
 wind up and mix.
@@ -331,9 +338,15 @@ $e_4(r_z')$.
 
 
 \subsection{Demonstration with a Simple Equilibrium Model}
+\label{sec:eq-model}
 
 
 \subsection{Tests with a Perturbed Disk}
+\label{sec:diseq-disk}
+
+
+\subsection{Empirical Actions and Frequencies from \gaia\ Data Release 3}
+\label{sec:gaiadr3}
 
 
 \section{Discussion} \label{sec:discussion}
