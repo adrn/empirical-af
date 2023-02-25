@@ -19,29 +19,29 @@ from empaf.jax_helpers import simpson
 
 __all__ = ["DensityOrbitModel", "LabelOrbitModel"]
 
+_e_param_names = ["A", "alpha", "x0"]
+
 
 class OrbitModelBase:
-    _state_names = ["nu", "e_vals", "z0", "vz0"]
-    _spl_name = ""
+    _state_names = ["Omega", "e_params", "z0", "vz0"]
+    fit_name = ""
+    fit_param_names = []
 
     def __init_subclass__(cls):
-        if cls._spl_name == "":
+        if cls.fit_name == "":
             raise ValueError("TODO")
-        cls._state_names = cls._state_names + [f"{cls._spl_name}_vals"]  # make a copy
+        cls._state_names = list(cls._state_names) + [f"{cls.fit_name}_params"]
 
-    def __init__(self, e_knots, e_signs, e_k=1, unit_sys=galactic):
+    def __init__(self, e_signs, unit_sys=galactic):
         r"""
-        TODO:
-        - nu below should actually be Omega
-        -
-
         Notation:
-        - :math:`\nu_0` or ``nu_0``: A scale frequency used to compute the elliptical
-          radius ``rz_prime``.
+        - :math:`\Omega_0` or ``Omega_0``: A scale frequency used to compute the
+          elliptical radius ``rz_prime``. This can be interpreted as the asymptotic
+          midplane orbital frequency.
         - :math:`r_z'` or ``rz_prime``: The "raw" elliptical radius :math:`\sqrt{z^2\,
-          \nu_0 + v_z^2 \, \nu_0^{-1}}`.
+          \Omega_0 + v_z^2 \, \Omega_0^{-1}}`.
         - :math:`\theta'` or ``theta_prime``: The "raw" z angle defined as :math:`\tan
-          {\theta'} = \frac{z}{v_z}\,\nu_0`.
+          {\theta'} = \frac{z}{v_z}\,\Omega_0`.
         - :math:`r_z` or ``rz``: The distorted elliptical radius :math:`r_z = r_z' \,
           f(r_z', \theta_z')` where :math:`f(\cdot)` is the distortion function.
         - :math:`\theta` or ``theta``: The true vertical angle.
@@ -50,35 +50,16 @@ class OrbitModelBase:
 
         Parameters
         ----------
-        e_knots : dict
-            The locations of knots for the splines that control the variation of each
-            :math:`e_m(r_z')` function. Keys should be the (integer) "m" order of the
-            distortion term (for the distortion function), and values should be the knot
-            locations for interpolating the values of the distortion coefficients
-            :math:`e_m(r_z')`.
         e_signs : dict
             The overall sign of the :math:`e_m(r_z')` functions. Keys should be the
             (integer) "m" order of the distortion term (for the distortion function),
             and values should be 1 or -1.
-        e_k : int (optional)
-            The order of the spline used for the :math:`e_m` coefficients. Default: 1,
-            linear. Only k=2 (quadratic) or k=3 (cubic) are supported.
         unit_sys : `gala.units.UnitSystem` (optional)
             The unit system to work in. Default is to use the "galactic" unit system
             from Gala: (kpc, Myr, Msun).
 
         """
-        self.e_knots = {int(m): jnp.array(knots) for m, knots in e_knots.items()}
-        self.e_signs = {int(m): float(e_signs.get(m, 1.0)) for m in e_knots.keys()}
-        self.e_k = int(e_k)
-
-        for m, knots in self.e_knots.items():
-            if knots[0] != 0.0:
-                raise ValueError(
-                    f"The first knot must be at rz=0. Knots for m={m} start at "
-                    f"{knots[0]} instead"
-                )
-
+        self.e_signs = {int(m): float(e_signs.get(m, 1.0)) for m in e_signs.keys()}
         self.state = None
 
         # Unit system:
@@ -102,6 +83,25 @@ class OrbitModelBase:
                         f"Parameter {name} is missing from the model state"
                     )
 
+            if "e_params" in names:
+                e_params = self.state.get("e_params", {})
+                for m, e_params_m in e_params.items():
+                    for sub_name in _e_param_names:
+                        if sub_name not in e_params_m.keys():
+                            raise RuntimeError(
+                                f"e function parameter {sub_name} is missing from the "
+                                f"model state for m={m}"
+                            )
+
+            if f"{self.fit_name}_params" in names:
+                _params = self.state.get(f"{self.fit_name}_params", {})
+                for sub_name in self.fit_param_names:
+                    if sub_name not in _params.keys():
+                        raise RuntimeError(
+                            f"{self.fit_name} function parameter {sub_name} is missing "
+                            f"from the model state"
+                        )
+
     def set_state(self, params, overwrite=False):
         """
         Set the model state parameters.
@@ -124,8 +124,8 @@ class OrbitModelBase:
             self.state = {}
 
         for k in params:
-            if k == "ln_nu":
-                self.state.setdefault("nu", jnp.exp(params["ln_nu"]))
+            if k == "ln_Omega":
+                self.state.setdefault("Omega", jnp.exp(params["ln_Omega"]))
             elif k == "e_vals":
                 self.state.setdefault(k, {})
                 for m, vals in params[k].items():
@@ -141,9 +141,9 @@ class OrbitModelBase:
 
         params = {}
         for k in self.state:
-            if k == "nu":
-                params["ln_nu"] = jnp.log(self.state[k])
-            elif k == "e_vals":
+            if k == "Omega":
+                params["ln_Omega"] = jnp.log(self.state[k])
+            elif k.startswith("e_"):
                 params[k] = {}
                 for m, vals in self.state[k].items():
                     params[k][m] = jnp.array(vals)
@@ -157,7 +157,8 @@ class OrbitModelBase:
         """
         Compute the Fourier m-order coefficients
         """
-        self._validate_state(["e_vals"])
+        # TODO: need to validate all e_ parameters
+        self._validate_state([k for k in self._state_names if k.startswith("e_")])
         e_vals = self.state["e_vals"]
 
         es = {}
@@ -175,10 +176,10 @@ class OrbitModelBase:
         r"""
         Compute :math:`r_z'` (``rz_prime``) and :math:`\theta_z'` (``theta_prime``)
         """
-        self._validate_state(["z0", "vz0", "nu"])
+        self._validate_state(["z0", "vz0", "Omega"])
 
-        x = (vz - self.state["vz0"]) / jnp.sqrt(self.state["nu"])
-        y = (z - self.state["z0"]) * jnp.sqrt(self.state["nu"])
+        x = (vz - self.state["vz0"]) / jnp.sqrt(self.state["Omega"])
+        y = (z - self.state["z0"]) * jnp.sqrt(self.state["Omega"])
 
         rz_prime = jnp.sqrt(x**2 + y**2)
         th_prime = jnp.arctan2(y, x)
@@ -234,16 +235,16 @@ class OrbitModelBase:
     @partial(jax.jit, static_argnames=["self"])
     def get_z(self, rz, theta_prime):
         self._validate_state()
-        nu = self.state["nu"]
+        Omega = self.state["Omega"]
         rzp = self.get_rz_prime(rz, theta_prime)
-        return rzp * jnp.sin(theta_prime) / jnp.sqrt(nu)
+        return rzp * jnp.sin(theta_prime) / jnp.sqrt(Omega)
 
     @partial(jax.jit, static_argnames=["self"])
     def get_vz(self, rz, theta_prime):
         self._validate_state()
-        nu = self.state["nu"]
+        Omega = self.state["Omega"]
         rzp = self.get_rz_prime(rz, theta_prime)
-        return rzp * jnp.cos(theta_prime) * jnp.sqrt(nu)
+        return rzp * jnp.cos(theta_prime) * jnp.sqrt(Omega)
 
     @partial(jax.jit, static_argnames=["self", "N_grid"])
     def _get_Tz_Jz_thetaz(self, z, vz, N_grid):
@@ -340,44 +341,15 @@ class OrbitModelBase:
         return res
 
     def copy(self):
-        knot_name = f"{self._spl_name}_knots"
-        kw = {knot_name: getattr(self, knot_name)}
-        k_name = f"{self._spl_name}_k"
-        kw[k_name] = getattr(self, k_name)
-        obj = self.__class__(
-            e_knots=self.e_knots,
-            e_signs=self.e_signs,
-            e_k=self.e_k,
-            unit_sys=self.unit_sys,
-            **kw,
-        )
+        obj = self.__class__(e_signs=self.e_signs, unit_sys=self.unit_sys)
         obj.set_state(self.state, overwrite=True)
         return obj
 
 
 class DensityOrbitModel(OrbitModelBase):
-    _spl_name = "ln_dens"
-
-    def __init__(
-        self, ln_dens_knots, e_knots, e_signs, e_k=1, ln_dens_k=1, unit_sys=galactic
-    ):
-        f"""
-        {OrbitModelBase.__init__.__doc__.split('Parameters')[0]}
-
-        Parameters
-        ----------
-        ln_dens_knots : array_like
-            The knot locations for the spline that controls the density function. These
-            are locations in :math:`r_z`.
-        {OrbitModelBase.__init__.__doc__.split('----------')[1]}
-        dens_k : int (optional)
-            The order of the spline used for the density function. Default: 1, linear.
-            Only k=2 (quadratic) or k=3 (cubic) are supported.
-
-        """
-        self.ln_dens_knots = jnp.array(ln_dens_knots)
-        self.ln_dens_k = int(ln_dens_k)
-        super().__init__(e_knots=e_knots, e_signs=e_signs, e_k=e_k, unit_sys=unit_sys)
+    fit_name = "ln_dens"
+    fit_param_names = ["A", "alpha", "x0"]
+    # TODO: might need others to control offset, etc.
 
     @u.quantity_input
     def get_params_init(self, z: u.kpc, vz: u.km / u.s):
@@ -496,7 +468,9 @@ class DensityOrbitModel(OrbitModelBase):
 
 
 class LabelOrbitModel(OrbitModelBase):
-    _spl_name = "label"
+    fit_name = "label"
+    fit_param_names = ["A", "alpha", "x0"]
+    # TODO: might need others to control offset, etc.
 
     def __init__(
         self, label_knots, e_knots, e_signs, e_k=1, label_k=3, unit_sys=galactic
