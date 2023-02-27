@@ -12,7 +12,7 @@ models.append(model)
 
 valid_state = {}
 valid_state["e_params"] = {m: {k: 1.0 for k in _e_param_names} for m in [2, 4]}
-valid_state["ln_dens_params"] = {"A": 1.0, "alpha": 0.5, "x0": 1.0}
+valid_state["ln_dens_params"] = {"f0": 1.0, "f3": -1, "alpha": 0.5, "x0": 1.0}
 valid_state["Omega"] = 0.1
 valid_state["z0"] = 0.0
 valid_state["vz0"] = 0.0

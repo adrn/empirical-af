@@ -36,3 +36,13 @@ def designer_func(x, A, alpha, x0, c=1.0):
     """
     beta = (1 - alpha) / alpha
     return A * (c - (1 - (x / x0) ** (1 / beta)) ** beta)
+
+
+@jax.jit
+def designer_func_alt(x, f0, f1, alpha, x0):
+    """
+    An alternate parametrization of the designer function above.
+    """
+    A = (f1 - f0) / (1 + designer_func(1.0, 1.0, alpha, x0, c=0.0))
+    offset = f0 + A
+    return designer_func(x, c=0.0, A=A, alpha=alpha, x0=x0) + offset

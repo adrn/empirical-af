@@ -1,5 +1,4 @@
 import abc
-import copy
 from functools import partial
 from warnings import warn
 
@@ -16,11 +15,11 @@ from jax_cosmo.scipy.interpolate import InterpolatedUnivariateSpline
 from jaxopt import Bisection
 from scipy.stats import binned_statistic, binned_statistic_2d
 
-from empaf.jax_helpers import designer_func, simpson
+from empaf.jax_helpers import designer_func_alt, simpson
 
 __all__ = ["DensityOrbitModel", "LabelOrbitModel"]
 
-_e_param_names = ["A", "alpha", "x0"]
+_e_param_names = ["f1", "alpha", "x0"]
 
 
 class OrbitModelBase:
@@ -130,7 +129,7 @@ class OrbitModelBase:
             elif k == "e_params":
                 self.state.setdefault(k, {})
                 for m in self.e_signs:
-                    self.state[k].set_default(m, {})
+                    self.state[k].setdefault(m, {})
                     for sub_k, val in params[k][m].items():
                         self.state[k][m][sub_k] = val
             elif k == f"{self.fit_name}_params":
@@ -139,6 +138,8 @@ class OrbitModelBase:
                     self.state[k][sub_k] = val
             else:
                 self.state.setdefault(k, jnp.array(params[k]))
+
+        return self.state
 
     def get_params(self):
         """
@@ -150,8 +151,14 @@ class OrbitModelBase:
         for k in self.state:
             if k == "Omega":
                 params["ln_Omega"] = jnp.log(self.state[k])
-            elif k in ["e_params", f"{self.fit_name}_params"]:
-                params[k] = copy.deepcopy(self.state[k])
+            elif k == "e_params":
+                params[k] = {}
+                for m in self.state[k]:
+                    params[k][m] = {
+                        key: jnp.array(val) for key, val in self.state[k][m].items()
+                    }
+            elif k == f"{self.fit_name}_params":
+                params[k] = {key: jnp.array(val) for key, val in self.state[k].items()}
             else:
                 params[k] = jnp.array(self.state[k])
 
@@ -167,7 +174,7 @@ class OrbitModelBase:
 
         es = {}
         for m, pars in e_pars.items():
-            es[m] = self.e_signs[m] * designer_func(rz_prime, c=1.0, **pars)
+            es[m] = self.e_signs[m] * designer_func_alt(rz_prime, f0=0.0, **pars)
         return es
 
     @partial(jax.jit, static_argnames=["self"])
@@ -347,8 +354,7 @@ class OrbitModelBase:
 
 class DensityOrbitModel(OrbitModelBase):
     fit_name = "ln_dens"
-    fit_param_names = ["A", "alpha", "x0"]
-    # TODO: might need others to control offset, etc.
+    fit_param_names = ["f0", "f1", "alpha", "x0"]
 
     @u.quantity_input
     def get_params_init(self, z: u.kpc, vz: u.km / u.s):
@@ -437,13 +443,8 @@ class DensityOrbitModel(OrbitModelBase):
     @partial(jax.jit, static_argnames=["self"])
     def get_ln_dens(self, rz):
         self._validate_state()
-
         pars = self.state[f"{self.fit_name}_params"]
-        func_vals = (
-            -designer_func(rz, c=0.0, A=pars["A"], alpha=pars["alpha"], x0=pars["x0"])
-            - pars["offset"]
-        )
-        return func_vals
+        return designer_func_alt(rz, **pars)
 
     @partial(jax.jit, static_argnames=["self"])
     def ln_density(self, z, vz):
