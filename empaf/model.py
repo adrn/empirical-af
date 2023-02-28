@@ -15,24 +15,16 @@ from jax_cosmo.scipy.interpolate import InterpolatedUnivariateSpline
 from jaxopt import Bisection
 from scipy.stats import binned_statistic, binned_statistic_2d
 
-from empaf.jax_helpers import designer_func_alt, simpson
+from empaf.jax_helpers import simpson
+from empaf.model_helpers import monotonic_designer_func_alt
 
 __all__ = ["DensityOrbitModel", "LabelOrbitModel"]
-
-_e_param_names = ["f1", "alpha", "x0"]
 
 
 class OrbitModelBase:
     _param_names = ["ln_Omega", "e_params", "z0", "vz0"]
-    fit_name = ""
-    fit_param_names = []
 
-    def __init_subclass__(cls):
-        if cls.fit_name == "":
-            raise ValueError("TODO")
-        cls._param_names = list(cls._param_names) + [f"{cls.fit_name}_params"]
-
-    def __init__(self, e_signs, unit_sys=galactic):
+    def __init__(self, e_funcs=None, unit_sys=galactic):
         r"""
         Notation:
         - :math:`\Omega_0` or ``Omega_0``: A scale frequency used to compute the
@@ -50,17 +42,27 @@ class OrbitModelBase:
 
         Parameters
         ----------
-        e_signs : dict
-            The overall sign of the :math:`e_m(r_z')` functions. Keys should be the
+        e_funcs : dict (optional)
+            A dictionary that provides functions that specify the dependence of the
+            Fourier distortion coefficients :math:`e_m(r_z')`. Keys should be the
             (integer) "m" order of the distortion term (for the distortion function),
-            and values should be 1 or -1.
+            and values should be Python callable objects that can be passed to
+            `jax.jit()`.
         unit_sys : `gala.units.UnitSystem` (optional)
             The unit system to work in. Default is to use the "galactic" unit system
             from Gala: (kpc, Myr, Msun).
 
         """
-        self.e_signs = {int(m): float(e_signs.get(m, 1.0)) for m in e_signs.keys()}
-        self.state = None
+        if e_funcs is None:
+            # Default functions:
+            self.e_funcs = {
+                2: lambda *a, **k: monotonic_designer_func_alt(*a, f0=0.0, **k),
+                4: lambda *a, **k: monotonic_designer_func_alt(*a, f0=0.0, **k),
+            }
+            self._default_e_funcs = True
+        else:
+            self.e_funcs = {int(m): jax.jit(e_func) for m, e_func in e_funcs.items()}
+            self._default_e_funcs = False
 
         # Unit system:
         self.unit_sys = UnitSystem(unit_sys)
@@ -72,7 +74,7 @@ class OrbitModelBase:
         """
         es = {}
         for m, pars in e_params.items():
-            es[m] = self.e_signs[m] * designer_func_alt(rz_prime, f0=0.0, **pars)
+            es[m] = self.e_funcs[m](rz_prime, **pars)
         return es
 
     @partial(jax.jit, static_argnames=["self"])
@@ -88,7 +90,9 @@ class OrbitModelBase:
 
         return rz_prime, th_prime
 
-    z_vz_to_rz_theta_prime_arr = jax.vmap(z_vz_to_rz_theta_prime, in_axes=[None, 0, 0])
+    z_vz_to_rz_theta_prime_arr = jax.vmap(
+        z_vz_to_rz_theta_prime, in_axes=[None, 0, 0, None]
+    )
 
     @partial(jax.jit, static_argnames=["self"])
     def get_rz(self, rz_prime, theta_prime, e_params):
@@ -120,20 +124,6 @@ class OrbitModelBase:
             tol=1e-4,
         )
         return bisec.run(rz, rrz=rz, tt_prime=theta_prime, ee_params=e_params).params
-
-        # The below only works for purely linear functions in e2, e4, etc., and only
-        # when they are fixed to be zero at rz=0
-        # self._validate_state()
-        # e_vals = self.state["e_vals"]
-
-        # # Shorthand
-        # thp = theta_prime
-
-        # # convert e_vals and e_knots to slope and intercept
-        # e_as = {k: e_vals[k][0] / self.e_knots[k][1] for k in e_vals}
-        # terms2 = jnp.sum(jnp.array([e_as[k] * jnp.cos(k * thp) for k in e_as]),
-        # axis=0)
-        # return (2 * rz) / (1 + jnp.sqrt(1 + 4 * rz * terms2))
 
     @partial(jax.jit, static_argnames=["self"])
     def get_z(self, rz, theta_prime, params):
@@ -175,10 +165,14 @@ class OrbitModelBase:
     _get_Tz_Jz_thetaz = jax.vmap(_get_Tz_Jz_thetaz, in_axes=[None, 0, 0, None, None])
 
     @u.quantity_input
-    def get_aaf(self, z: u.kpc, vz: u.km / u.s, params, N_grid=101):
+    def compute_action_angle(self, z: u.kpc, vz: u.km / u.s, params, N_grid=101):
         """
         Compute the vertical period, action, and angle given input phase-space
         coordinates.
+
+        Parameters
+        ----------
+        TODO
         """
         z = z.decompose(self.unit_sys).value
         vz = vz.decompose(self.unit_sys).value
@@ -236,17 +230,28 @@ class OrbitModelBase:
 
         return res
 
-    def copy(self):
-        obj = self.__class__(e_signs=self.e_signs, unit_sys=self.unit_sys)
-        return obj
-
 
 class DensityOrbitModel(OrbitModelBase):
-    fit_name = "ln_dens"
-    fit_param_names = ["f0", "f1", "alpha", "x0"]
+    def __init__(self, ln_dens_func, e_funcs=None, unit_sys=galactic):
+        """
+        {intro}
+
+        Parameters
+        ----------
+        ln_dens_func : callable (optional)
+            TODO
+        {params}
+        """
+        super().__init__(e_funcs=e_funcs, unit_sys=unit_sys)
+        self.ln_dens_func = jax.jit(ln_dens_func)
+
+    __init__.__doc__ = __init__.__doc__.format(
+        intro=OrbitModelBase.__init__.__doc__.split("Parameters")[0].rstrip(),
+        params=OrbitModelBase.__init__.__doc__.split("----------")[1].lstrip(),
+    )
 
     @u.quantity_input
-    def get_params_init(self, z: u.kpc, vz: u.km / u.s):
+    def get_params_init(self, z: u.kpc, vz: u.km / u.s, ln_dens_params0=None):
         """
         Estimate initial model parameters from the data
 
@@ -269,7 +274,7 @@ class DensityOrbitModel(OrbitModelBase):
         std_vz = 1.5 * MAD(vz, ignore_nan=True)
         nu = std_vz / std_z
 
-        pars0 = {"z0": np.nanmedian(z), "vz0": np.nanmedian(vz), "nu": nu}
+        pars0 = {"z0": np.nanmedian(z), "vz0": np.nanmedian(vz), "ln_Omega": np.log(nu)}
         rzp, _ = self.z_vz_to_rz_theta_prime_arr(z, vz, pars0)
 
         max_rz = np.nanpercentile(rzp, 99.5)
@@ -281,25 +286,37 @@ class DensityOrbitModel(OrbitModelBase):
         # TODO: WTF - this is a total hack -- why is this needed???
         ln_dens = ln_dens - 8.6
 
-        spl = sci.InterpolatedUnivariateSpline(xc, ln_dens, k=self.ln_dens_k)
-        ln_dens_vals = spl(self.ln_dens_knots)
+        if ln_dens_params0 is not None:
+            # Fit the specified ln_dens_func to the measured densities
+            # This is a BAG O' HACKS!
+            spl = sci.InterpolatedUnivariateSpline(xc, ln_dens, k=3)
+            xeval = np.geomspace(1e-3, np.nanmax(xc), 32)  # MAGIC NUMBER:
 
-        # Transform to parameters:
-        ln_dens_pars = np.concatenate(
-            (ln_dens_vals[0:1], np.clip(-np.diff(ln_dens_vals), 0.0, None))
-        )
-        pars0["ln_dens_vals"] = ln_dens_pars
+            def obj(params, x, data_y):
+                model_y = self.ln_dens_func(x, **params)
+                return jnp.sum((model_y - data_y) ** 2)
 
-        # TODO: is there a better way to estimate these?
-        # TODO: update these
-        e_vals = {}
-        e_vals[2] = jnp.full(len(self.e_knots[2]) - 1, 0.1 / len(self.e_knots[2]))
-        e_vals[4] = jnp.full(len(self.e_knots[4]) - 1, 0.05 / len(self.e_knots[4]))
-        for m in self.e_knots.keys():
-            if m in e_vals:
-                continue
-            e_vals[m] = jnp.zeros(len(self.e_knots[m]) - 1)
-        pars0["e_vals"] = e_vals
+            optim = jaxopt.ScipyMinimize(fun=obj, method="BFGS")
+            res = optim.run(init_params=ln_dens_params0, x=xeval, data_y=spl(xeval))
+            if res.state.success:
+                pars0["ln_dens_params"] = res.params
+            else:
+                # TODO: warn!
+                pass
+
+        # If default e_funcs, we can specify some defaults:
+        if self._default_e_funcs:
+            pars0["e_params"] = {2: {}, 4: {}}
+            pars0["e_params"][2]["f1"] = 0.1
+            pars0["e_params"][2]["alpha"] = 0.33
+            pars0["e_params"][2]["x0"] = 3.0
+
+            pars0["e_params"][4]["f1"] = -0.02
+            pars0["e_params"][4]["alpha"] = 0.45
+            pars0["e_params"][4]["x0"] = 3.0
+        else:
+            # TODO: warn!
+            pass
 
         return pars0
 
@@ -328,7 +345,7 @@ class DensityOrbitModel(OrbitModelBase):
 
     @partial(jax.jit, static_argnames=["self"])
     def get_ln_dens(self, rz, params):
-        return designer_func_alt(rz, **params[f"{self.fit_name}_params"])
+        return self.ln_dens_func(rz, **params["ln_dens_params"])
 
     @partial(jax.jit, static_argnames=["self"])
     def ln_density(self, z, vz, params):
