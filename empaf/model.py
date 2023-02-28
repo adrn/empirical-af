@@ -23,14 +23,14 @@ _e_param_names = ["f1", "alpha", "x0"]
 
 
 class OrbitModelBase:
-    _state_names = ["Omega", "e_params", "z0", "vz0"]
+    _param_names = ["ln_Omega", "e_params", "z0", "vz0"]
     fit_name = ""
     fit_param_names = []
 
     def __init_subclass__(cls):
         if cls.fit_name == "":
             raise ValueError("TODO")
-        cls._state_names = list(cls._state_names) + [f"{cls.fit_name}_params"]
+        cls._param_names = list(cls._param_names) + [f"{cls.fit_name}_params"]
 
     def __init__(self, e_signs, unit_sys=galactic):
         r"""
@@ -65,127 +65,23 @@ class OrbitModelBase:
         # Unit system:
         self.unit_sys = UnitSystem(unit_sys)
 
-    def _validate_state(self, names=None):
-        if self.state is None or not hasattr(self.state, "keys"):
-            raise RuntimeError(
-                "Model state is not set or is invalid. Maybe you didn't initialize "
-                "properly, or run .optimize() yet?"
-            )
-
-        else:
-            if names is None:
-                names = self._state_names
-
-            for name in names:
-                assert name in self._state_names
-                if name not in self.state:
-                    raise RuntimeError(
-                        f"Parameter {name} is missing from the model state"
-                    )
-
-            if "e_params" in names:
-                e_params = self.state.get("e_params", {})
-                for m, e_params_m in e_params.items():
-                    for sub_name in _e_param_names:
-                        if sub_name not in e_params_m.keys():
-                            raise RuntimeError(
-                                f"e function parameter {sub_name} is missing from the "
-                                f"model state for m={m}"
-                            )
-
-            if f"{self.fit_name}_params" in names:
-                _params = self.state.get(f"{self.fit_name}_params", {})
-                for sub_name in self.fit_param_names:
-                    if sub_name not in _params.keys():
-                        raise RuntimeError(
-                            f"{self.fit_name} function parameter {sub_name} is missing "
-                            f"from the model state"
-                        )
-
-    def set_state(self, params, overwrite=False):
-        """
-        Set the model state parameters.
-
-        Default behavior is to not overwrite any existing state parameter values.
-
-        Parameters
-        ----------
-        params : dict
-            Parameters used to set the model state parameters.
-        overwrite : bool (optional)
-            Overwrite any existing state parameter values.
-        """
-        if params is None:
-            self.state = None
-            return
-
-        # TODO: could have a "copy" argument?
-        if self.state is None or overwrite:
-            self.state = {}
-
-        for k in params:
-            if k == "ln_Omega":
-                self.state.setdefault("Omega", jnp.exp(params["ln_Omega"]))
-            elif k == "e_params":
-                self.state.setdefault(k, {})
-                for m in self.e_signs:
-                    self.state[k].setdefault(m, {})
-                    for sub_k, val in params[k][m].items():
-                        self.state[k][m][sub_k] = val
-            elif k == f"{self.fit_name}_params":
-                self.state.setdefault(k, {})
-                for sub_k, val in params[k].items():
-                    self.state[k][sub_k] = val
-            else:
-                self.state.setdefault(k, jnp.array(params[k]))
-
-        return self.state
-
-    def get_params(self):
-        """
-        Transform the current model state to optimization parameter values
-        """
-        self._validate_state()
-
-        params = {}
-        for k in self.state:
-            if k == "Omega":
-                params["ln_Omega"] = jnp.log(self.state[k])
-            elif k == "e_params":
-                params[k] = {}
-                for m in self.state[k]:
-                    params[k][m] = {
-                        key: jnp.array(val) for key, val in self.state[k][m].items()
-                    }
-            elif k == f"{self.fit_name}_params":
-                params[k] = {key: jnp.array(val) for key, val in self.state[k].items()}
-            else:
-                params[k] = jnp.array(self.state[k])
-
-        return params
-
     @partial(jax.jit, static_argnames=["self"])
-    def get_es(self, rz_prime):
+    def get_es(self, rz_prime, e_params):
         """
         Compute the Fourier m-order coefficients
         """
-        self._validate_state(["e_params"])
-        e_pars = self.state["e_params"]
-
         es = {}
-        for m, pars in e_pars.items():
+        for m, pars in e_params.items():
             es[m] = self.e_signs[m] * designer_func_alt(rz_prime, f0=0.0, **pars)
         return es
 
     @partial(jax.jit, static_argnames=["self"])
-    def z_vz_to_rz_theta_prime(self, z, vz):
+    def z_vz_to_rz_theta_prime(self, z, vz, params):
         r"""
         Compute :math:`r_z'` (``rz_prime``) and :math:`\theta_z'` (``theta_prime``)
         """
-        self._validate_state(["z0", "vz0", "Omega"])
-
-        x = (vz - self.state["vz0"]) / jnp.sqrt(self.state["Omega"])
-        y = (z - self.state["z0"]) * jnp.sqrt(self.state["Omega"])
+        x = (vz - params["vz0"]) / jnp.sqrt(jnp.exp(params["ln_Omega"]))
+        y = (z - params["z0"]) * jnp.sqrt(jnp.exp(params["ln_Omega"]))
 
         rz_prime = jnp.sqrt(x**2 + y**2)
         th_prime = jnp.arctan2(y, x)
@@ -195,11 +91,11 @@ class OrbitModelBase:
     z_vz_to_rz_theta_prime_arr = jax.vmap(z_vz_to_rz_theta_prime, in_axes=[None, 0, 0])
 
     @partial(jax.jit, static_argnames=["self"])
-    def get_rz(self, rz_prime, theta_prime):
+    def get_rz(self, rz_prime, theta_prime, e_params):
         """
         Compute the distorted radius :math:`r_z`
         """
-        es = self.get_es(rz_prime)
+        es = self.get_es(rz_prime, e_params)
         return rz_prime * (
             1
             + jnp.sum(
@@ -208,12 +104,13 @@ class OrbitModelBase:
         )
 
     @partial(jax.jit, static_argnames=["self"])
-    def get_rz_prime(self, rz, theta_prime):
+    def get_rz_prime(self, rz, theta_prime, e_params):
         """
         Compute the raw radius :math:`r_z'` by inverting the distortion transformation
         """
         bisec = Bisection(
-            lambda x, rrz, tt_prime: self.get_rz(x, tt_prime) - rrz,
+            lambda x, rrz, tt_prime, ee_params: self.get_rz(x, tt_prime, ee_params)
+            - rrz,
             lower=0.0,
             upper=1.0,
             maxiter=30,
@@ -222,7 +119,7 @@ class OrbitModelBase:
             check_bracket=False,
             tol=1e-4,
         )
-        return bisec.run(rz, rrz=rz, tt_prime=theta_prime).params
+        return bisec.run(rz, rrz=rz, tt_prime=theta_prime, ee_params=e_params).params
 
         # The below only works for purely linear functions in e2, e4, etc., and only
         # when they are fixed to be zero at rz=0
@@ -239,55 +136,53 @@ class OrbitModelBase:
         # return (2 * rz) / (1 + jnp.sqrt(1 + 4 * rz * terms2))
 
     @partial(jax.jit, static_argnames=["self"])
-    def get_z(self, rz, theta_prime):
-        self._validate_state()
-        Omega = self.state["Omega"]
-        rzp = self.get_rz_prime(rz, theta_prime)
-        return rzp * jnp.sin(theta_prime) / jnp.sqrt(Omega)
+    def get_z(self, rz, theta_prime, params):
+        rzp = self.get_rz_prime(rz, theta_prime, params["e_params"])
+        return rzp * jnp.sin(theta_prime) / jnp.sqrt(jnp.exp(params["ln_Omega"]))
 
     @partial(jax.jit, static_argnames=["self"])
-    def get_vz(self, rz, theta_prime):
-        self._validate_state()
-        Omega = self.state["Omega"]
-        rzp = self.get_rz_prime(rz, theta_prime)
-        return rzp * jnp.cos(theta_prime) * jnp.sqrt(Omega)
+    def get_vz(self, rz, theta_prime, params):
+        rzp = self.get_rz_prime(rz, theta_prime, params["e_params"])
+        return rzp * jnp.cos(theta_prime) * jnp.sqrt(jnp.exp(params["ln_Omega"]))
 
     @partial(jax.jit, static_argnames=["self", "N_grid"])
-    def _get_Tz_Jz_thetaz(self, z, vz, N_grid):
-        rzp_, thp_ = self.z_vz_to_rz_theta_prime(z, vz)
-        rz = self.get_rz(rzp_, thp_)
+    def _get_Tz_Jz_thetaz(self, z, vz, params, N_grid):
+        rzp_, thp_ = self.z_vz_to_rz_theta_prime(z, vz, params)
+        rz = self.get_rz(rzp_, thp_, params["e_params"])
 
-        dz_dthp_func = jax.vmap(jax.grad(self.get_z, argnums=1), in_axes=[None, 0])
+        dz_dthp_func = jax.vmap(
+            jax.grad(self.get_z, argnums=1), in_axes=[None, 0, None]
+        )
 
-        get_vz = jax.vmap(self.get_vz, in_axes=[None, 0])
+        get_vz = jax.vmap(self.get_vz, in_axes=[None, 0, None])
 
         # Grid of theta_prime to do the integral over:
         thp_grid = jnp.linspace(0, jnp.pi / 2, N_grid)
-        vz_th = get_vz(rz, thp_grid)
-        dz_dthp = dz_dthp_func(rz, thp_grid)
+        vz_th = get_vz(rz, thp_grid, params)
+        dz_dthp = dz_dthp_func(rz, thp_grid, params)
 
         Tz = 4 * simpson(dz_dthp / vz_th, thp_grid)
         Jz = 4 / (2 * jnp.pi) * simpson(dz_dthp * vz_th, thp_grid)
 
         thp_partial = jnp.linspace(0, thp_, N_grid)
-        vz_th_partial = get_vz(rz, thp_partial)
-        dz_dthp_partial = dz_dthp_func(rz, thp_partial)
+        vz_th_partial = get_vz(rz, thp_partial, params)
+        dz_dthp_partial = dz_dthp_func(rz, thp_partial, params)
         dt = simpson(dz_dthp_partial / vz_th_partial, thp_partial)
         thz = 2 * jnp.pi * dt / Tz
 
         return Tz, Jz, thz
 
-    _get_Tz_Jz_thetaz = jax.vmap(_get_Tz_Jz_thetaz, in_axes=[None, 0, 0, None])
+    _get_Tz_Jz_thetaz = jax.vmap(_get_Tz_Jz_thetaz, in_axes=[None, 0, 0, None, None])
 
     @u.quantity_input
-    def get_aaf(self, z: u.kpc, vz: u.km / u.s, N_grid=101):
+    def get_aaf(self, z: u.kpc, vz: u.km / u.s, params, N_grid=101):
         """
         Compute the vertical period, action, and angle given input phase-space
         coordinates.
         """
         z = z.decompose(self.unit_sys).value
         vz = vz.decompose(self.unit_sys).value
-        Tz, Jz, thz = self._get_Tz_Jz_thetaz(z, vz, N_grid)
+        Tz, Jz, thz = self._get_Tz_Jz_thetaz(z, vz, params, N_grid)
 
         tbl = at.QTable()
         tbl["T_z"] = Tz * self.unit_sys["time"]
@@ -301,7 +196,7 @@ class OrbitModelBase:
     def objective(self):
         pass
 
-    def optimize(self, params0=None, bounds=None, jaxopt_kwargs=None, **data):
+    def optimize(self, params0, bounds=None, jaxopt_kwargs=None, **data):
         """
         Parameters
         ----------
@@ -316,9 +211,6 @@ class OrbitModelBase:
         jaxopt_result : TODO
             TODO
         """
-        if params0 is None:
-            params0 = self.get_params()
-
         if jaxopt_kwargs is None:
             jaxopt_kwargs = dict()
         jaxopt_kwargs.setdefault("maxiter", 16384)
@@ -341,14 +233,11 @@ class OrbitModelBase:
                 "Optimization failed! See the returned result object for more "
                 "information, but the model state was not updated"
             )
-        else:
-            self.set_state(res.params, overwrite=True)
 
         return res
 
     def copy(self):
         obj = self.__class__(e_signs=self.e_signs, unit_sys=self.unit_sys)
-        obj.set_state(self.state, overwrite=True)
         return obj
 
 
@@ -380,10 +269,8 @@ class DensityOrbitModel(OrbitModelBase):
         std_vz = 1.5 * MAD(vz, ignore_nan=True)
         nu = std_vz / std_z
 
-        model = self.copy()
-
-        model.set_state({"z0": np.nanmedian(z), "vz0": np.nanmedian(vz), "nu": nu})
-        rzp, _ = model.z_vz_to_rz_theta_prime_arr(z, vz)
+        pars0 = {"z0": np.nanmedian(z), "vz0": np.nanmedian(vz), "nu": nu}
+        rzp, _ = self.z_vz_to_rz_theta_prime_arr(z, vz, pars0)
 
         max_rz = np.nanpercentile(rzp, 99.5)
         rz_bins = np.linspace(0, max_rz, 25)  # TODO: fixed number
@@ -395,15 +282,16 @@ class DensityOrbitModel(OrbitModelBase):
         ln_dens = ln_dens - 8.6
 
         spl = sci.InterpolatedUnivariateSpline(xc, ln_dens, k=self.ln_dens_k)
-        ln_dens_vals = spl(model.ln_dens_knots)
+        ln_dens_vals = spl(self.ln_dens_knots)
 
         # Transform to parameters:
         ln_dens_pars = np.concatenate(
             (ln_dens_vals[0:1], np.clip(-np.diff(ln_dens_vals), 0.0, None))
         )
-        model.set_state({"ln_dens_vals": ln_dens_pars})
+        pars0["ln_dens_vals"] = ln_dens_pars
 
         # TODO: is there a better way to estimate these?
+        # TODO: update these
         e_vals = {}
         e_vals[2] = jnp.full(len(self.e_knots[2]) - 1, 0.1 / len(self.e_knots[2]))
         e_vals[4] = jnp.full(len(self.e_knots[4]) - 1, 0.05 / len(self.e_knots[4]))
@@ -411,11 +299,9 @@ class DensityOrbitModel(OrbitModelBase):
             if m in e_vals:
                 continue
             e_vals[m] = jnp.zeros(len(self.e_knots[m]) - 1)
-        model.set_state({"e_vals": e_vals})
+        pars0["e_vals"] = e_vals
 
-        model._validate_state()
-
-        return model
+        return pars0
 
     @u.quantity_input
     def get_data_im(self, z: u.kpc, vz: u.km / u.s, bins):
@@ -441,24 +327,19 @@ class DensityOrbitModel(OrbitModelBase):
         return {"z": jnp.array(yc), "vz": jnp.array(xc), "H": jnp.array(data_H.T)}
 
     @partial(jax.jit, static_argnames=["self"])
-    def get_ln_dens(self, rz):
-        self._validate_state()
-        pars = self.state[f"{self.fit_name}_params"]
-        return designer_func_alt(rz, **pars)
+    def get_ln_dens(self, rz, params):
+        return designer_func_alt(rz, **params[f"{self.fit_name}_params"])
 
     @partial(jax.jit, static_argnames=["self"])
-    def ln_density(self, z, vz):
-        self._validate_state()
-        rzp, thp = self.z_vz_to_rz_theta_prime(z, vz)
-        rz = self.get_rz(rzp, thp)
-        return self.get_ln_dens(rz)
+    def ln_density(self, z, vz, params):
+        rzp, thp = self.z_vz_to_rz_theta_prime(z, vz, params)
+        rz = self.get_rz(rzp, thp, params["e_params"])
+        return self.get_ln_dens(rz, params)
 
     @partial(jax.jit, static_argnames=["self"])
     def ln_poisson_likelihood(self, params, z, vz, H):
-        self.set_state(params, overwrite=True)
-
         # Expected number:
-        ln_Lambda = self.ln_density(z, vz)
+        ln_Lambda = self.ln_density(z, vz, params)
 
         # gammaln(x+1) = log(factorial(x))
         return (H * ln_Lambda - jnp.exp(ln_Lambda) - gammaln(H + 1)).sum()
