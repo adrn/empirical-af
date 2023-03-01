@@ -1,11 +1,23 @@
 import jax
+import jax.numpy as jnp
 
-__all__ = ["monotonic_designer_func", "monotonic_designer_func_alt"]
+__all__ = [
+    "monotonic_poly_func",
+    "monotonic_poly_func_alt",
+    "custom_tanh_func",
+    "custom_tanh_func_alt",
+    "monotonic_quadratic_spline",
+]
 
 
 @jax.jit
-def monotonic_designer_func(x, A, alpha, x0, c=1.0):
-    """
+def monotonic_poly_func(x, A, alpha, x0, c=1.0):
+    r"""
+    .. math::
+
+        A \, \left[c - (1 - (x/x_0)^(1/\beta))^\beta \right]
+        \beta = \frac{1 - \alpha}{\alpha}
+
     This is a custom family of functions that can be controlled such that they are
     monotonic and have constant sign of the curvature (second derivative). This is
     mostly used internally to set the dependence of the :math:`e_m(r_z)` functions. This
@@ -17,7 +29,7 @@ def monotonic_designer_func(x, A, alpha, x0, c=1.0):
 
 
 @jax.jit
-def monotonic_designer_func_alt(x, f0, f1, alpha, x0):
+def monotonic_poly_func_alt(x, f0, fx, alpha, x0, xval=1.0):
     """
     An alternate parametrization of the designer function ``monotonic_designer_func()``
 
@@ -27,6 +39,72 @@ def monotonic_designer_func_alt(x, f0, f1, alpha, x0):
     was inspired by the discussion in this StackExchange post:
     https://math.stackexchange.com/questions/65641/i-need-to-define-a-family-one-parameter-of-monotonic-curves
     """
-    A = (f1 - f0) / (1 + monotonic_designer_func(1.0, 1.0, alpha, x0, c=0.0))
+    A = (fx - f0) / (1 + monotonic_poly_func(xval, 1.0, alpha, x0, c=0.0))
     offset = f0 + A
-    return monotonic_designer_func(x, c=0.0, A=A, alpha=alpha, x0=x0) + offset
+    return monotonic_poly_func(x, c=0.0, A=A, alpha=alpha, x0=x0) + offset
+
+
+@jax.jit
+def custom_tanh_func(x, A, alpha, x0):
+    r"""
+    .. math::
+
+        A \, \tanh\left( (x/x_0)^(1/\alpha) \right)^\alpha
+
+    This is a custom family of functions that can be controlled such that they are
+    monotonic and have constant sign of the curvature (second derivative).
+    """
+    return A * jnp.tanh((x / x0) ** (1 / alpha)) ** alpha
+
+
+@jax.jit
+def custom_tanh_func_alt(x, f_xval, alpha, x0, xval=1.0):
+    r"""
+    An alternate parametrization of ``custom_tanh_func()``
+
+    .. math::
+
+        A \, \tanh\left( (x/x_0)^(1/\alpha) \right)^\alpha
+    """
+    A = f_xval / jnp.tanh((xval / x0) ** (1 / alpha)) ** alpha
+    return custom_tanh_func(x, A, alpha, x0)
+
+
+@jax.jit
+def monotonic_quadratic_spline(x, y, x_eval):
+    # Checked that using .at[].set() is faster than making padded arrays and stacking
+    x = jnp.array(x)
+    y = jnp.array(y)
+    x_eval = jnp.array(x_eval)
+
+    N = 3 * (len(x) - 1)
+    A = jnp.zeros((N, N))
+    b = jnp.zeros((N,))
+    A = A.at[0, :3].set([x[0] ** 2, x[0], 1])
+    b = b.at[0].set(y[0])
+    A = A.at[1, :3].set([2 * x[1], 1, 0])
+    b = b.at[1].set(y[1])
+
+    for i, n in enumerate(2 * jnp.arange(1, len(x) - 1, 1), start=1):
+        A = A.at[n, 3 * i : 3 * i + 3].set([2 * x[i], 1, 0])
+        b = b.at[n].set(y[i])
+        A = A.at[n + 1, 3 * i : 3 * i + 3].set([2 * x[i + 1], 1, 0])
+        b = b.at[n + 1].set(y[i + 1])
+
+    for j, m in enumerate(jnp.arange(2 * (len(x) - 1), N - 1)):
+        A = A.at[m, 3 * j : 3 * j + 3].set([x[j + 1] ** 2, x[j + 1], 1])
+        A = A.at[m, 3 * (j + 1) : 3 * (j + 1) + 3].set([-x[j + 1] ** 2, -x[j + 1], -1])
+
+    A = A.at[-1, 0].set(1.0)
+
+    coeffs = jnp.linalg.solve(A, b)
+
+    # Determine the interval that x lies in
+    ind = jnp.digitize(x_eval, x) - 1
+    ind = 3 * jnp.clip(ind, 0, len(x) - 2)
+    coeff_ind = jnp.stack((ind, ind + 1, ind + 2)).T
+
+    xxx = jnp.array([x_eval**2, x_eval, jnp.ones_like(x_eval)]).T
+    f = jnp.sum(coeffs[coeff_ind] * xxx, axis=1)
+
+    return f

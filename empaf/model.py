@@ -16,7 +16,7 @@ from jaxopt import Bisection
 from scipy.stats import binned_statistic, binned_statistic_2d
 
 from empaf.jax_helpers import simpson
-from empaf.model_helpers import monotonic_designer_func_alt
+from empaf.model_helpers import custom_tanh_func_alt
 
 __all__ = ["DensityOrbitModel", "LabelOrbitModel"]
 
@@ -56,8 +56,8 @@ class OrbitModelBase:
         if e_funcs is None:
             # Default functions:
             self.e_funcs = {
-                2: lambda *a, **k: monotonic_designer_func_alt(*a, f0=0.0, **k),
-                4: lambda *a, **k: monotonic_designer_func_alt(*a, f0=0.0, **k),
+                2: lambda *a, **k: custom_tanh_func_alt(*a, f0=0.0, **k),
+                4: lambda *a, **k: custom_tanh_func_alt(*a, f0=0.0, **k),
             }
             self._default_e_funcs = True
         else:
