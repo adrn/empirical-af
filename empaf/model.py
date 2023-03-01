@@ -210,6 +210,10 @@ class OrbitModelBase:
         jaxopt_kwargs.setdefault("maxiter", 16384)
 
         if bounds is not None:
+            # Detect packed bounds (a single dict):
+            if isinstance(bounds, dict):
+                bounds = self.unpack_bounds(bounds)
+
             jaxopt_kwargs.setdefault("method", "L-BFGS-B")
             optimizer = jaxopt.ScipyBoundedMinimize(
                 fun=self.objective,
@@ -229,6 +233,33 @@ class OrbitModelBase:
             )
 
         return res
+
+    @classmethod
+    def unpack_bounds(cls, bounds):
+        """
+        Split a bounds dictionary that is specified like: {"key": (lower, upper)} into
+        two bounds dictionaries for the lower and upper bounds separately, e.g., for the
+        example above: {"key": lower} and {"key": upper}.
+        """
+        import numpy as np
+
+        def clean_dict(d):
+            if isinstance(d, dict):
+                return {k: clean_dict(v) for k, v in d.items()}
+            else:
+                d = np.array(d)
+                assert d.shape[0] == 2
+                return d
+
+        # Make sure all tuples / lists become arrays:
+        clean_bounds = clean_dict(bounds)
+
+        vals, treedef = jax.tree_util.tree_flatten(clean_bounds)
+
+        bounds_l = treedef.unflatten([x[0] for x in vals])
+        bounds_r = treedef.unflatten([x[1] for x in vals])
+
+        return bounds_l, bounds_r
 
 
 class DensityOrbitModel(OrbitModelBase):
