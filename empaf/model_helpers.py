@@ -102,9 +102,9 @@ def monotonic_quadratic_spline(x, y, x_eval):
     # Determine the interval that x lies in
     ind = jnp.digitize(x_eval, x) - 1
     ind = 3 * jnp.clip(ind, 0, len(x) - 2)
-    coeff_ind = jnp.stack((ind, ind + 1, ind + 2)).T
+    coeff_ind = jnp.stack((ind, ind + 1, ind + 2), axis=0)
 
-    xxx = jnp.array([x_eval**2, x_eval, jnp.ones_like(x_eval)]).T
-    f = jnp.sum(coeffs[coeff_ind] * xxx, axis=1)
+    xxx = jnp.stack([x_eval**2, x_eval, jnp.ones_like(x_eval)], axis=0)
+    f = jnp.sum(coeffs[coeff_ind] * xxx, axis=0)
 
     return f
