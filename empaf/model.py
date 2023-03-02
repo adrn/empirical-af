@@ -22,23 +22,23 @@ __all__ = ["DensityOrbitModel", "LabelOrbitModel"]
 
 
 class OrbitModelBase:
-    _param_names = ["ln_Omega", "e_params", "z0", "vz0"]
-
     def __init__(self, e_funcs=None, unit_sys=galactic):
         r"""
         Notation:
         - :math:`\Omega_0` or ``Omega_0``: A scale frequency used to compute the
           elliptical radius ``rz_prime``. This can be interpreted as the asymptotic
-          midplane orbital frequency.
+          orbital frequency at :math:`J_z=0`.
         - :math:`r_z'` or ``rz_prime``: The "raw" elliptical radius :math:`\sqrt{z^2\,
           \Omega_0 + v_z^2 \, \Omega_0^{-1}}`.
         - :math:`\theta'` or ``theta_prime``: The "raw" z angle defined as :math:`\tan
           {\theta'} = \frac{z}{v_z}\,\Omega_0`.
         - :math:`r_z` or ``rz``: The distorted elliptical radius :math:`r_z = r_z' \,
-          f(r_z', \theta_z')` where :math:`f(\cdot)` is the distortion function.
-        - :math:`\theta` or ``theta``: The true vertical angle.
+          f(r_z', \theta_z')`, which is close to :math:`\sqrt{J_z}` and so we call it
+          the "proxy action" below. :math:`f(\cdot)` is the distortion function defined
+          next.
         - :math:`f(r_z', \theta_z')`: The distortion function is a Fourier expansion,
           defined as: :math:`f(r_z', \theta_z') = 1+\sum_m e_m(r_z')\,\cos(m\,\theta')`
+        - :math:`\theta_z` or ``theta_z``: The vertical angle.
 
         Parameters
         ----------
@@ -47,10 +47,13 @@ class OrbitModelBase:
             Fourier distortion coefficients :math:`e_m(r_z')`. Keys should be the
             (integer) "m" order of the distortion term (for the distortion function),
             and values should be Python callable objects that can be passed to
-            `jax.jit()`.
+            `jax.jit()`. The first argument of each of these functions should be the raw
+            elliptical radius :math:`r_z'` or ``rz_prime``. If not specified, default
+            monotonic functions will be used:
+            `empaf.model_helpers.custom_tanh_func_alt()`.
         unit_sys : `gala.units.UnitSystem` (optional)
             The unit system to work in. Default is to use the "galactic" unit system
-            from Gala: (kpc, Myr, Msun).
+            from Gala: (kpc, Myr, Msun, radian).
 
         """
         if e_funcs is None:
@@ -67,20 +70,21 @@ class OrbitModelBase:
         # Unit system:
         self.unit_sys = UnitSystem(unit_sys)
 
-    @partial(jax.jit, static_argnames=["self"])
-    def get_es(self, rz_prime, e_params):
-        """
-        Compute the Fourier m-order coefficients
-        """
-        es = {}
-        for m, pars in e_params.items():
-            es[m] = self.e_funcs[m](rz_prime, **pars)
-        return es
+        # TODO: decide if we will keep parameter validation. For JIT/JAX maybe not?
+        # Fill a list of parameter names - used later to validate input `params`
+        # self._param_names = ["ln_Omega", "e_params", "z0", "vz0"]
 
     @partial(jax.jit, static_argnames=["self"])
     def z_vz_to_rz_theta_prime(self, z, vz, params):
         r"""
-        Compute :math:`r_z'` (``rz_prime``) and :math:`\theta_z'` (``theta_prime``)
+        Compute the raw elliptical radius :math:`r_z'` (``rz_prime``) and the apparent
+        phase :math:`\theta_z'` (``theta_prime``)
+
+        Parameters
+        ----------
+        z : numeric, array-like
+        vz : numeric, array-like
+        params : dict
         """
         x = (vz - params["vz0"]) / jnp.sqrt(jnp.exp(params["ln_Omega"]))
         y = (z - params["z0"]) * jnp.sqrt(jnp.exp(params["ln_Omega"]))
@@ -90,28 +94,75 @@ class OrbitModelBase:
 
         return rz_prime, th_prime
 
-    z_vz_to_rz_theta_prime_arr = jax.vmap(
-        z_vz_to_rz_theta_prime, in_axes=[None, 0, 0, None]
-    )
+    @partial(jax.jit, static_argnames=["self"])
+    def get_es(self, rz_prime, e_params):
+        """
+        Compute the Fourier m-order distortion coefficients
+
+        Parameters
+        ----------
+        rz_prime : numeric, array-like
+        e_params : dict
+        """
+        es = {}
+        for m, pars in e_params.items():
+            es[m] = self.e_funcs[m](rz_prime, **pars)
+        return es
 
     @partial(jax.jit, static_argnames=["self"])
     def get_rz(self, rz_prime, theta_prime, e_params):
         """
-        Compute the distorted radius :math:`r_z`
+        Compute the "proxy action" or distorted radius :math:`r_z`
+
+        Parameters
+        ----------
+        rz_prime : numeric, array-like
+        theta_prime : numeric, array-like
+        e_params : dict
         """
         es = self.get_es(rz_prime, e_params)
         return rz_prime * (
             1
             + jnp.sum(
-                jnp.array([e * jnp.cos(n * theta_prime) for n, e in es.items()]), axis=0
+                jnp.array([e * jnp.cos(m * theta_prime) for m, e in es.items()]), axis=0
             )
+        )
+
+    @partial(jax.jit, static_argnames=["self"])
+    def get_thetaz(self, rz_prime, theta_prime, e_params):
+        """
+        Compute the vertical phase angle
+
+        Parameters
+        ----------
+        rz_prime : numeric, array-like
+        theta_prime : numeric, array-like
+        e_params : dict
+        """
+        es = self.get_es(rz_prime, e_params)
+        # TODO: why t.f. is the π/2 needed below??
+        return theta_prime - jnp.sum(
+            jnp.array(
+                [m / (jnp.pi / 2) * e * jnp.sin(m * theta_prime) for m, e in es.items()]
+            ),
+            axis=0,
         )
 
     @partial(jax.jit, static_argnames=["self"])
     def get_rz_prime(self, rz, theta_prime, e_params):
         """
         Compute the raw radius :math:`r_z'` by inverting the distortion transformation
+
+        Parameters
+        ----------
+        rz : numeric
+            The "proxy action" or distorted radius.
+        theta_prime : numeric
+            The raw "apparent" angle.
+        e_params : dict
+            Dictionary of parameter values for the distortion coefficient (e) functions.
         """
+        # TODO lots of numbers are hard-set below!
         bisec = Bisection(
             lambda x, rrz, tt_prime, ee_params: self.get_rz(x, tt_prime, ee_params)
             - rrz,
@@ -261,6 +312,48 @@ class OrbitModelBase:
 
         return bounds_l, bounds_r
 
+    def check_e_funcs(self, e_params, rz_prime_max=1.0):
+        """
+        Check that the parameter values and functions used for the e_m(r_z') functions
+        are valid given the condition that d(r_z)/d(r_z') > 0.
+        """
+        import numpy as np
+
+        # TODO: 16 is a magic number
+        rz_primes = np.linspace(np.sqrt(1e-3), np.sqrt(rz_prime_max), 16) ** 2
+
+        # TODO: potential issue if order of arguments in e_funcs() call is different
+        # from the order of the values in the e_params dictionary...
+        d_em_d_rzp_funcs = {
+            m: jax.vmap(
+                jax.grad(self.e_funcs[m], argnums=0),
+                in_axes=[0] + [None] * len(e_params[m]),
+            )
+            for m in self.e_funcs.keys()
+        }
+
+        thps = np.linspace(0, np.pi / 2, 128)
+        checks = np.zeros((len(rz_primes), len(thps)))
+
+        for j, thp in enumerate(thps):
+            checks[:, j] = jnp.sum(
+                jnp.array(
+                    [
+                        jnp.cos(m * thp)
+                        * (
+                            e_func(rz_primes, **e_params[m])
+                            + rz_primes
+                            * d_em_d_rzp_funcs[m](rz_primes, *e_params[m].values())
+                        )
+                        for m, e_func in self.e_funcs.items()
+                    ]
+                ),
+                axis=0,
+            )
+
+        # This condition has to be met such that d(r_z)/d(r_z') > 0 at all theta_z':
+        return np.all(checks > -1), checks
+
 
 class DensityOrbitModel(OrbitModelBase):
     def __init__(self, ln_dens_func, e_funcs=None, unit_sys=galactic):
@@ -306,7 +399,7 @@ class DensityOrbitModel(OrbitModelBase):
         nu = std_vz / std_z
 
         pars0 = {"z0": np.nanmedian(z), "vz0": np.nanmedian(vz), "ln_Omega": np.log(nu)}
-        rzp, _ = self.z_vz_to_rz_theta_prime_arr(z, vz, pars0)
+        rzp, _ = self.z_vz_to_rz_theta_prime(z, vz, pars0)
 
         max_rz = np.nanpercentile(rzp, 99.5)
         rz_bins = np.linspace(0, max_rz, 25)  # TODO: fixed number
@@ -448,8 +541,8 @@ class LabelOrbitModel(OrbitModelBase):
             np.abs(z.ravel()[annulus_idx]), 25
         )
 
-        model.set_state({"z0": 0.0, "vz0": 0.0, "nu": nu})
-        rzp, _ = model.z_vz_to_rz_theta_prime_arr(z, vz)
+        pars0 = {"z0": np.nanmedian(z), "vz0": np.nanmedian(vz), "ln_Omega": np.log(nu)}
+        rzp, _ = self.z_vz_to_rz_theta_prime(z, vz, pars0)
 
         # Now estimate the label function spline values, again, with some craycray:
         bins = np.linspace(0, 1.0, 9) ** 2  # TODO: arbitrary bin max = 1
