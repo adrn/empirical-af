@@ -6,6 +6,8 @@ __all__ = [
     "monotonic_poly_func_alt",
     "custom_tanh_func",
     "custom_tanh_func_alt",
+    "generalized_logistic_func",
+    "generalized_logistic_func_alt",
     "monotonic_quadratic_spline",
 ]
 
@@ -68,6 +70,27 @@ def custom_tanh_func_alt(x, f_xval, alpha, x0, xval=1.0):
     """
     A = f_xval / jnp.tanh((xval / x0) ** (1 / alpha)) ** alpha
     return custom_tanh_func(x, A, alpha, x0)
+
+
+def generalized_logistic_func(t, t0, A, B, C, K, nu):
+    """
+    https://en.wikipedia.org/wiki/Generalised_logistic_function
+    """
+    denom = (C + jnp.exp(-B * (t - t0))) ** (1 / nu)
+    return A + (K - A) / denom
+
+
+def generalized_logistic_func_alt(t, t0, F1, B, C, nu, t1=1.0):
+    """
+    https://en.wikipedia.org/wiki/Generalised_logistic_function
+
+    Now: F1 is the value at t1, and it is constrained to be 0 at 0.
+    """
+    D0 = (C + jnp.exp(B * t0)) ** (1 / nu)
+    D1 = (C + jnp.exp(-B * (t1 - t0))) ** (1 / nu)
+    A = D1 * F1 / (D1 - D0)
+    K = A * (1 - D0)
+    return generalized_logistic_func(t, t0, A, B, C, K, nu)
 
 
 @jax.jit
