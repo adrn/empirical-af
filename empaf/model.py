@@ -520,7 +520,7 @@ class LabelOrbitModel(OrbitModelBase):
     )
 
     @u.quantity_input
-    def get_params_init(self, z: u.kpc, vz: u.km / u.s, label):
+    def get_params_init(self, z: u.kpc, vz: u.km / u.s, label, label_params0=None):
         """
         Estimate initial model parameters from the data
 
@@ -537,10 +537,8 @@ class LabelOrbitModel(OrbitModelBase):
         z = z.decompose(self.unit_sys).value
         vz = vz.decompose(self.unit_sys).value
 
-        model = self.copy()
-
         # First, estimate nu0 with some crazy bullshit:
-        med_stat = np.nanpercentile(label, 15)
+        med_stat = np.nanpercentile(label, 25)
 
         fac = 0.02  # MAGIC NUMBER
         for _ in range(16):  # max number of iterations
@@ -560,25 +558,42 @@ class LabelOrbitModel(OrbitModelBase):
         pars0 = {"z0": np.nanmedian(z), "vz0": np.nanmedian(vz), "ln_Omega": np.log(nu)}
         rzp, _ = self.z_vz_to_rz_theta_prime(z, vz, pars0)
 
-        # TODO: replace with fitting label function
-        # Now estimate the label function spline values, again, with some craycray:
-        bins = np.linspace(0, 1.0, 9) ** 2  # TODO: arbitrary bin max = 1
-        stat = binned_statistic(
-            rzp.ravel(), label.ravel(), bins=bins, statistic=np.nanmedian
-        )
-        xc = 0.5 * (stat.bin_edges[:-1] + stat.bin_edges[1:])
+        if label_params0 is not None:
+            # Now estimate the label function spline values, again, with some craycray:
+            bins = np.linspace(0, 1.0, 9) ** 2  # TODO: arbitrary bin max = 1
+            stat = binned_statistic(
+                rzp.ravel(), label.ravel(), bins=bins, statistic=np.nanmedian
+            )
+            xc = 0.5 * (stat.bin_edges[:-1] + stat.bin_edges[1:])
 
-        simple_spl = sci.InterpolatedUnivariateSpline(
-            xc[np.isfinite(stat.statistic)],
-            stat.statistic[np.isfinite(stat.statistic)],
-            k=1,
-        )
-        model.set_state({"label_vals": simple_spl(model.label_knots)})
+            # Fit the specified ln_dens_func to the measured densities
+            # This is a BAG O' HACKS!
+            spl = sci.InterpolatedUnivariateSpline(
+                xc[np.isfinite(stat.statistic)],
+                stat.statistic[np.isfinite(stat.statistic)],
+                k=1,
+            )
+            xeval = np.geomspace(1e-3, np.nanmax(xc), 32)  # MAGIC NUMBER:
+
+            def obj(params, x, data_y):
+                model_y = self.label_func(x, **params)
+                return jnp.sum((model_y - data_y) ** 2)
+
+            optim = jaxopt.ScipyMinimize(fun=obj, method="BFGS")
+            res = optim.run(init_params=label_params0, x=xeval, data_y=spl(xeval))
+            if res.state.success:
+                pars0["label_params"] = res.params
+            else:
+                warn(
+                    "Initial parameter estimation failed: Failed to estimate "
+                    "parameters of label function `label_func()`",
+                    RuntimeWarning,
+                )
 
         # If default e_funcs, we can specify some defaults:
         pars0.update(self._get_default_e_params())
 
-        return model
+        return pars0
 
     @u.quantity_input
     def get_data_im(
@@ -627,7 +642,7 @@ class LabelOrbitModel(OrbitModelBase):
 
     @partial(jax.jit, static_argnames=["self"])
     def ln_label_likelihood(self, params, z, vz, label, label_err):
-        rzp, thp = self.z_vz_to_rz_theta_prime(z, vz)
+        rzp, thp = self.z_vz_to_rz_theta_prime(z, vz, params)
         rz = self.get_rz(rzp, thp, params["e_params"])
         model_label = self.get_label(rz, params)
 
