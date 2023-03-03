@@ -278,9 +278,14 @@ class OrbitModelBase:
         jaxopt_result : TODO
             TODO
         """
+        import numpy as np
+
         if jaxopt_kwargs is None:
             jaxopt_kwargs = dict()
         jaxopt_kwargs.setdefault("maxiter", 16384)
+
+        vals, treedef = jax.tree_util.tree_flatten(params0)
+        params0 = treedef.unflatten([np.array(x, dtype=np.float64) for x in vals])
 
         if bounds is not None:
             # Detect packed bounds (a single dict):
@@ -329,8 +334,8 @@ class OrbitModelBase:
 
         vals, treedef = jax.tree_util.tree_flatten(clean_bounds)
 
-        bounds_l = treedef.unflatten([x[0] for x in vals])
-        bounds_r = treedef.unflatten([x[1] for x in vals])
+        bounds_l = treedef.unflatten([np.array(x[0], dtype=np.float64) for x in vals])
+        bounds_r = treedef.unflatten([np.array(x[1], dtype=np.float64) for x in vals])
 
         return bounds_l, bounds_r
 
