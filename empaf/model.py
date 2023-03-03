@@ -11,7 +11,6 @@ import scipy.interpolate as sci
 from astropy.stats import median_absolute_deviation as MAD
 from gala.units import UnitSystem, galactic
 from jax.scipy.special import gammaln
-from jax_cosmo.scipy.interpolate import InterpolatedUnivariateSpline
 from jaxopt import Bisection
 from scipy.stats import binned_statistic, binned_statistic_2d
 
@@ -73,6 +72,29 @@ class OrbitModelBase:
         # TODO: decide if we will keep parameter validation. For JIT/JAX maybe not?
         # Fill a list of parameter names - used later to validate input `params`
         # self._param_names = ["ln_Omega", "e_params", "z0", "vz0"]
+
+    def _get_default_e_params(self):
+        pars0 = {}
+
+        # If default e_funcs, we can specify some defaults:
+        if self._default_e_funcs:
+            pars0["e_params"] = {2: {}, 4: {}}
+            pars0["e_params"][2]["f1"] = 0.1
+            pars0["e_params"][2]["alpha"] = 0.33
+            pars0["e_params"][2]["x0"] = 3.0
+
+            pars0["e_params"][4]["f1"] = -0.02
+            pars0["e_params"][4]["alpha"] = 0.45
+            pars0["e_params"][4]["x0"] = 3.0
+        else:
+            warn(
+                "With custom e_funcs, you must set your own initial parameters. Use "
+                "the dictionary returned by this function and add initial guesses "
+                "for all parameters expected by the e_funcs.",
+                RuntimeWarning,
+            )
+
+        return pars0
 
     @partial(jax.jit, static_argnames=["self"])
     def z_vz_to_rz_theta_prime(self, z, vz, params):
@@ -383,11 +405,7 @@ class DensityOrbitModel(OrbitModelBase):
         ----------
         z : quantity-like or array-like
         vz : quantity-like or array-like
-
-        Returns
-        -------
-        model : `VerticalOrbitModel`
-            A copy of the initial model with state set to initial parameter estimates.
+        ln_dens_params0 : dict (optional)
         """
         import numpy as np
 
@@ -425,22 +443,14 @@ class DensityOrbitModel(OrbitModelBase):
             if res.state.success:
                 pars0["ln_dens_params"] = res.params
             else:
-                # TODO: warn!
-                pass
+                warn(
+                    "Initial parameter estimation failed: Failed to estimate "
+                    "parameters of log-density function `ln_dens_func()`",
+                    RuntimeWarning,
+                )
 
         # If default e_funcs, we can specify some defaults:
-        if self._default_e_funcs:
-            pars0["e_params"] = {2: {}, 4: {}}
-            pars0["e_params"][2]["f1"] = 0.1
-            pars0["e_params"][2]["alpha"] = 0.33
-            pars0["e_params"][2]["x0"] = 3.0
-
-            pars0["e_params"][4]["f1"] = -0.02
-            pars0["e_params"][4]["alpha"] = 0.45
-            pars0["e_params"][4]["x0"] = 3.0
-        else:
-            # TODO: warn!
-            pass
+        pars0.update(self._get_default_e_params())
 
         return pars0
 
@@ -491,30 +501,36 @@ class DensityOrbitModel(OrbitModelBase):
 
 
 class LabelOrbitModel(OrbitModelBase):
-    fit_name = "label"
-    fit_param_names = ["A", "alpha", "x0"]
-    # TODO: might need others to control offset, etc.
-
-    def __init__(
-        self, label_knots, e_knots, e_signs, e_k=1, label_k=3, unit_sys=galactic
-    ):
-        f"""
-        {OrbitModelBase.__init__.__doc__.split('Parameters')[0]}
+    def __init__(self, label_func, e_funcs=None, unit_sys=galactic):
+        """
+        {intro}
 
         Parameters
         ----------
-        label_knots : array_like
-            The knot locations for the spline that controls the label function. These
-            are locations in :math:`r_z`.
-        {OrbitModelBase.__init__.__doc__.split('----------')[1]}
-
+        label_func : callable (optional)
+            TODO
+        {params}
         """
-        self.label_knots = jnp.array(label_knots)
-        self.label_k = int(label_k)
-        super().__init__(e_knots=e_knots, e_signs=e_signs, e_k=e_k, unit_sys=unit_sys)
+        super().__init__(e_funcs=e_funcs, unit_sys=unit_sys)
+        self.label_func = jax.jit(label_func)
+
+    __init__.__doc__ = __init__.__doc__.format(
+        intro=OrbitModelBase.__init__.__doc__.split("Parameters")[0].rstrip(),
+        params=OrbitModelBase.__init__.__doc__.split("----------")[1].lstrip(),
+    )
 
     @u.quantity_input
-    def get_params_init(self, z: u.kpc, vz: u.km / u.s, label_stat):
+    def get_params_init(self, z: u.kpc, vz: u.km / u.s, label):
+        """
+        Estimate initial model parameters from the data
+
+        Parameters
+        ----------
+        z : quantity-like or array-like
+        vz : quantity-like or array-like
+        label : array-like
+
+        """
         import numpy as np
         import scipy.interpolate as sci
 
@@ -524,11 +540,11 @@ class LabelOrbitModel(OrbitModelBase):
         model = self.copy()
 
         # First, estimate nu0 with some crazy bullshit:
-        med_stat = np.nanpercentile(label_stat, 15)
+        med_stat = np.nanpercentile(label, 15)
 
         fac = 0.02  # MAGIC NUMBER
         for _ in range(16):  # max number of iterations
-            annulus_idx = np.abs(label_stat.ravel() - med_stat) < fac * np.abs(med_stat)
+            annulus_idx = np.abs(label.ravel() - med_stat) < fac * np.abs(med_stat)
             if annulus_idx.sum() < 0.05 * len(annulus_idx):  # MAGIC NUMBER
                 fac *= 2
             else:
@@ -544,10 +560,11 @@ class LabelOrbitModel(OrbitModelBase):
         pars0 = {"z0": np.nanmedian(z), "vz0": np.nanmedian(vz), "ln_Omega": np.log(nu)}
         rzp, _ = self.z_vz_to_rz_theta_prime(z, vz, pars0)
 
+        # TODO: replace with fitting label function
         # Now estimate the label function spline values, again, with some craycray:
         bins = np.linspace(0, 1.0, 9) ** 2  # TODO: arbitrary bin max = 1
         stat = binned_statistic(
-            rzp.ravel(), label_stat.ravel(), bins=bins, statistic=np.nanmedian
+            rzp.ravel(), label.ravel(), bins=bins, statistic=np.nanmedian
         )
         xc = 0.5 * (stat.bin_edges[:-1] + stat.bin_edges[1:])
 
@@ -558,17 +575,8 @@ class LabelOrbitModel(OrbitModelBase):
         )
         model.set_state({"label_vals": simple_spl(model.label_knots)})
 
-        # Lastly, set all e vals to 0
-        e_vals = {}
-        e_vals[2] = jnp.full(len(self.e_knots[2]) - 1, 0.1 / len(self.e_knots[2]))
-        e_vals[4] = jnp.full(len(self.e_knots[4]) - 1, 0.05 / len(self.e_knots[4]))
-        for m in self.e_knots.keys():
-            if m in e_vals:
-                continue
-            e_vals[m] = jnp.zeros(len(self.e_knots[m]) - 1)
-        model.set_state({"e_vals": e_vals})
-
-        model._validate_state()
+        # If default e_funcs, we can specify some defaults:
+        pars0.update(self._get_default_e_params())
 
         return model
 
@@ -608,34 +616,24 @@ class LabelOrbitModel(OrbitModelBase):
         }
 
     @partial(jax.jit, static_argnames=["self"])
-    def get_label(self, rz):
-        self._validate_state()
-        label_vals = self.state["label_vals"]
-        spl = InterpolatedUnivariateSpline(self.label_knots, label_vals, k=self.label_k)
-        return spl(rz)
+    def get_label(self, rz, params):
+        return self.label_func(rz, **params["label_params"])
 
     @partial(jax.jit, static_argnames=["self"])
-    def label(self, z, vz):
-        self._validate_state()
+    def label(self, z, vz, params):
+        rzp, thp = self.z_vz_to_rz_theta_prime(z, vz, params)
+        rz = self.get_rz(rzp, thp, params["e_params"])
+        return self.get_label(rz, params)
+
+    @partial(jax.jit, static_argnames=["self"])
+    def ln_label_likelihood(self, params, z, vz, label, label_err):
         rzp, thp = self.z_vz_to_rz_theta_prime(z, vz)
-        rz = self.get_rz(rzp, thp)
-        return self.get_label(rz)
+        rz = self.get_rz(rzp, thp, params["e_params"])
+        model_label = self.get_label(rz, params)
+
+        # log of a gaussian
+        return -0.5 * jnp.nansum((label - model_label) ** 2 / label_err**2)
 
     @partial(jax.jit, static_argnames=["self"])
-    def ln_label_likelihood(self, params, z, vz, label_stat, label_stat_err):
-        self.set_state(params, overwrite=True)
-        self._validate_state()
-
-        rzp, thp = self.z_vz_to_rz_theta_prime(z, vz)
-        rz = self.get_rz(rzp, thp)
-        model_label = self.get_label(rz)
-
-        # log-normal
-        return -0.5 * jnp.nansum((label_stat - model_label) ** 2 / label_stat_err**2)
-
-    @partial(jax.jit, static_argnames=["self"])
-    def objective(self, params, z, vz, label_stat, label_stat_err):
-        return (
-            -(self.ln_label_likelihood(params, z, vz, label_stat, label_stat_err))
-            / label_stat.size
-        )
+    def objective(self, params, z, vz, label, label_err):
+        return -(self.ln_label_likelihood(params, z, vz, label, label_err)) / label.size
