@@ -459,21 +459,21 @@ class DensityOrbitModel(OrbitModelBase):
 
         return pars0
 
-    @u.quantity_input
-    def get_data_im(self, z: u.kpc, vz: u.km / u.s, bins):
+    @classmethod
+    def get_data_im(cls, z, vz, bins):
         """
         Convert the raw data (stellar positions and velocities z, vz) into a binned 2D
         histogram / image of number counts.
 
         Parameters
         ----------
-        z : quantity-like
-        vz : quantity-like
+        z : array-like
+        vz : array-like
         bins : dict
         """
         data_H, xe, ye = jnp.histogram2d(
-            vz.decompose(self.unit_sys).value,
-            z.decompose(self.unit_sys).value,
+            vz,
+            z,
             bins=(bins["vz"], bins["z"]),
         )
         xc = 0.5 * (xe[:-1] + xe[1:])
@@ -600,15 +600,13 @@ class LabelOrbitModel(OrbitModelBase):
 
         return pars0
 
-    @u.quantity_input
-    def get_data_im(
-        self, z: u.kpc, vz: u.km / u.s, label, bins, **binned_statistic_kwargs
-    ):
+    @classmethod
+    def get_data_im(cls, z, vz, label, bins, **binned_statistic_kwargs):
         import numpy as np
 
         stat = binned_statistic_2d(
-            vz.decompose(self.unit_sys).value,
-            z.decompose(self.unit_sys).value,
+            vz,
+            z,
             label,
             bins=(bins["vz"], bins["z"]),
             **binned_statistic_kwargs,
@@ -620,8 +618,8 @@ class LabelOrbitModel(OrbitModelBase):
         # Compute label statistic error
         err_floor = 0.1
         stat_err = binned_statistic_2d(
-            vz.decompose(self.unit_sys).value,
-            z.decompose(self.unit_sys).value,
+            vz,
+            z,
             label,
             bins=(bins["vz"], bins["z"]),
             statistic=lambda x: np.sqrt((1.5 * MAD(x)) ** 2 + err_floor**2)
