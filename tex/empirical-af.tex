@@ -134,25 +134,49 @@ motivated by orbital torus imaging
 
 \section{Methods} \label{sec:methods}
 
-Our goal is to use the stellar phase-space density (or statistics computed from stellar
-invariants) to infer a local transformation to actions, angles, and frequencies directly
-from the data, i.e. without assuming the form of a gravitational potential model.
+Our goal is to use the stellar phase-space density $f(\boldsymbol{x}, \boldsymbol{v})$
+(or statistics computed from stellar invariants for stars on different orbits
+$X(\boldsymbol{x}, \boldsymbol{v})$) to infer a local transformation to actions, angles,
+and frequencies without assuming a particular model for the gravitational potential of
+the Galaxy.
+As motivation and context, we presume that we have access to precise and accurate
+measurements of the stellar positions and velocities $(\bs{x}, \bs{v})$ for a large
+sample of stars in the Milky Way (for example, from the \gaia\ Mission; \citealt{TODO}).
+Conceptually, our plan is to infer a flexible model of the local phase-space
+distribution function (DF), $f(\bs{x}, \bs{v})$, and use levels of constant phase-space
+density (or constant stellar invariants) to trace the shapes of orbits in phase space.
+
+
+\subsection{Setup and Assumptions} \label{sec:methods-setup}
+
+For simplicity, in this work we restrict our focus to one-dimensional (1D) kinematics in
+the vertical Galactic phase space $(z, v_z)$ (we discuss generalizations of the method
+later in the Discussion, Section~\ref{sec:discussion}). % TODO: do this
+However, even in a simple, axisymmetric galaxy mass model, stellar orbits are not
+separable in cylindrical coordinates $R, z$, meaning that the trajectory a typical star
+traces out in the 4D phase-space is coupled in terms of the radial $R$ and vertical $z$
+components of motion.
+We therefore ... conditional on $J_R=0$
+
+author:"price-whelan, adrian" OR author:"ness, melissa" OR author:"johnston, kathryn" OR author:"cunningham, emily" OR author:"garavito-camargo" OR author:"hunt, jason a s" OR author:"horta, daniel" OR author:"sanderson, robyn" year:2022
+
+
 To do this, we make several assumptions or choices to simplify the problem:
 \begin{description}
-    \item[Axisymmetry] The gravitational potential that the stars orbit in is
-    axisymmetric and smooth.
-    \item[No interactions] The stars do not interact with one another and act
-    effectively as test particles orbiting within the galactic mass distribution.
-    \item[1D phase-space / vertical kinematics] Here, for simplicity, we will work with
-    just one position and one velocity component. In the demonstrations below, we use
-    the vertical kinematics $z, v_z$, but this could equally be applied to radial
-    kinematics $R, v_R$.
+    \item[Axisymmetry] The true gravitational potential that the stars orbit in is
+    axisymmetric and smooth (but note that we do not assume a form for this potential).
+    \item[1D phase-space / vertical kinematics] Here we focus on vertical position and
+    velocity $z, v_z$, but this method could equally be applied to the radial kinematics
+    $R, v_R$.
+    % TODO: here
     \item[Circular orbits] For the previous assumption to be a valid simplification, we
     also require that stars have negligible eccentricity (or zero radial action $J_R=0$)
     and have the same $z$-component of the angular momentum $L_z$ (or azimuthal action
     $J_\phi$).
     \item[Phase-mixed] The stellar distribution function (\df) in any vertical slice of
     the full phase-space is phase-mixed.
+    \item[No interactions] The stars do not interact with one another and act
+    effectively as test particles orbiting within the galactic mass distribution.
     % TODO: note the assumptions above mean we are working at many R's to have J_R=0 but
     % constant L_z
 \end{description}
