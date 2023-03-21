@@ -46,8 +46,8 @@
 \begin{document}
 
 \title{
-    Empirical Actions, Frequencies, and Angles: \\
-    Data-driven Dynamics with 1D Kinematics
+    Data-driven Dynamics with Orbital Torus Imaging:  \\
+    Empirically Modeling the Vertical Phase-space of the Galaxy
 }
 
 \newcommand{\affcca}{
@@ -82,41 +82,76 @@
 
 \begin{abstract}\noindent
 % Context
-Orbital dynamics is complex in six-dimensional phase-space, making it a challenge to
-interpret the rich and structured kinematic data of stars in the Milky Way revealed in
-recent data releases from the \gaia\ Mission.
-In a symmetric, steady-state galaxy, or in the presence of only weak perturbations, the
-dynamical interpretation and investigation of kinematic data is often simplified by
-using dynamical invariants such as orbital actions.
-However, computing many such quantities (e.g., the energy, actions, fundamental
-frequencies, etc.) require having a model for the gravitational potential and, even so,
-are either slow to compute or imprecise.
-% Aims.
-To mitigate at least one of these limitations, we aim to demonstrate a method for
-estimating fundamental galactic orbital properties for stars directly from the kinematic
-and stellar label data (e.g., element abundances) without requiring a gravitational
-potential model.
+In a steady-state dynamical system, gradients of the phase-space density distribution of
+any tracers can be simply related to gradients of the underlying gravitational potential
+(i.e. the acceleration field).
+This is the basis of many methods used in Galactic dynamics to infer the mass or dark
+matter distribution of the Milky Way, often with highly-symmetric, few-component,
+parametric models of the Galaxy (e.g., an exponential disk with constant scale height).
+However, we know that the Galaxy is not in equilibrium and its mass distribution is
+complex:
+Stellar kinematics show signatures of non-steady-state dynamics throughout the Galactic
+disk and significant departures from axisymmetry.
+% Aims
+We aim to develop a framework for measuring the acceleration field of the Milky Way in
+the presence of weak disequilibrium that makes fewer assumptions about the form of the
+mass distribution.
 % Methods
-This method still assumes a symmetric and steady-state distribution function, but uses
-either the number density of stars in a slice of phase-space (e.g., vertical $z$--$v_z$
-kinematics) or a statistic computed from other stellar invariants in this slice (e.g.,
-element abundances) to empirically estimate orbital actions, frequencies, and angles for
-the stars.
+As a step toward this goal, here we outline a flexible method for empirically modeling
+the vertical phase-space density (or mean statistics of stellar invariants in this
+phase-space, like element abundances) of stars in the Galactic disk.
+This method --- an improved version of the method of \emph{Orbital Torus Imaging} (OTI)
+--- works by exploiting the fact that orbital trajectories in the vertical phase-space
+of an unperturbed galaxy have predictable symmetries and can be represented as a
+low-order Fourier expansion away from an ellipse.
 % Results
-We demonstrate the method using a toy equilibrium model where orbital properties are
-known, and then show applications of this method even in the presence of disequilibrium.
-As a last demonstration, we use data from the \gaia\ Mission to estimate the total mass
-density at the Galactic midplane as a function of radius near the sun.
+We first demonstrate OTI using a toy simulation of a vertical phase-space distribution
+of stars, then with a more realistic galactic disk population, and show that in both
+cases OTI recovers the local acceleration field (\todo{or frequency structure, or mean
+density, or whatever we actually learn!}).
+We then show that this method enables us to compute orbital actions, angles, and
+frequencies for stars where the approximation of a separable 1D phase-space is valid.
+We finally demonstrate that this method provides a useful tool for studying the
+\emph{residuals} away from an equilibrium model, such as the ``\gaia\ Phase Spiral.''
 % Conclusions
-We conclude :shrugs:.
+Can add perturbations, hoping to go to 4D phase-space next. Some conclusions.
+
+% Context
+% Orbital dynamics is complex in six-dimensional phase-space, making it a challenge to
+% interpret the rich and structured kinematic data of stars in the Milky Way revealed in
+% recent data releases from the \gaia\ Mission.
+% In a symmetric, steady-state galaxy, or in the presence of only weak perturbations, the
+% dynamical interpretation and investigation of kinematic data is often simplified by
+% using dynamical invariants such as orbital actions.
+% However, computing many such quantities (e.g., the energy, actions, fundamental
+% frequencies, etc.) require having a model for the gravitational potential and, even so,
+% are either slow to compute or imprecise.
+% % Aims
+% To mitigate at least one of these limitations, we aim to demonstrate a method for
+% estimating fundamental galactic orbital properties for stars directly from the kinematic
+% and stellar label data (e.g., element abundances) without requiring a gravitational
+% potential model.
+% % Methods
+% This method still assumes a symmetric and steady-state distribution function, but uses
+% either the number density of stars in a slice of phase-space (e.g., vertical $z$--$v_z$
+% kinematics) or a statistic computed from other stellar invariants in this slice (e.g.,
+% element abundances) to empirically estimate orbital actions, frequencies, and angles for
+% the stars.
+% % Results
+% We demonstrate the method using a toy equilibrium model where orbital properties are
+% known, and then show applications of this method even in the presence of disequilibrium.
+% As a last demonstration, we use data from the \gaia\ Mission to estimate the total mass
+% density at the Galactic midplane as a function of radius near the sun.
+% % Conclusions
+% We conclude :shrugs:.
 
 \end{abstract}
 
 % \keywords{}
 
-\section*{~}\clearpage
-
 \section{Introduction} \label{sec:intro}
+
+
 
 KVJ/JASH intro sketch:
 The power and peril of actions. The promise of frequencies. Much can be learned without
@@ -157,8 +192,6 @@ separable in cylindrical coordinates $R, z$, meaning that the trajectory a typic
 traces out in the 4D phase-space is coupled in terms of the radial $R$ and vertical $z$
 components of motion.
 We therefore ... conditional on $J_R=0$
-
-author:"price-whelan, adrian" OR author:"ness, melissa" OR author:"johnston, kathryn" OR author:"cunningham, emily" OR author:"garavito-camargo" OR author:"hunt, jason a s" OR author:"horta, daniel" OR author:"sanderson, robyn" year:2022
 
 
 To do this, we make several assumptions or choices to simplify the problem:
