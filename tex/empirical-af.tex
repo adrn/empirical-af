@@ -2,6 +2,7 @@
 % - The point that central regions of low J_z, density flattens = no constraining power
 % - The condition on d(r_z)/d(r_z')
 % - Widmark papers
+% - https://arxiv.org/abs/2303.18040
 
 % \begin{figure}[!t]
 % \begin{center}
@@ -49,6 +50,7 @@
     Data-driven Dynamics with Orbital Torus Imaging:  \\
     Empirically Modeling the Vertical Phase-space of the Galaxy
 }
+% ChatGPT: Empirical Modeling of Vertical Phase-Space Density in the Milky Way: A Flexible Method for Inferring the Acceleration Field
 
 \newcommand{\affcca}{
     Center for Computational Astrophysics, Flatiron Institute, \\
@@ -151,27 +153,53 @@ Can add perturbations, hoping to go to 4D phase-space next. Some conclusions.
 
 \section{Introduction} \label{sec:intro}
 
+Study dark matter in the Milky Way because it's our best bet.
+
+Mass / density is related to acceleration.
+Absent of direct measurements of acceleration, best bet to measure mass is through kinematics. Requires assumptions. Assumptions we now know are violated.
+
+A steady-state galaxy is straightforward to model. CBE. Jeans. Look at Read review on vertical kinematics for inspiration of this. Also Greg Green paper.
 
 
-KVJ/JASH intro sketch:
-The power and peril of actions. The promise of frequencies. Much can be learned without
-actions. Soliloquy on frequencies. The Galaxy is a clock. Frequencies set how things
-wind up and mix.
+% KVJ/JASH intro sketch:
+% The power and peril of actions. The promise of frequencies. Much can be learned without
+% actions. Soliloquy on frequencies. The Galaxy is a clock. Frequencies set how things
+% wind up and mix.
 
-Also how they interact. A lot to be learned from frequencies alone.
+% Also how they interact. A lot to be learned from frequencies alone.
 
-Recent data sets suggest signatures of this mixing and interaction ... and hence Freq
-directly - resonances, snails. Models typically within assumed potentials, but actually
-information in there directly. Motivated by the peril of actions and the promise of
-frequencies, this paper attempts to examine what can be learned without.... Approach
-motivated by orbital torus imaging
+% Recent data sets suggest signatures of this mixing and interaction ... and hence Freq
+% directly - resonances, snails. Models typically within assumed potentials, but actually
+% information in there directly. Motivated by the peril of actions and the promise of
+% frequencies, this paper attempts to examine what can be learned without.... Approach
+% motivated by orbital torus imaging
 
 
-\section{Methods} \label{sec:methods}
+\section{Method} \label{sec:method}
 
-Our goal is to use the stellar phase-space density $f(\boldsymbol{x}, \boldsymbol{v})$
-(or statistics computed from stellar invariants for stars on different orbits
-$X(\boldsymbol{x}, \boldsymbol{v})$) to infer a local transformation to actions, angles,
+% Notes:
+% - We measure the DF, so can take gradients, but to get to acceleration and potential,
+%   we need to know df/dt.
+
+Until direct measurements of the Galactic acceleration field become more ubiquitous, our
+best hope for studying the acceleration field of the Milky Way comes from modeling
+stellar kinematics (i.e. positions and velocities, $\boldsymbol{x}, \boldsymbol{v}$).
+In an assumed collisionless system like the Milky Way, the distribution function of
+stellar kinematics, $f(\boldsymbol{x}, \boldsymbol{v})$, is a fundamental ...
+
+Separability
+CBE
+
+Our goal is to model the stellar phase-space density
+$f(\boldsymbol{x}, \boldsymbol{v})$, or the functional dependence of statistics computed
+from stellar invariants for stars on different orbits $X(\boldsymbol{x},
+\boldsymbol{v})$, as a means toward
+
+From this model, we can then measure the acceleration field from gradients of the DF, can determine the mean density field from frequencies.
+
+to both (1) infer the local acceleration field, and (2) determine a local, empirical transformation to actions, angles, and frequencies
+
+to infer a local transformation to actions, angles,
 and frequencies without assuming a particular model for the gravitational potential of
 the Galaxy.
 As motivation and context, we presume that we have access to precise and accurate
