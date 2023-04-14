@@ -48,7 +48,7 @@
 
 \title{
     Data-driven Dynamics with Orbital Torus Imaging:  \\
-    Empirically Modeling the Vertical Phase-space of the Galaxy
+    A Flexible Model of the Vertical Phase-space of the Galaxy
 }
 % ChatGPT: Empirical Modeling of Vertical Phase-Space Density in the Milky Way: A Flexible Method for Inferring the Acceleration Field
 
@@ -84,9 +84,9 @@
 
 \begin{abstract}\noindent
 % Context
-In a steady-state dynamical system, gradients of the phase-space density distribution of
-any tracers can be simply related to gradients of the underlying gravitational potential
-(i.e. the acceleration field).
+In a steady-state dynamical system, spatial gradients of the phase-space density (the
+distribution function, \df) of any tracers are related to gradients of the underlying
+gravitational potential (the acceleration field).
 This is the basis of many methods used in Galactic dynamics to infer the mass or dark
 matter distribution of the Milky Way, often with highly-symmetric, few-component,
 parametric models of the Galaxy (e.g., an exponential disk with constant scale height).
@@ -95,28 +95,31 @@ complex:
 Stellar kinematics show signatures of non-steady-state dynamics throughout the Galactic
 disk and significant departures from axisymmetry.
 % Aims
-We aim to develop a framework for measuring the acceleration field of the Milky Way in
-the presence of weak disequilibrium that makes fewer assumptions about the form of the
+We aim to develop a framework for measuring the acceleration field of the Milky Way, in
+the presence of weak disequilibrium, that makes few assumptions about the form of the
 mass distribution.
 % Methods
-As a step toward this goal, here we outline a flexible method for empirically modeling
-the vertical phase-space density (or mean statistics of stellar invariants in this
-phase-space, like element abundances) of stars in the Galactic disk.
+Here we outline a flexible method for empirically modeling the vertical phase-space
+density (or mean statistics of stellar invariants in this phase-space, like element
+abundances) of stars in the Galactic disk.
 This method --- an improved version of the method of \emph{Orbital Torus Imaging} (OTI)
 --- works by exploiting the fact that orbital trajectories in the vertical phase-space
-of an unperturbed galaxy have predictable symmetries and can be represented as a
-low-order Fourier expansion away from an ellipse.
+of an unperturbed galaxy have predictable symmetries in projections of phase-space and
+can be represented as a low-order Fourier expansion away from an ellipse.
 % Results
 We first demonstrate OTI using a toy simulation of a vertical phase-space distribution
 of stars, then with a more realistic galactic disk population, and show that in both
-cases OTI recovers the local acceleration field (\todo{or frequency structure, or mean
-density, or whatever we actually learn!}).
-We then show that this method enables us to compute orbital actions, angles, and
-frequencies for stars where the approximation of a separable 1D phase-space is valid.
-We finally demonstrate that this method provides a useful tool for studying the
+cases OTI recovers the local vertical acceleration as a function of height above the
+galactic midplane.
+We then show that this method enables us to compute \emph{empirical} orbital actions,
+angles, and frequencies for stars where the approximation of a separable 1D phase-space
+is valid: This enables interpreting the timescales of disequilibrium features in a
+flexible way that does not require adopting a global model of the gravitational
+potential.
+For example, we demonstrate that this method provides a useful tool for studying the
 \emph{residuals} away from an equilibrium model, such as the ``\gaia\ Phase Spiral.''
 % Conclusions
-Can add perturbations, hoping to go to 4D phase-space next. Some conclusions.
+Some conclusions.
 
 % Context
 % Orbital dynamics is complex in six-dimensional phase-space, making it a challenge to
@@ -153,7 +156,38 @@ Can add perturbations, hoping to go to 4D phase-space next. Some conclusions.
 
 \section{Introduction} \label{sec:intro}
 
-Study dark matter in the Milky Way because it's our best bet.
+Measuring and studying the mass distribution of the Milky Way is an important venture
+for many applications in astrophysics.
+For one, the total mass distribution determines the orbits of its gas, stars, star
+clusters, and satellite galaxies, and thus enables interpreting the kinematic snapshot
+we observe in terms of dynamical and galactic evolutionary processes.
+The Galactic mass distribution also encodes the structure of dark matter around the
+Milky Way, which provides an important laboratory for studying the astrophysical
+properties of dark matter on the scale of an individual galaxy.
+On these mass scales (and smaller), effective models for dark matter predict different
+radial density profiles and different populations of substructure:
+It is therefore hoped that precise measurements of the detailed structure of dark matter
+within the Milky Way and other nearby galaxies will enable new constraints on the
+particle nature of dark matter.
+
+The task of measuring the dark matter or total mass distribution of the Milky Way has a
+long history of methods, tracers, and measurements that span from applications within
+the galactic nucleus, to the Galactic disk and solar neighborhood, to the outer stellar
+halo of the galaxy \citep[e.g.,][]{todo}.
+Until direct measurements of the Galactic acceleration field become more ubiquitous
+\citep{todo}, the principle challenge of this problem is that we only observe a snapshot
+of the kinematics of tracer populations in the Galaxy.
+In the best case scenario, we observe the instantaneous tracer distribution function
+(\df) $f(\bs{x}, \bs{v}, t=0)$ at present day ($t=0$), though often this is censored or
+modified by survey selection effects.
+In order to relate this kinematic snapshot to the Galactic acceleration field or
+underlying mass distribution, we must make assumptions about the evolution of the system
+or its dynamical state.
+% \footnote{For example, the weakest assumption we might assume is that galaxies are bound
+% objects that exist for long periods of time. But all galaxies \emph{could} be a
+% transient phenomenon that only exist at the present cosmological epoch because of very
+% special initial conditions.}
+
 
 Mass / density is related to acceleration.
 Absent of direct measurements of acceleration, best bet to measure mass is through kinematics. Requires assumptions. Assumptions we now know are violated.
