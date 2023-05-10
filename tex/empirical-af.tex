@@ -2,6 +2,7 @@
 % - The point that central regions of low J_z, density flattens = no constraining power
 % - The condition on d(r_z)/d(r_z')
 % - Widmark papers
+% - https://arxiv.org/abs/2303.18040
 
 % \begin{figure}[!t]
 % \begin{center}
@@ -46,9 +47,10 @@
 \begin{document}
 
 \title{
-    Empirical Actions, Frequencies, and Angles: \\
-    Data-driven Dynamics with 1D Kinematics
+    Data-driven Dynamics with Orbital Torus Imaging:  \\
+    A Flexible Model of the Vertical Phase-space of the Galaxy
 }
+% ChatGPT: Empirical Modeling of Vertical Phase-Space Density in the Milky Way: A Flexible Method for Inferring the Acceleration Field
 
 \newcommand{\affcca}{
     Center for Computational Astrophysics, Flatiron Institute, \\
@@ -82,77 +84,215 @@
 
 \begin{abstract}\noindent
 % Context
-Orbital dynamics is complex in six-dimensional phase-space, making it a challenge to
-interpret the rich and structured kinematic data of stars in the Milky Way revealed in
-recent data releases from the \gaia\ Mission.
-In a symmetric, steady-state galaxy, or in the presence of only weak perturbations, the
-dynamical interpretation and investigation of kinematic data is often simplified by
-using dynamical invariants such as orbital actions.
-However, computing many such quantities (e.g., the energy, actions, fundamental
-frequencies, etc.) require having a model for the gravitational potential and, even so,
-are either slow to compute or imprecise.
-% Aims.
-To mitigate at least one of these limitations, we aim to demonstrate a method for
-estimating fundamental galactic orbital properties for stars directly from the kinematic
-and stellar label data (e.g., element abundances) without requiring a gravitational
-potential model.
+In a steady-state dynamical system, spatial gradients of the phase-space density (the
+distribution function, \df) of any tracers are related to gradients of the underlying
+gravitational potential (the acceleration field).
+This is the basis of many methods used in Galactic dynamics to infer the mass or dark
+matter distribution of the Milky Way, often with highly-symmetric, few-component,
+parametric models of the Galaxy (e.g., an exponential disk with constant scale height).
+However, we know that the Galaxy is not in equilibrium and its mass distribution is
+complex:
+Stellar kinematics show signatures of non-steady-state dynamics throughout the Galactic
+disk and significant departures from axisymmetry.
+% Aims
+We aim to develop a framework for measuring the acceleration field of the Milky Way, in
+the presence of weak disequilibrium, that makes few assumptions about the form of the
+mass distribution.
 % Methods
-This method still assumes a symmetric and steady-state distribution function, but uses
-either the number density of stars in a slice of phase-space (e.g., vertical $z$--$v_z$
-kinematics) or a statistic computed from other stellar invariants in this slice (e.g.,
-element abundances) to empirically estimate orbital actions, frequencies, and angles for
-the stars.
+Here we outline a flexible method for empirically modeling the vertical phase-space
+density (or mean statistics of stellar invariants in this phase-space, like element
+abundances) of stars in the Galactic disk.
+This method --- an improved version of the method of \emph{Orbital Torus Imaging} (OTI)
+--- works by exploiting the fact that orbital trajectories in the vertical phase-space
+of an unperturbed galaxy have predictable symmetries in projections of phase-space and
+can be represented as a low-order Fourier expansion away from an ellipse.
 % Results
-We demonstrate the method using a toy equilibrium model where orbital properties are
-known, and then show applications of this method even in the presence of disequilibrium.
-As a last demonstration, we use data from the \gaia\ Mission to estimate the total mass
-density at the Galactic midplane as a function of radius near the sun.
+We first demonstrate OTI using a toy simulation of a vertical phase-space distribution
+of stars, then with a more realistic galactic disk population, and show that in both
+cases OTI recovers the local vertical acceleration as a function of height above the
+galactic midplane.
+We then show that this method enables us to compute \emph{empirical} orbital actions,
+angles, and frequencies for stars where the approximation of a separable 1D phase-space
+is valid: This enables interpreting the timescales of disequilibrium features in a
+flexible way that does not require adopting a global model of the gravitational
+potential.
+For example, we demonstrate that this method provides a useful tool for studying the
+\emph{residuals} away from an equilibrium model, such as the ``\gaia\ Phase Spiral.''
 % Conclusions
-We conclude :shrugs:.
+Some conclusions.
+
+% Context
+% Orbital dynamics is complex in six-dimensional phase-space, making it a challenge to
+% interpret the rich and structured kinematic data of stars in the Milky Way revealed in
+% recent data releases from the \gaia\ Mission.
+% In a symmetric, steady-state galaxy, or in the presence of only weak perturbations, the
+% dynamical interpretation and investigation of kinematic data is often simplified by
+% using dynamical invariants such as orbital actions.
+% However, computing many such quantities (e.g., the energy, actions, fundamental
+% frequencies, etc.) require having a model for the gravitational potential and, even so,
+% are either slow to compute or imprecise.
+% % Aims
+% To mitigate at least one of these limitations, we aim to demonstrate a method for
+% estimating fundamental galactic orbital properties for stars directly from the kinematic
+% and stellar label data (e.g., element abundances) without requiring a gravitational
+% potential model.
+% % Methods
+% This method still assumes a symmetric and steady-state distribution function, but uses
+% either the number density of stars in a slice of phase-space (e.g., vertical $z$--$v_z$
+% kinematics) or a statistic computed from other stellar invariants in this slice (e.g.,
+% element abundances) to empirically estimate orbital actions, frequencies, and angles for
+% the stars.
+% % Results
+% We demonstrate the method using a toy equilibrium model where orbital properties are
+% known, and then show applications of this method even in the presence of disequilibrium.
+% As a last demonstration, we use data from the \gaia\ Mission to estimate the total mass
+% density at the Galactic midplane as a function of radius near the sun.
+% % Conclusions
+% We conclude :shrugs:.
 
 \end{abstract}
 
 % \keywords{}
 
-\section*{~}\clearpage
-
 \section{Introduction} \label{sec:intro}
 
-KVJ/JASH intro sketch:
-The power and peril of actions. The promise of frequencies. Much can be learned without
-actions. Soliloquy on frequencies. The Galaxy is a clock. Frequencies set how things
-wind up and mix.
+Measuring and studying the mass distribution of the Milky Way is an important venture
+for many applications in astrophysics.
+For one, the total mass distribution determines the orbits of its gas, stars, star
+clusters, and satellite galaxies, and thus enables interpreting the kinematic snapshot
+we observe in terms of dynamical and galactic evolutionary processes.
+The Galactic mass distribution also encodes the structure of dark matter around the
+Milky Way, which provides an important laboratory for studying the astrophysical
+properties of dark matter on the scale of an individual galaxy.
+On these mass scales (and smaller), effective models for dark matter predict different
+radial density profiles and different populations of substructure.
+It is therefore hoped that precise measurements of the detailed structure of dark matter
+within the Milky Way and other nearby galaxies will enable new constraints on the
+particle nature of dark matter.
 
-Also how they interact. A lot to be learned from frequencies alone.
+The task of measuring the dark matter or total mass distribution of the Milky Way has a
+long history of methodological development, identification of useful astrophysical
+tracers, and of measurements on many length and mass scales within the Galaxy and its
+satellites.
+% These measurements span from applications on small length and mass scales, for example
+% within dwarf galaxies, to intermediate scales when considering the Galactic disk and
+% innher halo, to the largest scales that consider the global dark matter halo of the
+% galaxy \citep[e.g.,][]{todo}. % timing argument - cite an old, a new for each?
+The principle challenge of this problem is that we only observe a \emph{snapshot} of the
+kinematics (i.e. positions $\bs{x}$ and velocities $\bs{v}$) and other stellar
+properties (i.e. element abundances, age, etc.) of tracer populations throughout the
+Galaxy.
+That is, until direct measurements of the Galactic acceleration field become more
+ubiquitous \citep{todo}, in the best case scenario we can only observe the instantaneous
+tracer distribution function (\df) $f(\bs{x}, \bs{v}, t=0)$ (defining $t=0$ to be
+present day).
+Often this is also censored or modified by survey selection effects, and historically we
+have only had access to subsets of the full set of phase-space coordinates $(\bs{x},
+\bs{v})$.
+In order to relate this kinematic snapshot to the Galactic acceleration field or the
+Galactic mass distribution, we therefore must make assumptions about the evolution of
+the system or its dynamical state.
+% \footnote{For example, the weakest assumption we might assume is that galaxies are bound
+% objects that exist for long periods of time. But all galaxies \emph{could} be a
+% transient phenomenon that only exist at the present cosmological epoch because of very
+% special initial conditions.}
 
-Recent data sets suggest signatures of this mixing and interaction ... and hence Freq
-directly - resonances, snails. Models typically within assumed potentials, but actually
-information in there directly. Motivated by the peril of actions and the promise of
-frequencies, this paper attempts to examine what can be learned without.... Approach
-motivated by orbital torus imaging
+The most common assumptions are that the Galaxy is close to equilibrium (i.e. the
+gravitational potential $\Phi$ is time-invariant; $\pderiv{\Phi}{t}=0$) and that the
+tracer distribution function is nearly in a steady state (i.e. the tracer distribution
+function $f$ is time-invariant; $\pderiv{f}{t}=0$).
+These assumptions eliminate the explicit time derivatives in dynamical calculations and
+therefore enable relating the gravitational acceleration (i.e. mass) to the tracer
+kinematics (i.e. through the Collisionless Boltzmann Equation, CBE, or moments of the CBE, such as the Jeans equations).
+
+Common assumption here is equilibrium, and common to assume simple potential models.
+Fundamental tool here is CBE.
+Historically, moments of CBE / Jeans methods - couldn't even measure a good representation of f().
+But now, modern data like Gaia, tractable to measure f().
+Access to acceleration. Greg Green work, DF modeling, etc.
+
+But the galaxy is not in equilibrium: DF shows clear signs of non-steady-state phenomenon.
+Around the Sun alone: Vertical phase spiral (Antoja), structure in bulk kinematics (Katz, Eilers), ridges in other projections of kinematics (Kawata?).
+More broadly, bar at galactic center (old cite, new cite), overall warp to stellar and gas disks (old cite, Poggio, Evan Levine), substructure in outer disk (newberg, pw, xu, etc.)
 
 
-\section{Methods} \label{sec:methods}
+% KVJ/JASH intro sketch:
+% The power and peril of actions. The promise of frequencies. Much can be learned without
+% actions. Soliloquy on frequencies. The Galaxy is a clock. Frequencies set how things
+% wind up and mix.
 
-Our goal is to use the stellar phase-space density (or statistics computed from stellar
-invariants) to infer a local transformation to actions, angles, and frequencies directly
-from the data, i.e. without assuming the form of a gravitational potential model.
+% Also how they interact. A lot to be learned from frequencies alone.
+
+% Recent data sets suggest signatures of this mixing and interaction ... and hence Freq
+% directly - resonances, snails. Models typically within assumed potentials, but actually
+% information in there directly. Motivated by the peril of actions and the promise of
+% frequencies, this paper attempts to examine what can be learned without.... Approach
+% motivated by orbital torus imaging
+
+
+\section{Method} \label{sec:method}
+
+% Notes:
+% - We measure the DF, so can take gradients, but to get to acceleration and potential,
+%   we need to know df/dt.
+
+Until direct measurements of the Galactic acceleration field become more ubiquitous, our
+best hope for studying the acceleration field of the Milky Way comes from modeling
+stellar kinematics (i.e. positions and velocities, $\boldsymbol{x}, \boldsymbol{v}$).
+In an assumed collisionless system like the Milky Way, the distribution function of
+stellar kinematics, $f(\boldsymbol{x}, \boldsymbol{v})$, is a fundamental ...
+
+Separability
+CBE
+
+Our goal is to model the stellar phase-space density
+$f(\boldsymbol{x}, \boldsymbol{v})$, or the functional dependence of statistics computed
+from stellar invariants for stars on different orbits $X(\boldsymbol{x},
+\boldsymbol{v})$, as a means toward
+
+From this model, we can then measure the acceleration field from gradients of the DF, can determine the mean density field from frequencies.
+
+to both (1) infer the local acceleration field, and (2) determine a local, empirical transformation to actions, angles, and frequencies
+
+to infer a local transformation to actions, angles,
+and frequencies without assuming a particular model for the gravitational potential of
+the Galaxy.
+As motivation and context, we presume that we have access to precise and accurate
+measurements of the stellar positions and velocities $(\bs{x}, \bs{v})$ for a large
+sample of stars in the Milky Way (for example, from the \gaia\ Mission; \citealt{TODO}).
+Conceptually, our plan is to infer a flexible model of the local phase-space
+distribution function (DF), $f(\bs{x}, \bs{v})$, and use levels of constant phase-space
+density (or constant stellar invariants) to trace the shapes of orbits in phase space.
+
+
+\subsection{Setup and Assumptions} \label{sec:methods-setup}
+
+For simplicity, in this work we restrict our focus to one-dimensional (1D) kinematics in
+the vertical Galactic phase space $(z, v_z)$ (we discuss generalizations of the method
+later in the Discussion, Section~\ref{sec:discussion}). % TODO: do this
+However, even in a simple, axisymmetric galaxy mass model, stellar orbits are not
+separable in cylindrical coordinates $R, z$, meaning that the trajectory a typical star
+traces out in the 4D phase-space is coupled in terms of the radial $R$ and vertical $z$
+components of motion.
+We therefore ... conditional on $J_R=0$
+
+
 To do this, we make several assumptions or choices to simplify the problem:
 \begin{description}
-    \item[Axisymmetry] The gravitational potential that the stars orbit in is
-    axisymmetric and smooth.
-    \item[No interactions] The stars do not interact with one another and act
-    effectively as test particles orbiting within the galactic mass distribution.
-    \item[1D phase-space / vertical kinematics] Here, for simplicity, we will work with
-    just one position and one velocity component. In the demonstrations below, we use
-    the vertical kinematics $z, v_z$, but this could equally be applied to radial
-    kinematics $R, v_R$.
+    \item[Axisymmetry] The true gravitational potential that the stars orbit in is
+    axisymmetric and smooth (but note that we do not assume a form for this potential).
+    \item[1D phase-space / vertical kinematics] Here we focus on vertical position and
+    velocity $z, v_z$, but this method could equally be applied to the radial kinematics
+    $R, v_R$.
+    % TODO: here
     \item[Circular orbits] For the previous assumption to be a valid simplification, we
     also require that stars have negligible eccentricity (or zero radial action $J_R=0$)
     and have the same $z$-component of the angular momentum $L_z$ (or azimuthal action
     $J_\phi$).
     \item[Phase-mixed] The stellar distribution function (\df) in any vertical slice of
     the full phase-space is phase-mixed.
+    \item[No interactions] The stars do not interact with one another and act
+    effectively as test particles orbiting within the galactic mass distribution.
     % TODO: note the assumptions above mean we are working at many R's to have J_R=0 but
     % constant L_z
 \end{description}
