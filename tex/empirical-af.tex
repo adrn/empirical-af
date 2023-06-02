@@ -77,12 +77,17 @@
 % \affiliation{\affnyu}
 % \affiliation{\affmpia}
 
+\author{Lawrence Widrow}
+
 \author{Benjamin~Cassese}
 
-\author{+ more}
+\author{Neige Frankel}
+
+\author{+ more, ORDER TBD!}
 
 
 \begin{abstract}\noindent
+\emph{Old abstract - needs rethinking}
 % Context
 In a steady-state dynamical system, spatial gradients of the phase-space density (the
 distribution function, \df) of any tracers are related to gradients of the underlying
@@ -166,32 +171,32 @@ Milky Way, which provides an important laboratory for studying the astrophysical
 properties of dark matter on the scale of an individual galaxy.
 On these mass scales (and smaller), effective models for dark matter predict different
 radial density profiles and different populations of substructure.
-It is therefore hoped that precise measurements of the detailed structure of dark matter
-within the Milky Way and other nearby galaxies will enable new constraints on the
-particle nature of dark matter.
+It is therefore hoped that precise measurements of the structure of dark matter within
+the Milky Way and other nearby galaxies will enable new constraints on the particle
+nature of dark matter.
 
 The task of measuring the dark matter or total mass distribution of the Milky Way has a
 long history of methodological development, identification of useful astrophysical
 tracers, and of measurements on many length and mass scales within the Galaxy and its
-satellites.
+satellites \citep[see, e.g., ][]{TODO}.
 % These measurements span from applications on small length and mass scales, for example
 % within dwarf galaxies, to intermediate scales when considering the Galactic disk and
 % innher halo, to the largest scales that consider the global dark matter halo of the
 % galaxy \citep[e.g.,][]{todo}. % timing argument - cite an old, a new for each?
 The principle challenge of this problem is that we only observe a \emph{snapshot} of the
 kinematics (i.e. positions $\bs{x}$ and velocities $\bs{v}$) and other stellar
-properties (i.e. element abundances, age, etc.) of tracer populations throughout the
+properties (i.e. element abundances, ages, etc.) of tracer populations throughout the
 Galaxy.
 That is, until direct measurements of the Galactic acceleration field become more
-ubiquitous \citep{todo}, in the best case scenario we can only observe the instantaneous
+ubiquitous \citep{TODO}, in the best case scenario we can only observe the instantaneous
 tracer distribution function (\df) $f(\bs{x}, \bs{v}, t=0)$ (defining $t=0$ to be
 present day).
 Often this is also censored or modified by survey selection effects, and historically we
-have only had access to subsets of the full set of phase-space coordinates $(\bs{x},
+only had access to subsets of the full set of phase-space coordinates $(\bs{x},
 \bs{v})$.
 In order to relate this kinematic snapshot to the Galactic acceleration field or the
-Galactic mass distribution, we therefore must make assumptions about the evolution of
-the system or its dynamical state.
+Galactic mass distribution, it was therefore common to make assumptions about the
+evolution of the system or its dynamical state.
 % \footnote{For example, the weakest assumption we might assume is that galaxies are bound
 % objects that exist for long periods of time. But all galaxies \emph{could} be a
 % transient phenomenon that only exist at the present cosmological epoch because of very
@@ -200,21 +205,56 @@ the system or its dynamical state.
 The most common assumptions are that the Galaxy is close to equilibrium (i.e. the
 gravitational potential $\Phi$ is time-invariant; $\pderiv{\Phi}{t}=0$) and that the
 tracer distribution function is nearly in a steady state (i.e. the tracer distribution
-function $f$ is time-invariant; $\pderiv{f}{t}=0$).
+function $f$ is time-invariant; $\pderiv{f}{t} \approx 0$).
 These assumptions eliminate the explicit time derivatives in dynamical calculations and
-therefore enable relating the gravitational acceleration (i.e. mass) to the tracer
-kinematics (i.e. through the Collisionless Boltzmann Equation, CBE, or moments of the CBE, such as the Jeans equations).
+therefore enable relating the gravitational acceleration (i.e. dark matter mass) to the
+tracer kinematics (i.e. through the Collisionless Boltzmann Equation, CBE, or moments of
+the CBE, such as the Jeans equations).
+Often the gravitational potential $\Phi$ is additionally assumed to be highly symmetric
+and is represented using simple analytic mass models (i.e. a sum of a spherical dark
+matter component, a component to represent the Galactic bulge, plus an axisymmetric disk
+component; see, e.g., \citealt{TODO}), and the tracer DF is explicitly parametrized
+\citep[e.g.,][]{TODO}.
 
-Common assumption here is equilibrium, and common to assume simple potential models.
-Fundamental tool here is CBE.
-Historically, moments of CBE / Jeans methods - couldn't even measure a good representation of f().
-But now, modern data like Gaia, tractable to measure f().
-Access to acceleration. Greg Green work, DF modeling, etc.
+This research program has been completely revolutionized by recent data releases from
+the \gaia\ Mission \citep{TODO} and larger stellar spectroscopic surveys of the Galaxy
+\citep{APOGEE, GALAH, RAVE, TODO}.
+For one, \gaia\ has given us access to stellar kinematic measurements for a large number
+of stars over a substantial volume of the Milky Way, enabling an almost direct (modulo
+selection effects from the survey and Galactic extinction) reconstruction of the stellar
+tracer DF $f$.
+With models or reconstructions of the tracer DF, one can either use the CBE (or Jeans
+equations) to directly estimate the vertical acceleration field under all of the
+assumptions discussed above \citep{greggreen, jatanbuch, TODO}, or construct an
+action-based model (a so-called ``$f(J)$'' model) in which the potential constraining
+power comes from the implicit transformation to action-angle coordinates \citep{sanders,
+others}.
 
-But the galaxy is not in equilibrium: DF shows clear signs of non-steady-state phenomenon.
-Around the Sun alone: Vertical phase spiral (Antoja), structure in bulk kinematics (Katz, Eilers), ridges in other projections of kinematics (Kawata?).
+The impressive precision of the \gaia\ data has also been transformative for revealing
+intricate substructure in the DF that was previously seen at low precision or unknown.
+For example, ...
+
+Gaia also revolutionary in what it revealed: clear signatures of disequilibrium everywhere.
+Hinted at in previous data: Around the Sun alone: Vertical phase spiral (Antoja), structure in bulk kinematics (Katz, Eilers), ridges in other projections of kinematics (Kawata?).
 More broadly, bar at galactic center (old cite, new cite), overall warp to stellar and gas disks (old cite, Poggio, Evan Levine), substructure in outer disk (newberg, pw, xu, etc.)
 
+Spectroscopic surveys open up new dimensions.
+Add radial velocities for distant stars, but also element abundances.
+Element abundances and stellar parameters are complementary to phase-space invariants.
+Can be used to study dynamical state of disk by combining with kinematic quantities.
+Mono-abundance populations (MAPs): $p(\bs{J} \given \bs{X})$ (Bovy)
+DF modeling: $p(\bs{J} \given \bs{X})$ (Sanders)
+We introduced the idea of Orbital Torus Imaging: $p(\bs{X} \given \bs{J})$ (PW21).
+
+OTI is the idea that ...
+Conditioned on action, so less sensitive to survey selection effects and dust.
+Uses the abundances to help constrain the dynamics.
+
+Advances in data motivate advances in methods, and using new kinds of data.
+This work defines a new approach for studying the Milky Way's acceleration field using
+stellar invariants or the phase-space density, in the spirit of OTI.
+Potential to go to multiple dimensions and non-equilibrium phase structure, but here we
+start with 1D and equilibrium models (still useful to look at residuals).
 
 % KVJ/JASH intro sketch:
 % The power and peril of actions. The promise of frequencies. Much can be learned without
@@ -240,7 +280,7 @@ Until direct measurements of the Galactic acceleration field become more ubiquit
 best hope for studying the acceleration field of the Milky Way comes from modeling
 stellar kinematics (i.e. positions and velocities, $\boldsymbol{x}, \boldsymbol{v}$).
 In an assumed collisionless system like the Milky Way, the distribution function of
-stellar kinematics, $f(\boldsymbol{x}, \boldsymbol{v})$, is a fundamental ...
+stellar kinematics, $f(\boldsymbol{x}, \boldsymbol{v}, t)$, is a fundamental ...
 
 Separability
 CBE
@@ -484,16 +524,24 @@ $e_4(r_z')$.
 \subsection{Demonstration with a Simple Equilibrium Model}
 \label{sec:eq-model}
 
+Set up an Agama model, show that we can recover the acceleration field.
+
 
 \subsection{Tests with a Perturbed Disk}
 \label{sec:diseq-disk}
 
+\subsection{Application to Data from \gaia\ Data Release 3}
 
-\subsection{Empirical Actions and Frequencies from \gaia\ Data Release 3}
+Fit the vertical acceleration in a slice around the sun, ignoring selection function.
+Show residuals: Phase spiral-o-rama
+
+\subsection{Empirical Actions and Frequencies}
 \label{sec:gaiadr3}
 
 
 \section{Discussion} \label{sec:discussion}
+
+\subsection{Limitation that our acceleration can depend on $v_z$}
 
 
 \section{Summary and Conclusions} \label{sec:conclusions}
