@@ -1,16 +1,16 @@
 # ---
 # jupyter:
 #   jupytext:
-#     formats: ipynb,py
+#     formats: ipynb,py:light
 #     text_representation:
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
 #       jupytext_version: 1.14.4
 #   kernelspec:
-#     display_name: apw-py3-2022
+#     display_name: Python [conda env:root] *
 #     language: python
-#     name: apw-py3-2022
+#     name: conda-root-py
 # ---
 
 import pathlib
@@ -161,4 +161,3 @@ axes[0].set_title("Orbits")
 axes[1].set_title("Phase-space Density")
 
 fig.savefig(figure_path / "illustrate-zvz.pdf")
-# -
