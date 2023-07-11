@@ -4,6 +4,17 @@
 % - Widmark papers
 % - https://arxiv.org/abs/2303.18040
 
+
+% Reframe paper:
+% - Want to learn density distribution from snapshot
+% - Can't see individual orbits
+% - Have to do statistically
+% - (something about how we're all doing equilibrium, but dream is to go beyond)
+% - Many ways - summarize approaches (from Kuijken)
+% - "Direct contouring" has advantage that don't have to assume Phi(x) or rho(x)
+% - Disadvantage that physics doesn't have to be obeyed - contours can imply Phi that depends on v_z
+% - Also: Under assumption of orbits, can compute actions angles freqs
+
 % \begin{figure}[!t]
 % \begin{center}
 % % \includegraphics[width=0.9\textwidth]{visitstats.pdf}
@@ -170,27 +181,219 @@ The Galactic mass distribution also encodes the structure of dark matter around 
 Milky Way, which provides an important laboratory for studying the astrophysical
 properties of dark matter on the scale of an individual galaxy.
 On these mass scales (and smaller), effective models for dark matter predict different
-radial density profiles and different populations of substructure.
-It is therefore hoped that precise measurements of the structure of dark matter within
-the Milky Way and other nearby galaxies will enable new constraints on the particle
-nature of dark matter.
+density profiles and different populations of substructures.
+We therefore hope that precise measurements of the structure of dark matter within the
+Milky Way and other nearby galaxies will enable new constraints on the particle nature
+of dark matter.
 
-Until direct measurements of the Galactic acceleration field become more ubiquitous, our
-best hope for studying the acceleration field of the Milky Way (and therefore its mass
-distribution and dark matter content) comes from modeling stellar kinematics.
+Until direct measurements of the Galactic acceleration field become more ubiquitous
+(CITE), our best hope for studying the mass and dark matter content of the Milky Way
+comes from modeling stellar kinematics (CITE binney tremaine).
 The principle challenge of this problem is that we only observe a \emph{snapshot} of the
-kinematics (i.e. positions $\bs{x}$ and velocities $\bs{v}$) and other stellar
-properties (i.e. element abundances, ages, etc.) of tracer populations throughout the
-Galaxy at present day.
-In order to relate this kinematic snapshot of tracers to the acceleration field, there
-are two main limits that dictate what methods one can use: (1) the phase-mixed and
-equilibrium case, and (2) the phase-coherent case.
-When a stellar system is in equilibrium and the distribution function (DF, $f(\bs{x},
+kinematics (i.e. position $\bs{x}$ and velocity $\bs{v}$) and other stellar properties
+(i.e. element abundance, age, etc.) of stars throughout the Galaxy at present day.
+That is, we do not observe the orbits of stars or even segments of their orbits, which
+would enable a more direct measurement of the acceleration field around those
+orbits.\footnote{TODO: note about phase coherence - conceptually, streams show us
+orbits.}
+Instead, we have to rely on statistical mechanics to relate the snapshot of tracer
+kinematics we observe to the underlying mass distribution (CITE intro of Kuijken \&
+Gilmore).
+
+The fundamental objects of a statistical approach to Galactic dynamics are the tracer
+distribution function (DF), $f(\bs{x}, \bs{v}, t)$, which describes the probability of
+observing a star at position $\bs{x}$ and velocity $\bs{v}$ at time $t$, and the total
+gravitational potential, $\Phi(\bs{x}, t)$, which is related to the mass density
+distribution we seek $\rho(\bs{x}, t)$ through Poisson's equation $\nabla^2 \Phi = 4\pi
+G \, \rho$.
+Many dynamical inference methods have been built to connect these two objects (the DF
+and the potential) in order to measure properties of the mass distribution of the Milky
+Way and other galaxies (CITE).
+These methods can be broadly categorized into two classes: those that work with
+gradients of the DF to measure gradients of the potential (CITE), or those that model
+the form of the DF itself (CITE).
+In either case, the majority of applications of these methods have assumed that the
+Galaxy is in equilibrium and the DF is in steady state so that the explicit time
+dependence of the DF and potential can be ignored.
+Most applications also assume that the DF and potential are separable in some
+coordinates (for example, cylindrical radius $R$ and height $z$, for disk modeling), and
+that the DF and/or potential can be expressed by a set of smooth, parametric model terms
+for which the parameters can be inferred from the data.
+These methods and assumptions have enabled a wide array of measurements of the structure
+and mass distribution of the Milky Way's disk, central region, stellar halo, and dark
+matter content over the last century (CITE).
+
+Contemporary stellar surveys have opened up a new era of Galactic dynamical inferences
+by providing an abundance of high-quality stellar label and kinematic data for millions
+to billions of stars throughout our Galaxy.
+This includes the transformative astrometric, photometric, and spectroscopic data from
+the \gaia\ Mission (CITE), deep, multi-band photometric surveys such as the Sloan
+Digital Sky Survey (SDSS; CITE), and high-resolution spectroscopic surveys such as the
+Apache Point Observatory Galactic Evolution Experiment (APOGEE; CITE).
+Many other stellar surveys are currently underway or planned for the near future that
+will expand (or are expanding) the volume, number of stars, and precision of the
+available data for Milky Way stars even further (CITE; LAMOST, GALAH, WEAVE, 4MOST,
+SDSS-V).
+This wealth of data brings the opportunity to develop new dynamical inference methods,
+but also presents a challenge to current and past methods.
+The principle ``challenge'' of these new data is that they have revealed the complexity
+of the Milky Way in extraordinary signal-to-noise.
+For example, the observed DF of stars in the Milky Way disk is highly sub-structured on
+small and large-scales in phase-space.
+This includes local features like the \gaia\ ``phase spiral'' in the vertical kinematics
+of stars (CITE), or the historically-named ``moving groups'' in the in-plane kinematics
+or integrals of motions (CITE Trick, Hunt, etc.).
+But this also includes large-scale features like ``ridges'' in the vertical velocity as
+a function of Galactic radius (CITE), an overall warp and flaring of the disk (CITE),
+and significant bulk motion of stars in their in-plane velocities (CITE Katz, Eilers),
+to name a few.
+(These features of the DF imply time-dependence of the potential)
+(With the quality and volume of data at hand, ignoring these features -- at 10s of percent level -- will produce very precise, biased measurements)
+
+- One approach to dealing with this complexity is to explicitly model the complexity with parametric models, and add these to models of the DF and potential
+- In principle, that should work fine to produce unbiased measurements, but how do we decide on parametrizations? And will we really be able to add components for all such features?
+- Also, what about all the additional data we have now - stellar parameters, abundances, etc.?
+- We need a more flexible approach that can use all the data, and that is robust to non-equilibrium features
+
+- We are starting to work in that direction by developing new, more flexible methods in the space of data-driven dynamics
+-
+
+
+
+
+
+
+
+
+
+- Tirade about all the assumptions that go into these methods:
+  - Moments are hard to measure and don't contain all the information unless you take all of them
+  - Explicit parametrization of all the things
+  - Separability
+  - Equilibrium and steady state
+
+- Data are getting better and better, and we need to be able to use them.
+  - Gaia, APOGEE, WEAVE, 4MOST, SDSS-V, etc.
+  - We need to be able to use all the data, not just the moments.
+  - We need to be able to use the data in a flexible way, not just with a parametric model.
+  - We need to be able to use the data in a way that is robust to non-equilibrium features.
+  - More data than just kinematics! Now have stellar parameters and etc.
+
+- We therefore...
+
+
+
+
+
+
+
+
+
+A fundamental tool for the first class of methods is the collisionless Boltzmann
+equation (CBE), which relates position and velocity derivatives of the DF to spatial
+derivatives of the potential (i.e. accelerations; CITE).
+Historically, observations of the DF were sparse (in numbers of tracers), and many
+phase-space dimensions were unobserved (as is still the case for most external
+galaxies).
+In this regime, many approaches instead work with moments of the CBE, which form the
+``Jeans equations'' (Oort? CITE many others).
+However, the Jeans equations contain terms that are hard to measure reliably (e.g.,
+second-order things like velocity dispersion, which also make the error propagation
+challenging; CITE).
+The low-order Jeans equations also do not exploit all of the information about the DF
+unless you take a large number of moments (CITE).
+Instead, it is possible to work with the CBE directly, however this often requires
+assuming coordinate symmetries and separability of the DF and potential (CITE KG
+papers).
+
+
+
+
+: those that use gradients of
+the DF to measure gradients of the potential (i.e. via the collisionless Boltzmann
+equation; CBE) and those that model the form of the DF under the assumption that the DF
+only depends on integrals of motion (i.e. using the ``strong Jeans theorem'';
+citealt{BT08}).
+
+those that start with the
+collisionless Boltzmann equation (CBE) and those that start with the ``strong Jeans
+theorem.''
+
+The CBE provides a general framework to relate derivatives of the DF to derivatives of the potential (i.e. accelerations) using ... fluid dynamics.
+
+
+<paragraph about action or IOM-based DF modeling>
+
+
+
+Text to clean up below!
+
+
+For example, ... (CITE: CBE and Jeans methods from Oort, KG2, Binney??, to some recent. Vs. DF-modeling with actions).
+- For practical reasons, to simplify analysis, most methods assume equilibrium and global parametric form of DF and or potential.
+- However, we know that the Galaxy is not in equilibrium and its mass distribution and DF are therefore complex.
+- For example, see warp, flare, spiral arms, bar, phase spiral, etc.
+
+- Particularly important to face up to this because the data have become incredible.
+- Data from the Gaia mission and spectroscopic surveys allow mapping stellar kinematics and other properties like element abundances over large regions of the disk.
+- Precision is now insane, but parametric models of the Galaxy are way too simple. Precise but biased measurements unless we make models much more complex.
+- One approach is to ignore this, assume symmetric and equilibrium models, fit those, and subtract them to look at residuals (Widrow student paper, ...)
+- Another approach is to embrace complexity and build flexibility into the potential, or jointly model potential and DF using CBE (Green and Ting).
+
+- Here, we take an alternate approach toward data-driven dynamics based on the idea of 'Orbital Torus Imaging'.
+- We flexibly model the DF or a function of the DF (abundance moments) and then interpret the inferred DF to study dynamics
+
+
+\section{Collisionless Dynamics} \label{sec:dynamics}
+
+Level set f(R, z, vR, vz) = value is a 3D surface, so can't do the same trick...
+- fundamentally want to do [int vR(R) dR] and [int vz(z) dz] along orbit
+- f(R, z, vR, vz) = f(z, vz | R, vR) x f(R, vR) = f(R, vR | z, vz) x f(z, vz)
+- TODO: work out CBE for this??
+
+- CBE is a fundamental thing that relates DF to potential, through derivatives
+- Statement that level sets of f() are tori in 6D phase-space: Therefore, level sets of f() can be used to empirically estimate actions, angles, frequencies.
+- Move to vertical kinematics to show examples
+- QUESTION: if f is time-dependent, at any time, what is f(x, v) or a functional F(f)??
+
+The dynamics of collisionless systems is governed by the collisionless Boltzmann
+equation (CBE),
+\begin{equation}
+    \frac{\partial f}{\partial t} + \bs{v} \cdot \frac{\partial f}{\partial \bs{x}} - \frac{\partial \Phi}{\partial \bs{x}} \cdot \frac{\partial f}{\partial \bs{v}} = 0
+\end{equation}
+where $f$ is the distribution function (DF) of some tracers, $\Phi$ is the gravitational
+potential, and $\bs{x}$ and $\bs{v}$ are the position and velocity of a tracer.
+This has been the basis of many methods used in Galactic dynamics to infer the mass,
+density, and surface density of the Milky Way's disk and inner dark matter halo (CITE).
+In many applications, the CBE is simplified by assuming that the system is in
+equilibrium ($\Phi = \Phi(\bs{x})$), that the DF is in steady state ($f = f(\bs{x},
+\bs{v})$ so that $\frac{\partial f}{\partial t}=0$), and that the system globally obeys
+symmetries (usually either axisymmetry or spherical symmetry).
+The resulting equations after these assumptions are well known and summarized in, for
+example, (CITE Binney \& Tremaine section).
+The CBE is often further simplified by assuming that the DF and potential are separable
+(e.g., $\Phi(R, z) = \Phi(R) \, \Phi(z)$) or by taking statistical moments of the CBE to
+obtain the ``Jeans' equations'' (CITE e.g., TODO).
+
+- In practice, most methods rely on global symmetry and parametric forms of DF and/or potential.
+-
+
+
+
+- Fundamental tool here is CBE.
+- If system obeys symmetries, simplifies problem.
+- Historically, many applications that use moments of CBE (Jeans equations)
+
+When a stellar system is in equilibrium and a distribution function (DF, $f(\bs{x},
 \bs{v})$) is in steady state, the DF can be expressed as a function of only integrals of
-motion (e.g., the orbital actions, $\bs{J}$, so that $f(\bs{J})$).
-This enables using a number of dynamical inference methods that either try to explicitly
-model the DF (e.g., ``DF modelling'' methods), its derivatives (e.g., the Collisionless
-Boltzmann Equation), or moments of the DF (e.g., the Jeans equations).
+motion and not phases (e.g., the orbital actions, $\bs{J}$, so that $f(\bs{J})$; CITE Jeans?).
+This enables using a number of established dynamical inference methods that either make use of the collisionless Boltzmann equation (CBE) to relate derivatives of the DF to the acceleration field (CITE), or directly model the action-space disitrbution
+
+For example, one class of
+that either try
+to explicitly model the DF (e.g., ``DF modeling'' methods), its derivatives (e.g., the
+Collisionless Boltzmann Equation), or moments of the DF (e.g., the Jeans equations).
+
 - Used for decades, but can be a challenge because historically censored or modified by
 survey selection effects, and historically we only had access to subsets of the full set
 of phase-space coordinates $(\bs{x}, \bs{v})$.
@@ -199,11 +402,6 @@ symmetric and is represented using simple analytic mass models (i.e. a sum of a
 spherical dark matter component, a component to represent the Galactic bulge, plus an
 axisymmetric disk component; see, e.g., \citealt{TODO}), and the tracer DF is explicitly
 parametrized \citep[e.g.,][]{TODO}.
-
-In the phase-coherent case, the DF is not in steady state and therefore could depend
-explicitly on time and orbital phase (e.g., the orbital angles $\bs{\theta}$).
-- When the DF depends strongly on angles, there are no generic methods ... case-by-case.
-- For example, stellar streams tell us about orbits and more directly about acceleration. Can be more powerful than equilibrium methods.
 
 - MW disk is probably somewhere in between
 - Old enough to have erased much of its initial conditions
