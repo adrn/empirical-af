@@ -6,11 +6,6 @@
 
 
 % Reframe paper:
-% - Want to learn density distribution from snapshot
-% - Can't see individual orbits
-% - Have to do statistically
-% - (something about how we're all doing equilibrium, but dream is to go beyond)
-% - Many ways - summarize approaches (from Kuijken)
 % - "Direct contouring" has advantage that don't have to assume Phi(x) or rho(x)
 % - Disadvantage that physics doesn't have to be obeyed - contours can imply Phi that depends on v_z
 % - Also: Under assumption of orbits, can compute actions angles freqs
@@ -341,41 +336,74 @@ orbits in projections of phase-space.
 % Figure 4: Real galaxy - not separable. Agama equilibrium model. Still does well!
 % Figure 5:
 
-
-\section{Method} \label{sec:method}
-
 % Notes:
 % - We measure the DF, so can take gradients, but to get to acceleration and potential,
 %   we need to know df/dt.
 
 
-In a collisionless system, the distribution function of stellar kinematics,
-$f(\boldsymbol{x}, \boldsymbol{v}, t)$, is a fundamental ...
+\section{Method} \label{sec:method}
 
-Separability
-CBE
+Our goal, like many past efforts, is to define a framework for measuring the mass
+distribution underlying a tracer population given a snapshot of kinematic and other
+label data for the tracers.
+For this work, we will consider stars as the tracers and the particular case of modeling
+the mass distribution around the Milky Way disk, but we note that the method is
+generalizable to other contexts.
+As with most studies of stellar dynamics, we will assume that the stars are
+collisionless and we will ignore star formation and explosions (i.e. any processes that
+change the number of stars).
+A fundamental tool in this context is the collisionless Boltzmann equation (CBE),
+\begin{equation}
+    \frac{\partial f}{\partial t} + \bs{v} \cdot \frac{\partial f}{\partial \bs{x}} - \frac{\partial \Phi}{\partial \bs{x}} \cdot \frac{\partial f}{\partial \bs{v}} = 0
+\end{equation}
+which relates position $\bs{x}$ and velocity $\bs{v}$ derivatives of the distribution
+function (DF) $f$ to spatial derivatives of the gravitational potential $\Phi$ (i.e.
+accelerations; CITE).
 
-Our goal is to model the stellar phase-space density
-$f(\boldsymbol{x}, \boldsymbol{v})$, or the functional dependence of statistics computed
-from stellar invariants for stars on different orbits $X(\boldsymbol{x},
-\boldsymbol{v})$, as a means toward
+Though our eventual hope is to build a method that can handle time dependence and
+disequilibrium, we start with a set of common assumptions to simplify the setup and
+limit the dimensionality of expressions.
+In particular, we will start by assuming that the system is in equilibrium ($\Phi =
+\Phi(\bs{x})$), that the DF is in steady state ($f = f(\bs{x}, \bs{v})$ so that
+$\frac{\partial f}{\partial t}=0$), and that the system is axisymmetric and separable in
+cylindrical radius $R$ and vertical position $z$.
+With these assumptions, we turn to the case of modeling the vertical kinematics of a
+sample of stars that are spatially localized (e.g., near the sun).
 
-From this model, we can then measure the acceleration field from gradients of the DF, can determine the mean density field from frequencies.
-
-to both (1) infer the local acceleration field, and (2) determine a local, empirical transformation to actions, angles, and frequencies
-
-to infer a local transformation to actions, angles,
-and frequencies without assuming a particular model for the gravitational potential of
-the Galaxy.
-As motivation and context, we presume that we have access to precise and accurate
-measurements of the stellar positions and velocities $(\bs{x}, \bs{v})$ for a large
-sample of stars in the Milky Way (for example, from the \gaia\ Mission; \citealt{TODO}).
-Conceptually, our plan is to infer a flexible model of the local phase-space
-distribution function (DF), $f(\bs{x}, \bs{v})$, and use levels of constant phase-space
-density (or constant stellar invariants) to trace the shapes of orbits in phase space.
+% Historically, observations of the DF were sparse (in numbers of tracers), and many
+% phase-space dimensions were unobserved (as is still the case for most external
+% galaxies).
+% In this regime, many approaches instead work with statistical moments of the CBE, which
+% form the ``Jeans equations'' (Oort? CITE many others).
+% Within the Milky Way, Jeans modeling approaches that only use low-order moments do not
+% fully exploit the wealth of information we now have available to us.
+% However, measuring high-order moments is challenging and increasingly susceptible to
+% biases due to outliers and noise properties of the data.
+% Is is therefore possible to work with the CBE directly, to
 
 
-\subsection{Setup and Assumptions} \label{sec:methods-setup}
+\subsection{Vertical Dynamics} \label{sec:vertical}
+
+% TODO: In discussion, duh there is no midplane, there are spirals, etc.
+The ``vertical'' phase-space of the Galactic disk is defined by the position $z$ and
+velocity $v_z$ of tracers with respect to the Galactic midplane.
+- Write CBE in this context, ignoring df/dt
+- Explain f(Ez) modeling stuff
+    - KG and Widrow stuff, with flexible Phi(z)
+- Motivate why to go beyond this
+- But: f(Ez) = C define contours - fit contours, can take derivatives (KG paper 1)
+    - Another benefit: contours are orbits, so can derive actions, angles, etc.
+- <Explain our way of fitting shape of contours>
+
+New section (beyond phase-space density) or using stellar labels or whatever:
+- But wait, there's more!
+- Functions of f also satisfy CBE, so we can contour anything that has a gradient with dynamics!
+- For example, moments of element abundances
+- Advantage: Easier to measure from data and less subject to selection effects
+- Show how
+
+Applications:
+
 
 For simplicity, in this work we restrict our focus to one-dimensional (1D) kinematics in
 the vertical Galactic phase space $(z, v_z)$ (we discuss generalizations of the method
@@ -384,7 +412,6 @@ However, even in a simple, axisymmetric galaxy mass model, stellar orbits are no
 separable in cylindrical coordinates $R, z$, meaning that the trajectory a typical star
 traces out in the 4D phase-space is coupled in terms of the radial $R$ and vertical $z$
 components of motion.
-We therefore ... conditional on $J_R=0$
 
 
 To do this, we make several assumptions or choices to simplify the problem:
