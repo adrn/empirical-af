@@ -47,6 +47,9 @@
 \graphicspath{{figures/}}
 \input{preamble.tex}
 
+% Custom definitions for this paper:
+\newcommand{\freqzero}{\ensuremath{\Omega_{z,0}}}
+
 \shorttitle{}
 \shortauthors{Price-Whelan et al.}
 
@@ -342,7 +345,7 @@ orbits in projections of phase-space.
 
 \section{Method} \label{sec:method}
 
-% TODO: cite Justin Read review
+% TODO: cite Justin Read review, and https://arxiv.org/pdf/2012.11477.pdf
 
 Our goal, like many past efforts, is to define a framework for measuring the mass
 distribution underlying a tracer population given a snapshot of kinematic data for the
@@ -441,24 +444,61 @@ Of course, in truth, neither orbits nor realistic disk potentials are separable 
 The methodology described in Section~\ref{sec:vertical} is a standard approach to
 fitting the vertical kinematics of tracers in the Milky Way disk.
 Here we describe an alternative approach, built off of the idea of Orbital Torus Imaging
-\citep[OTI][]{Price-Whelan:2021}, that can more flexibly fit the vertical DF, but at the
-expense of direct interpretability.
+\citep[OTI;][]{Price-Whelan:2021}, that can more flexibly fit the vertical DF, but at
+the expense of direct interpretability.
 
-The core conceptual idea of OTI in this context is that the values of the phase-space
-density itself define curves in phase-space that correspond to the orbits of stars.
-In other words, the level sets of the DF $f_z(z, v_z)$ correspond to orbits in this 1D,
-equilibrium setup.
-Therefore, solving the expressing $f_z(z, v_z) = C$ for some constant $C$ shows us the
-shape of an orbit in the vertical kinematics.\footnote{As an aside, this is a generally
-useful fact: For a higher-dimensional DF, if we could measure multiple independent
-invariants, these would define surfaces in phase-space that correspond to the orbits.
-But for now, we stick to the one-dimensional dynamics of the vertical phase-space.}
+The core conceptual idea of OTI in this context is that the derivatives of the DF that
+appear in the CBE (e.g., Equation~\ref{eq:cbe-1d}) only depend on the shapes of the
+curves defined by level sets of the DF (i.e. curves of constant phase-space density).
 This motivates an alternate path to modeling the vertical DF of a set of tracers: We can
 parametrize the shapes of level sets of the DF, fit a general form for $f(z, v_z)$, and
-take derivatives of this fitted function to measure the acceleration with the CBE
-(Equation~\ref{eq:cbe-1d}).
+take derivatives of the fitted function of the phase-space density to measure the
+acceleration with the CBE.
 This idea was referred to as ``direct contouring'' of the DF by \citet{Kuijken:XXXX},
-but was ignored as a practical possibility at that time.
+but was ignored as being impractical at that time.
+An interesting aspect of this approach is that the level sets of the DF correspond to
+the orbits of individual stars.
+In other words, the curves of constant phase-space density $f_z(z, v_z)$ (i.e. DF value)
+correspond to orbits in this 1D, equilibrium setup. \todo{reference figure to
+demonstrate this}
+Therefore, solving the expressing $f_z(z, v_z) = C$ for some constant $C$ shows us the
+shape of an orbit in the vertical kinematics.\footnote{As an aside, this is a generally
+useful statement: For a higher-dimensional DF, if we could measure multiple independent
+invariants, these would define surfaces in phase-space that correspond to the orbits.
+But for now, we stick to the one-dimensional dynamics of the vertical phase-space.}
+So how should we parametrize the shapes of these contours?
+
+Very near the galactic midplane, where the density is approximately constant, the orbit
+shapes will be close to ellipses with an aspect ratio that depends on the asymptotic
+vertical frequency at the midplane, \freqzero.
+That is, near the midplane, contours of the DF will correspond to curves of constant
+elliptical radius $r_z'$, defined as
+\begin{equation}
+    r_z' = \sqrt{z^2 \, \freqzero + v_z^2 \, \freqzero^{-1}} \label{eq:rzp}
+\end{equation}
+for all values of the corresponding ellipsoidal angle $\theta_z'$,
+\begin{equation}
+    \tan \theta_z' = \frac{z}{v_z}\,\freqzero \label{eq:thetazp} \quad .
+\end{equation}
+Away from the midplane, the contours of the DF (and the shapes of orbits) have steadily
+decreasing frequencies with increasing maximum height $z_{\textrm{max}}$, which leads
+to, to first order, a changing aspect ratio of the contours.
+For contours with sufficiently large $z_{\textrm{max}}$ values (i.e. orbits that reach
+many scale heights above the disk), the influence of the dark matter halo's potential
+distorts the orbit shapes, and the contours of the DF are no longer well approximated by
+ellipses. \todo{a figure to show this point?}
+The halo potential causes the orbits to deform from ellipses to more diamond-like shapes
+that are reminiscent of $m=4$ Fourier modes.
+
+To model more general contour shapes, we use a low-order Fourier expansion in the
+ellipsoidal angle $\theta_z'$ to distort the ellipsoidal radius $r_z'$ into the
+distorted ellipsoidal radius $r_z$, defined as
+\begin{equation}
+    r_z = r_z' \, \left[1 + \sum_m \epsilon_m(r_z') \, \cos{\left(m\,\theta_z'\right)}\right] \label{eq:rz}
+\end{equation}
+where we only consider even $m$ values to preserve the symmetry of the contour shapes.
+To fit the phase-space density, we then use a model
+
 
 TODO: left off here
 - Want to parametrize shapes of contours
