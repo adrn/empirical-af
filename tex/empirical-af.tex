@@ -343,7 +343,7 @@ orbits in projections of phase-space.
 %   we need to know df/dt.
 
 
-\section{Method} \label{sec:method}
+\section{Vertical Dynamics} \label{sec:vertical}
 
 % TODO: cite Justin Read review, and https://arxiv.org/pdf/2012.11477.pdf
 
@@ -389,17 +389,18 @@ sample of stars that are spatially localized (e.g., near the sun).
 % Is is therefore possible to work with the CBE directly, to
 
 
-\subsection{Vertical Dynamics} \label{sec:vertical}
+% \subsection{Vertical Dynamics} \label{sec:vertical}
 
 % TODO: maybe a 3 panel figure? Left: z-vz phase-space density of toy data, Middle: fit
 % with f(E_z), Right: Fit with OTI?
 
 % TODO: In discussion, duh there is no midplane, there are spirals, etc.
 The ``vertical'' phase-space of the Galactic disk is defined by the position $z$ and
-velocity $v_z$ of tracers with respect to the Galactic midplane.
-With the assumptions of axisymmetry, equilibrium, and separability, the CBE
-(Equation~\ref{eq:cbe}) for the vertical phase-space simplifies to terms involving only
-$z$ and $v_z$ derivatives of the DF and potential:
+velocity $v_z$ of tracers with respect to the Galactic midplane ($z=0$).
+With assumptions of axisymmetry, equilibrium, separability of the potential, and
+neglecting the terms involving radial derivatives, the CBE (Equation~\ref{eq:cbe}) for
+the vertical phase-space simplifies to terms involving only $z$ and $v_z$ derivatives of
+the DF and potential:
 \begin{equation}
     v_z \, \frac{\partial f_z}{\partial z} - \frac{\partial \Phi}{\partial z} \, \frac{\partial f_z}{\partial v_z} = 0 \quad .
     \label{eq:cbe-1d}
@@ -411,13 +412,13 @@ This implies a solution for the DF of the form
 \end{align}
 Given measurements of the positions and velocities of a set of stars, one can therefore
 measure the potential $\Phi(z)$ by parameterizing $\Phi(z)$ and $f_z(E_z)$ and fitting
-the data (CITE KG, Li Widrow, others).
-Of course, to do this, we have to decide on functional forms for both $\Phi(z)$ and
-$f_z(E_z)$.
-We should use functions that are flexible enough to describe the data, but $\Phi(z)$ has
+the data to find the optimal parameters of the assumed functions (CITE KG, Li Widrow,
+others).
+To do this, we have to decide on functional forms for both $\Phi(z)$ and $f_z(E_z)$: We
+should use functions that are flexible enough to describe the data, but $\Phi(z)$ has
 the additional constraint that its second derivative must be finite and positive
 everywhere to satisfy the Poisson equation for realistic density functions.
-Of course, in truth, neither orbits nor realistic disk potentials are separable in $R$ and $z$: ...
+(Of course, in truth, neither orbits nor realistic disk potentials are separable in $R$ and $z$: ...)
 \todo{put in an example and figure panel to demonstrate this method fitting to toy data.}
 \todo{some comments about residuals?}
 \todo{cite KG and Widrow stuff, and probably others}
@@ -433,7 +434,7 @@ Of course, in truth, neither orbits nor realistic disk potentials are separable 
 % \end{figure*}
 
 
-\subsection{Orbital Torus Imaging with the Phase-space Density} \label{sec:oti-psd}
+\section{Orbital Torus Imaging} \label{sec:oti}
 
 % - But: f(z, vz) = C define contours
 %     - fit contours, can take derivatives
@@ -441,100 +442,150 @@ Of course, in truth, neither orbits nor realistic disk potentials are separable 
 %     - Method called "direct contouring" by (KG paper 1)
 % - <Explain our way of fitting shape of contours>
 
-The methodology described in Section~\ref{sec:vertical} is a standard approach to
-fitting the vertical kinematics of tracers in the Milky Way disk.
+The framework described in Section~\ref{sec:vertical} is a standard approach to fitting
+the vertical kinematics of tracers in the Milky Way disk.
 Here we describe an alternative approach, built off of the idea of Orbital Torus Imaging
-\citep[OTI;][]{Price-Whelan:2021}, that can more flexibly fit the vertical DF, but at
+\citep[OTI;][]{Price-Whelan:2021}, that can more flexibly fit the vertical DF but at
 the expense of direct interpretability.
+A core motivation for OTI is that the derivatives of the DF that appear in the CBE
+(e.g., Equation~\ref{eq:cbe-1d}) only depend on the shapes of the curves defined by
+level sets of the DF (i.e. curves of constant phase-space density), or of any functions
+of the phase-space density that depend on auxiliary data (e.g., element abundance ratios
+or other stellar labels).
+We start by considering the case of using the phase-space density or DF itself, but then
+discuss how this generalizes to using stellar label data instead.
 
-The core conceptual idea of OTI in this context is that the derivatives of the DF that
-appear in the CBE (e.g., Equation~\ref{eq:cbe-1d}) only depend on the shapes of the
-curves defined by level sets of the DF (i.e. curves of constant phase-space density).
-This motivates an alternate path to modeling the vertical DF of a set of tracers: We can
-parametrize the shapes of level sets of the DF, fit a general form for $f(z, v_z)$, and
-take derivatives of the fitted function of the phase-space density to measure the
-acceleration with the CBE.
-This idea was referred to as ``direct contouring'' of the DF by \citet{Kuijken:XXXX},
-but was ignored as being impractical at that time.
-An interesting aspect of this approach is that the level sets of the DF correspond to
-the orbits of individual stars.
-In other words, the curves of constant phase-space density $f_z(z, v_z)$ (i.e. DF value)
-correspond to orbits in this 1D, equilibrium setup. \todo{reference figure to
-demonstrate this}
-Therefore, solving the expressing $f_z(z, v_z) = C$ for some constant $C$ shows us the
-shape of an orbit in the vertical kinematics.\footnote{As an aside, this is a generally
-useful statement: For a higher-dimensional DF, if we could measure multiple independent
-invariants, these would define surfaces in phase-space that correspond to the orbits.
-But for now, we stick to the one-dimensional dynamics of the vertical phase-space.}
+\subsection{Modeling the Phase-space Density} \label{sec:psd}
+
+An alternate path to modeling the vertical DF of a set of tracers is to parametrize the
+shapes of level sets of the DF, fit a general form for the DF that uses the contour
+shapes, and take derivatives of the fitted function of the phase-space density to
+measure the acceleration with the CBE.
+This idea was already discussed and referred to as ``direct contouring'' of the DF by
+\citet{Kuijken:XXXX}, but was ignored as being impractical at that time.
+However, thanks mainly to data from the \gaia\ Mission, we now have access to large
+samples of full-phase-space kinematic measurements for stars throughout the Milky Way
+disk.
+An interesting aspect of this approach is that, in a one degree-of-freedom system, the
+level sets of the DF correspond to the orbits of individual stars:
+the curves of constant phase-space density $f_z(z, v_z)$ (i.e. value of DF) define
+orbits.
+\todo{reference figure to demonstrate this}
+In other words, given a DF, solving the expression $f_z(z, v_z) = C$ for $v_z(z)$ at
+some value $C$ would produce a contour of the DF that is equivalent to an orbit.
 So how should we parametrize the shapes of these contours?
+% TODO: move this down and reference the discussion here in the stellar label section
+% \footnote{As an aside, this is a generally useful statement: For a higher-dimensional
+% DF, if we could measure multiple independent invariants, these would define surfaces
+% in phase-space that correspond to the orbits. But for now, we stick to the
+% one-dimensional dynamics of the vertical phase-space.}
 
 Very near the galactic midplane, where the density is approximately constant, the orbit
-shapes will be close to ellipses with an aspect ratio that depends on the asymptotic
-vertical frequency at the midplane, \freqzero.
+shapes (and therefore contours of the DF) will be close to ellipses with an aspect ratio
+that depends on the asymptotic vertical frequency at the midplane, \freqzero.
 That is, near the midplane, contours of the DF will correspond to curves of constant
 elliptical radius $r_z'$, defined as
 \begin{equation}
-    r_z' = \sqrt{z^2 \, \freqzero + v_z^2 \, \freqzero^{-1}} \label{eq:rzp}
+    r_z' = \sqrt{(z-z_0)^2 \, \freqzero + (v_z-v_{z,0})^2 \, \freqzero^{-1}} \label{eq:rzp}
 \end{equation}
 for all values of the corresponding ellipsoidal angle $\theta_z'$,
 \begin{equation}
-    \tan \theta_z' = \frac{z}{v_z}\,\freqzero \label{eq:thetazp} \quad .
+    \tan \left(\theta_z'\right) = \left(\frac{z-z_0}{v_z-v_{z,0}}\right) \, \freqzero
+    \label{eq:thetazp}
 \end{equation}
-Away from the midplane, the contours of the DF (and the shapes of orbits) have steadily
-decreasing frequencies with increasing maximum height $z_{\textrm{max}}$, which leads
-to, to first order, a changing aspect ratio of the contours.
+where $z_0$ and $v_{z,0}$ are the zero-point position and velocity, respectively, which
+we include as parameters in our model.
+Away from the midplane, the shapes of orbits have steadily decreasing frequencies with
+increasing maximum height $z_{\textrm{max}}$, which leads to, to first order, a changing
+aspect ratio of the contours.\todo{reference a figure panel?}
 For contours with sufficiently large $z_{\textrm{max}}$ values (i.e. orbits that reach
 many scale heights above the disk), the influence of the dark matter halo's potential
-distorts the orbit shapes, and the contours of the DF are no longer well approximated by
-ellipses. \todo{a figure to show this point?}
+distorts the orbit shapes, and the contours of the DF are no longer well-approximated by
+ellipses.\todo{a figure to show this point?}
 The halo potential causes the orbits to deform from ellipses to more diamond-like shapes
 that are reminiscent of $m=4$ Fourier modes.
 
-To model more general contour shapes, we use a low-order Fourier expansion in the
-ellipsoidal angle $\theta_z'$ to distort the ellipsoidal radius $r_z'$ into the
-distorted ellipsoidal radius $r_z$, defined as
+To model more general contour shapes (i.e. beyond ellipses), we use a low-order Fourier
+expansion in the ellipsoidal angle $\theta_z'$ to distort the ellipsoidal radius $r_z'$
+into the distorted ellipsoidal radius $r_z$, defined as
 \begin{equation}
     r_z = r_z' \, \left[1 + \sum_m \epsilon_m(r_z') \, \cos{\left(m\,\theta_z'\right)}\right] \label{eq:rz}
 \end{equation}
-where we only consider even $m$ values to preserve the symmetry of the contour shapes.
-To fit the phase-space density, we then use a model
+where, for the vertical kinematics, we only consider even $m$ values to preserve the
+symmetry of the contour shapes.
+The functions $\epsilon_m(r_z')$ describe the radius-dependent amplitude of the Fourier
+terms, which we require to all be zero at $r_z'=0$, and the values are typically $\ll
+1$ within a few disk scale heights.
+This expansion is motivated by the fact that we expect to need just a few Fourier terms:
+an $m=2$ distortion with an amplitude that varies with $r_z'$ will change the aspect
+ratio of the elliptical contours as a function of $r_z'$, which acts like a changing
+frequency as a function of $z_{\textrm{max}}$.
+An $m=4$ distortion can ``pinch'' the contour shapes to make then more diamond-like,
+which mimics the effect of an orbit feeling the halo potential.
+In applications below, we try different maximum $m$ values, $m_{\textrm{max}}$, beyond
+$m=4$.
+\todo{Could show plots of rzp vs thetazp with different Fourier mmax fits?}
+
+The distorted radius $r_z$ (Equation~\ref{eq:rz}) is effectively a label for the orbits
+and therefore also for contours of the DF.
+To fit the phase-space density with the distorted radius $r_z$, we then need to specify
+a functional form for the dependence of the phase-space density on $r_z$, $f_z(r_z)$.
+The model components that must be specified to fit the phase-space density are then: the
+Fourier distortion amplitude functions $\epsilon_m(r_z')$ for all $m$ orders up to the
+specified $m_{\textrm{max}}$, the functional form of the phase-space density $f_z(r_z)$,
+and the zero-point position and velocity $z_0$ and $v_{z,0}$.
+We have implemented this framework in \python\ using \jax\ \citep{jax:2018} to
+accelerate the model evaluation and to use automatic differentiation to compute the
+gradients of the model with respect to the (many) model parameters.
+This framework is therefore very general and accepts any functional forms for the model
+components.
+We discuss specific choices for these components in the applications below
+(Sections~\ref{sec:applications-sim} and \ref{sec:applications-data}).
+
+TODO: how to go from this to constraints on acceleration / density
 
 
-TODO: left off here
-- Want to parametrize shapes of contours
-- Motivate why ellipsoidal coordinates good
-- But orbit shapes are only ellipsoidal near midplane, where density is ~constant
-- Beyond that, need a more general set of functions.
-- We use a Fourier expansion
-- Could show some plots of this? theta vs. rz or something
-- All implemented in Jax
+\subsection{Modeling Stellar Label} \label{sec:stellarlabels}
 
 
-Given a closed orbital trajectory in a 1D phase-space, we can estimate dynamical
-quantities like the orbital actions, angles, and frequencies.
-For example, in terms of the vertical position and velocity $z, v_z$, where an orbit can
-be parametrized as $v_z(z)$, the vertical action $J_z$ and period $T_z$ are given by
+
+\subsection{Estimating Dynamical Quantities} \label{sec:todo}
+
+Given an orbital trajectory in the vertical phase-space, and after fitting a model to
+the DF (Section~\ref{sec:psd}) or stellar label distribution
+(Section~\ref{sec:stellarlabels}), we can estimate dynamical quantities like the orbital
+actions, angles, and frequencies without needing to assume a form for the gravitational
+potential.
+In terms of the vertical position and velocity $z, v_z$, if we are given a function
+$v_z(z)$ along an orbit, we can compute the vertical action $J_z$ and vertical period
+$T_z$ as
 \begin{align}
-    J_z &= \frac{2}{\pi} \, \int_0^{z_{\textrm{max}}} \dd z \, v_z(z) \\
-    T_z &= 4 \, \int_0^{z_{\textrm{max}}} \frac{\dd z}{v_z(z)}\quad ,
+    J_z &= 4 \times \frac{1}{2\,\pi} \, \int_0^{z_{\textrm{max}}} \dd z \, v_z(z) \\
+    T_z &= 4 \times \int_0^{z_{\textrm{max}}} \frac{\dd z}{v_z(z)}\quad ,
 \end{align}
-which can then be used to compute the vertical (angular) frequency $\Omega_z =
-\frac{2\pi}{T_z}$.
-For a given stellar position and velocity $z, v_z$ along an orbit, the vertical angle
-$\theta_z$ can be computed as the fraction of an orbital period traversed up to that
-point,
+from which the vertical frequency follows, $\Omega_z = \frac{2\pi}{T_z}$.
+For a given instantaneous position and velocity $z^*, v_z^*$, the vertical angle
+$\theta_z$ at that point can be computed as the fraction of an orbital period traversed
+up to that point,
 \begin{equation}
-    \theta_z = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd w}{v_z(w)} \quad ,
+    \theta_z = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd z'}{v_z(z' \,;\, r_z(z^*, v_z^*))} \quad ,
 \end{equation}
-where $w$ is an integration variable.
-In principle, with infinite particle resolution, one could extract contours of constant
-density (or stellar labels) from an observed phase-space distribution and numerically
-estimate the integrals above.
-In practice, however, this would be noisy and unstable in regions of low phase-space
-density, which are often the most interesting (e.g., the transition from disk-dominated
-to halo-dominated kinematics).
-Instead, in what follows we outline a method for modeling the continuous phase-space
-density that enables computing the dynamical quantities.
+where $z'$ is an integration variable, and the function $v_z(z' \,;\, r_z(z^*, v_z^*))$
+indicates that this is a curve at constant $r_z$ as determined by the model parameters
+and given phase-space position $(z^*, v_z^*)$.
+
+In principle, if we could observe the stellar tracer DF with infinite particle
+resolution, we could extract contours of constant density (or stellar labels) to
+numerically and directly estimate the integrals described above.
+This would obviate the need for the modeling framework described in the previous two
+subsections (Sections~\ref{sec:psd}--\ref{sec:stellarlabels}).
+Of course, in practice, we are limited by the finite number of stars in our sample so
+that this procedure would be noisy and unstable in regions of low phase-space density,
+which are often the most interesting (e.g., the transition from disk-dominated to
+halo-dominated kinematics where dark matter dominates the gravitational potential).
+Instead, the framework described above allows us to fit a smooth model to the tracer data and to use this to semi-empirically estimate the dynamical quantities of interest.
+
+
 
 
 \subsection{Estimating Dynamical Quantities from the Phase-space Density}
@@ -666,34 +717,49 @@ Like previous subsection, but $F(r_z)$ instead of $f(r_z)$
 - Show how
 
 
-\section{Results} \label{sec:results}
-% TODO: rename
+\section{Applications to Simulated Data} \label{sec:applications-sim}
 
-For our implementation used in this article, we adopt the following:
-\begin{align}
-    m &= \left\{2, 4\right\} \\
-    e_2(r_z') &\geq 0 \,\,\forall r_z'\\
-    e_4(r_z') &\leq 0 \,\,\forall r_z'
-\end{align}
-and we use linear splines to represent the functions $n(r_z)$, $e_2(r_z')$, and
-$e_4(r_z')$.
+% For our implementation used in this article, we adopt the following:
+% \begin{align}
+%     m &= \left\{2, 4\right\} \\
+%     e_2(r_z') &\geq 0 \,\,\forall r_z'\\
+%     e_4(r_z') &\leq 0 \,\,\forall r_z'
+% \end{align}
+% and we use linear splines to represent the functions $n(r_z)$, $e_2(r_z')$, and
+% $e_4(r_z')$.
+
+\subsection{Simple Harmonic Oscillator}
+\label{sec:sim-sho}
 
 
-\subsection{Demonstration with a Simple Equilibrium Model}
-\label{sec:eq-model}
+\subsection{Simple Equilibrium Model}
+\label{sec:sim-eq}
 
 Set up an Agama model, show that we can recover the acceleration field.
 
 
-\subsection{Tests with a Perturbed Disk}
-\label{sec:diseq-disk}
+\subsection{N-body Simulation with a Perturbed Disk}
+\label{sec:sim-jason}
 
-\subsection{Application to Data from \gaia\ Data Release 3}
+
+\section{Applications to Data} \label{sec:applications-data}
+
+\subsection{Mapping ... spirals ... \gaia\ Data Release 3}
+\label{sec:gaiadr3}
+
+TODO: Empirical actions - show frequency-theta with empirical
 
 Fit the vertical acceleration in a slice around the sun, ignoring selection function.
 Show residuals: Phase spiral-o-rama
 
+
 \subsection{Empirical Actions and Frequencies}
+\label{sec:gaiadr3}
+
+TODO: compare Agama with empaf
+
+
+\subsection{GALAH or APOGEE demonstration}
 \label{sec:gaiadr3}
 
 
