@@ -48,7 +48,13 @@
 \input{preamble.tex}
 
 % Custom definitions for this paper:
-\newcommand{\freqzero}{\ensuremath{\Omega_{z,0}}}
+\newcommand{\freqzero}{\ensuremath{\Omega_0}}
+\newcommand{\mmax}{\ensuremath{M}}
+\newcommand{\rz}{\ensuremath{r_z}}
+% \newcommand{\rzp}{\ensuremath{r_z'}}
+\newcommand{\rzp}{\ensuremath{\tilde{r}_z}}
+\newcommand{\thz}{\ensuremath{\theta_z}}
+\newcommand{\thzp}{\ensuremath{\tilde{\theta}_z}}
 
 \shorttitle{}
 \shortauthors{Price-Whelan et al.}
@@ -484,13 +490,13 @@ Very near the galactic midplane, where the density is approximately constant, th
 shapes (and therefore contours of the DF) will be close to ellipses with an aspect ratio
 that depends on the asymptotic vertical frequency at the midplane, \freqzero.
 That is, near the midplane, contours of the DF will correspond to curves of constant
-elliptical radius $r_z'$, defined as
+elliptical radius \rzp, defined as
 \begin{equation}
-    r_z' = \sqrt{(z-z_0)^2 \, \freqzero + (v_z-v_{z,0})^2 \, \freqzero^{-1}} \label{eq:rzp}
+    \rzp = \sqrt{(z-z_0)^2 \, \freqzero + (v_z-v_{z,0})^2 \, \freqzero^{-1}} \label{eq:rzp}
 \end{equation}
-for all values of the corresponding ellipsoidal angle $\theta_z'$,
+for all values of the corresponding ellipsoidal angle \thzp,
 \begin{equation}
-    \tan \left(\theta_z'\right) = \left(\frac{z-z_0}{v_z-v_{z,0}}\right) \, \freqzero
+    \tan \left(\thzp\right) = \left(\frac{z-z_0}{v_z-v_{z,0}}\right) \, \freqzero
     \label{eq:thetazp}
 \end{equation}
 where $z_0$ and $v_{z,0}$ are the zero-point position and velocity, respectively, which
@@ -506,34 +512,36 @@ The halo potential causes the orbits to deform from ellipses to more diamond-lik
 that are reminiscent of $m=4$ Fourier modes.
 
 To model more general contour shapes (i.e. beyond ellipses), we use a low-order Fourier
-expansion in the ellipsoidal angle $\theta_z'$ to distort the ellipsoidal radius $r_z'$
-into the distorted ellipsoidal radius $r_z$, defined as
+expansion in the ellipsoidal angle \thzp\ to distort the ellipsoidal radius \rzp\
+into the distorted ellipsoidal radius \rz, defined as
 \begin{equation}
-    r_z = r_z' \, \left[1 + \sum_m \epsilon_m(r_z') \, \cos{\left(m\,\theta_z'\right)}\right] \label{eq:rz}
+    \rz = \rzp \, \left[1 + \sum_m \epsilon_m(\rzp) \, \cos{\left(m\,\thzp\right)}\right] \label{eq:rz}
 \end{equation}
 where, for the vertical kinematics, we only consider even $m$ values to preserve the
 symmetry of the contour shapes.
-The functions $\epsilon_m(r_z')$ describe the radius-dependent amplitude of the Fourier
-terms, which we require to all be zero at $r_z'=0$, and the values are typically $\ll
+The functions $\epsilon_m(\rzp)$ describe the radius-dependent amplitude of the Fourier
+terms, which we require to all be zero at $\rzp=0$, and the values are typically $\ll
 1$ within a few disk scale heights.
 This expansion is motivated by the fact that we expect to need just a few Fourier terms:
-an $m=2$ distortion with an amplitude that varies with $r_z'$ will change the aspect
-ratio of the elliptical contours as a function of $r_z'$, which acts like a changing
+an $m=2$ distortion with an amplitude that varies with \rzp\ will change the aspect
+ratio of the elliptical contours as a function of \rzp, which acts like a changing
 frequency as a function of $z_{\textrm{max}}$.
 An $m=4$ distortion can ``pinch'' the contour shapes to make then more diamond-like,
 which mimics the effect of an orbit feeling the halo potential.
-In applications below, we try different maximum $m$ values, $m_{\textrm{max}}$, beyond
+In applications below, we try different maximum $m$ values, \mmax, beyond
 $m=4$.
 \todo{Could show plots of rzp vs thetazp with different Fourier mmax fits?}
 
-The distorted radius $r_z$ (Equation~\ref{eq:rz}) is effectively a label for the orbits
-and therefore also for contours of the DF.
-To fit the phase-space density with the distorted radius $r_z$, we then need to specify
-a functional form for the dependence of the phase-space density on $r_z$, $f_z(r_z)$.
-The model components that must be specified to fit the phase-space density are then: the
-Fourier distortion amplitude functions $\epsilon_m(r_z')$ for all $m$ orders up to the
-specified $m_{\textrm{max}}$, the functional form of the phase-space density $f_z(r_z)$,
-and the zero-point position and velocity $z_0$ and $v_{z,0}$.
+The distorted radius \rz\ (Equation~\ref{eq:rz}) is effectively a label for the orbits
+and therefore also labels contours of the DF.
+To fit the phase-space density with the distorted radius \rz, we then need to specify
+a functional form for the dependence of the phase-space density on \rz, $f_z(\rz)$.
+
+The model components that must be specified in order to fit the phase-space density
+distribution of a sample of stellar phase-space positions are then: the Fourier
+distortion amplitude functions $\epsilon_m(\rzp)$ for all $m$ orders up to the specified
+\mmax, the functional form of the phase-space density $f_z(\rz)$, and the
+zero-point position and velocity $z_0$ and $v_{z,0}$.
 We have implemented this framework in \python\ using \jax\ \citep{jax:2018} to
 accelerate the model evaluation and to use automatic differentiation to compute the
 gradients of the model with respect to the (many) model parameters.
@@ -542,7 +550,7 @@ components.
 We discuss specific choices for these components in the applications below
 (Sections~\ref{sec:applications-sim} and \ref{sec:applications-data}).
 
-TODO: how to go from this to constraints on acceleration / density
+From a fitted model, we can compute the vertical acceleration at any $(z, v_z)$ ...
 
 
 \subsection{Modeling Stellar Label} \label{sec:stellarlabels}
@@ -565,13 +573,13 @@ $T_z$ as
 \end{align}
 from which the vertical frequency follows, $\Omega_z = \frac{2\pi}{T_z}$.
 For a given instantaneous position and velocity $z^*, v_z^*$, the vertical angle
-$\theta_z$ at that point can be computed as the fraction of an orbital period traversed
+\thz\ at that point can be computed as the fraction of an orbital period traversed
 up to that point,
 \begin{equation}
-    \theta_z = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd z'}{v_z(z' \,;\, r_z(z^*, v_z^*))} \quad ,
+    \thz = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd z'}{v_z(z' \,;\, \rz(z^*, v_z^*))} \quad ,
 \end{equation}
-where $z'$ is an integration variable, and the function $v_z(z' \,;\, r_z(z^*, v_z^*))$
-indicates that this is a curve at constant $r_z$ as determined by the model parameters
+where $z'$ is an integration variable, and the function $v_z(z' \,;\, \rz(z^*, v_z^*))$
+indicates that this is a curve at constant \rz\ as determined by the model parameters
 and given phase-space position $(z^*, v_z^*)$.
 
 In principle, if we could observe the stellar tracer DF with infinite particle
@@ -603,10 +611,10 @@ have longer periods).
 Similar arguments can be made at fixed $v_z=0$ in considering how $J_z$ and $\Omega_z$
 vary with increasing $z$.
 It is therefore useful to construct an ellipsoidal polar coordinate system in the $z,
-v_z$ plane with a radius coordinate $r_z'$ and a corresponding angle coordinates
+v_z$ plane with a radius coordinate \rzp\ and a corresponding angle coordinates
 $\theta_z'$ defined as
 \begin{align}
-    r_z' &= \sqrt{z^2 \, \omega_0 + v_z^2 \, \omega_0^{-1}} \label{eq:rzp} \\
+    \rzp &= \sqrt{z^2 \, \omega_0 + v_z^2 \, \omega_0^{-1}} \label{eq:rzp} \\
     \theta_z' &= \tan^{-1}\left(\frac{z}{v_z}\,\omega_0\right) \label{eq:thetazp}
 \end{align}
 where $\omega_0$ is a scale frequency.
@@ -818,6 +826,169 @@ participating in the {\it Gaia} Multilateral Agreement.
     % schwimmbad \citep{schwimmbad:2017},
     scipy \citep{scipy}.
 }
+
+\appendix
+
+\section{Evaluation of the Vertical Acceleration from an OTI Model}
+\label{sec:appendix-math}
+
+We would like to evaluate the vertical acceleration as a function of height above the
+Galactic midplane, $a_z(z) = \frac{\partial \Phi}{\partial z}$.
+From the collisionless Boltzmann equation (Equation~\ref{eq:cbe-1d}), after rearranging
+terms, we have:
+\begin{align}
+    \frac{\partial \Phi}{\partial z} &=
+        v_z \, \frac{\partial f}{\partial z} \,
+        \left( \frac{\partial f}{\partial v_z} \right)^{-1} \\
+    &= v_z \, \frac{\partial f}{\partial \rz} \, \frac{\partial \rz}{\partial z} \,
+        \left( \frac{\partial f}{\partial \rz} \frac{\partial \rz}{\partial v_z} \right)^{-1} \\
+        &= v_z \, \frac{\partial \rz}{\partial z} \,
+        \left( \frac{\partial \rz}{\partial v_z} \right)^{-1}
+\end{align}
+The acceleration only depends on the shapes of the contours of the DF, i.e. curves of
+constant \rz, so that we only need to differentiate the distorted radius to evaluate it.
+Recall that, based on our definitions above,
+\begin{align}
+    \rzp &= \sqrt{z^2 \, \freqzero + v_z^2 \, \freqzero^{-1}} \\
+    \thzp &= \tan^{-1}\left(\frac{z}{v_z} \, \freqzero\right) \\
+    \rz &= \rzp \, \left( 1 + \sum_{m=2}^{\mmax} e_m(\rzp) \,
+        \cos(m \, \thzp) \right) \label{eq:rz-rzp}
+\end{align}
+where the sum in Equation~\ref{eq:rz-rzp} is only over even values of $m$.
+
+We must compute the partial derivatives of \rz\ with respect to $z$ and $v_z$:
+\begin{align}
+    \frac{\partial \rz}{\partial z} &=
+        \frac{\partial \rzp}{\partial z} +
+        \sum_{m=2}^{\mmax} \frac{\partial}{\partial z} \left[\rzp \, e_m(\rzp) \, \cos\left(m \, \thzp\right)\right]\\
+    \frac{\partial \rz}{\partial v_z} &=
+        \frac{\partial \rzp}{\partial v_z} +
+        \sum_{m=2}^{\mmax} \frac{\partial}{\partial v_z} \left[\rzp \, e_m(\rzp) \, \cos\left(m \, \thzp\right)\right]
+\end{align}
+
+To work out the resulting expressions, we will make use of the following terms:
+\begin{alignat}{3}
+    \frac{\partial \rzp}{\partial z} &= \frac{z\,\freqzero}{\rzp} \quad &; \quad
+        \frac{\partial \rzp}{\partial v_z} &= \frac{v_z}{\freqzero \, \rzp} \\
+    \frac{\partial \thzp}{\partial z} &= \frac{v_z}{\rzp^2} \quad &; \quad
+        \frac{\partial \thzp}{\partial v_z} &= -\frac{z}{\rzp^2} \\
+    \frac{\partial e_m}{\partial z} &=
+        \frac{\partial e_m}{\partial \rzp} \, \frac{\partial \rzp}{\partial z}
+        \quad &; \quad
+        \frac{\partial e_m}{\partial v_z} &=
+        \frac{\partial e_m}{\partial \rzp} \, \frac{\partial \rzp}{\partial v_z}
+\end{alignat}
+
+Our goal is to remove or collect terms that explicitly contain $v_z$, as we are going to
+take the limit as $\thzp \to \frac{\pi}{2}$, i.e. to evaluate the acceleration along the
+$z$-axis, which implies $v_z \to 0$.
+Starting with the derivative with respect to $z$:
+\begin{align}
+    \frac{\partial \rz}{\partial z} &=
+        \frac{\partial \rzp}{\partial z} +
+        \sum_{m=2}^{\mmax} \frac{\partial}{\partial z}
+            \left[\rzp \, e_m(\rzp) \, \cos(m \, \thzp)\right]\\
+    &= \frac{\partial \rzp}{\partial z} +
+        \sum_{m=2}^{\mmax} \left[
+        \frac{\partial \rzp}{\partial z} \, e_m \, \cos(m \, \thzp)
+        + \rzp \, \frac{\partial e_m}{\partial z} \, \cos(m \, \thzp)
+        - \rzp \, e_m \, \sin(m \, \thzp) \, m \,\frac{\partial \thzp}{\partial z}\right]\\
+    &= \frac{z\,\freqzero}{\rzp} + \sum_{m=2}^{\mmax} \left[
+        \frac{z\,\freqzero}{\rzp} \, e_m \, \cos(m \, \thzp) +
+        \rzp \, \frac{z\,\freqzero}{\rzp} \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) -
+        \rzp \, e_m \, \sin(m \, \thzp) \, m \, \frac{v_z}{\rzp^2}\right]\\
+    &= \frac{z\,\freqzero}{\rzp} \, \left[
+        1 + \sum_{m=2}^{\mmax} \left(
+            e_m \, \cos(m \, \thzp) +
+                \rzp \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) -
+                m \, e_m \, \sin(m \, \thzp) \, \frac{v_z}{z\,\freqzero}
+        \right)
+    \right]\\
+    &= \frac{z\,\freqzero}{\rzp} \, \left[
+        1 + \sum_{m=2}^{\mmax} \left(
+            \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right) \,
+                \cos(m \, \thzp) -
+            m \, e_m \, \frac{\sin(m \, \thzp)}{\sin(\thzp)} \, \cos(\thzp)
+        \right)
+    \right]
+\end{align}
+As we are interested in evaluating this expression along the $z$-axis, we will take the
+limit of this expression as $\thzp \to \frac{\pi}{2}$.
+For even values of $m$, as we require, the sine term in the sum will be zero, and the
+cosine terms become:
+\begin{equation}
+    \cos(m \, \thzp) = (-1)^{m/2} \quad .
+\end{equation}
+In this limit, the expression becomes:
+\begin{equation}
+    \lim_{\thzp \to \frac{\pi}{2}} \frac{\partial \rz}{\partial z} =
+        \frac{z\,\freqzero}{\rzp} \, \left[
+            1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
+                \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+        \right] \quad .
+\end{equation}
+
+Similarly for the derivative with respect to $v_z$:
+\begin{align}
+    \frac{\partial \rz}{\partial v_z} &=
+        \frac{\partial \rzp}{\partial v_z} +
+        \sum_{m=2}^{\mmax} \frac{\partial}{\partial v_z}
+            \left[\rzp \, e_m(\rzp) \, \cos(m \, \thzp)\right]\\
+    &= \frac{\partial \rzp}{\partial v_z} +
+        \sum_{m=2}^{\mmax} \left[
+        \frac{\partial \rzp}{\partial v_z} \, e_m \, \cos(m \, \thzp)
+        + \rzp \, \frac{\partial e_m}{\partial v_z} \, \cos(m \, \thzp)
+        - \rzp \, e_m \, \sin(m \, \thzp) \, m \,\frac{\partial \thzp}{\partial v_z}\right]\\
+    &= \frac{v_z}{\freqzero\,\rzp} + \sum_{m=2}^{\mmax} \left[
+        \frac{v_z}{\freqzero\,\rzp} \, e_m \, \cos(m \, \thzp) +
+        \rzp \, \frac{v_z}{\freqzero\,\rzp} \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) +
+        \rzp \, e_m \, \sin(m \, \thzp) \, m \, \frac{z}{\rzp^2}\right]\\
+    &= \frac{v_z}{\freqzero \, \rzp} \, \left[
+        1 + \sum_{m=2}^{\mmax} \left(
+            e_m \, \cos(m \, \thzp) +
+                \rzp \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) +
+                m \, e_m \, \sin(m \, \thzp) \, \tan(\thzp)
+        \right)
+    \right]\\
+    &= \frac{v_z}{\freqzero \, \rzp} \, \left[
+        1 + \sum_{m=2}^{\mmax} \left(
+            \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right) \,
+                \cos(m \, \thzp) +
+            m \, e_m \, \sin(m \, \thzp) \, \tan(\thzp)
+        \right)
+    \right]
+\end{align}
+Taking the same limit $\thzp \to \frac{\pi}{2}$, this expression becomes:
+\begin{equation}
+    \lim_{\thzp \to \frac{\pi}{2}} \frac{\partial \rz}{\partial v_z} =
+        \frac{v_z}{\freqzero \, \rzp} \, \left[
+            1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
+                \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+        \right] \quad .
+\end{equation}
+
+Combining these expressions, we have:
+\begin{align}
+    \frac{\partial \Phi}{\partial z} &=
+        v_z \, \frac{\partial \rz}{\partial z} \,
+        \left( \frac{\partial \rz}{\partial v_z} \right)^{-1}\\
+    &= v_z \, \frac{z\,\freqzero}{\rzp} \, \frac{\freqzero \, \rzp}{v_z} \,
+        \frac{\left[
+            1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
+                \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+        \right]}{\left[
+            1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
+                \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+        \right]} \\
+    &= \freqzero^2 \, z \,
+        \frac{\left[
+            1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
+                \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+        \right]}{\left[
+            1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
+                \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+        \right]}
+\end{align}
 
 \bibliographystyle{aasjournal}
 \bibliography{refs}
