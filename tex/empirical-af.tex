@@ -292,6 +292,8 @@ The benefit of this approach is that, by releasing both in any study of stellar
 kinematics, subsequent work can build on the interpretation without having to rebuild
 the data analysis aspects of the method.
 
+% TODO: the power of orbital *labels* - can use action or abundance
+
 Another major motivator for thinking about new methods is that many stellar surveys
 deliver stellar parameters and element abundances alongside kinematic measurements.
 These additional stellar labels are complementary to measurements of phase-space
@@ -428,6 +430,7 @@ everywhere to satisfy the Poisson equation for realistic density functions.
 \todo{put in an example and figure panel to demonstrate this method fitting to toy data.}
 \todo{some comments about residuals?}
 \todo{cite KG and Widrow stuff, and probably others}
+\todo{Could introduce action and angle here}
 
 % \begin{figure*}[t!]
 % \begin{center}
@@ -448,18 +451,38 @@ everywhere to satisfy the Poisson equation for realistic density functions.
 %     - Method called "direct contouring" by (KG paper 1)
 % - <Explain our way of fitting shape of contours>
 
-The framework described in Section~\ref{sec:vertical} is a standard approach to fitting
-the vertical kinematics of tracers in the Milky Way disk.
+The framework described in Section~\ref{sec:vertical} is a standard approach to modeling
+the vertical kinematics of tracers in the Milky Way disk to measure properties of the
+mass distribution, like the vertical acceleration or surface mass density.
 Here we describe an alternative approach, built off of the idea of Orbital Torus Imaging
-\citep[OTI;][]{Price-Whelan:2021}, that can more flexibly fit the vertical DF but at
-the expense of direct interpretability.
-A core motivation for OTI is that the derivatives of the DF that appear in the CBE
-(e.g., Equation~\ref{eq:cbe-1d}) only depend on the shapes of the curves defined by
-level sets of the DF (i.e. curves of constant phase-space density), or of any functions
-of the phase-space density that depend on auxiliary data (e.g., element abundance ratios
-or other stellar labels).
-We start by considering the case of using the phase-space density or DF itself, but then
-discuss how this generalizes to using stellar label data instead.
+\citep[OTI;][]{Price-Whelan:2021}.
+OTI is the idea that, in an equilibrium system, any function of the phase-space
+coordinates that ``labels'' the orbits (e.g., the orbital actions or any function of
+the actions) can be used to constrain the shapes of contours of the DF.
+This is useful because the shapes of these contours are directly related to the
+acceleration (and therefore mass distribution) through the CBE
+(Equation~\ref{eq:cbe-1d}).
+In a system with one degree of freedom, these contours are closed curves in phase-space
+that also correspond to orbital trajectories.
+In what follows, we start by considering the case of using the phase-space density or
+the value of the DF itself to fit these contours.
+We then discuss how this generalizes to using stellar label data, which we assume are
+only functions of the orbital actions and not of orbital phase (i.e. conjugate angle).
+We finally show how, in the vertical phase-space, a fitted OTI model can be used to
+compute empirical values of dynamical quantities like the orbital actions, frequencies,
+and angles.
+
+% A core motivation for OTI is that the derivatives of the DF that appear in the CBE
+% (e.g., Equation~\ref{eq:cbe-1d}) only depend on the shapes of the curves defined by
+% level sets of the DF (i.e. curves of constant phase-space density), or of any
+% functions of the phase-space density that depend on auxiliary data (e.g., element
+% abundance ratios or other stellar labels). In a system with one degree of freedom,
+% these level sets are closed curves in phase-space that also correspond to orbits. We
+% start by considering the case of using the phase-space density or the value of the DF
+% itself, then discuss how this generalizes to using stellar label data, and then
+% finally show how, in the vertical phase-space, a fitted OTI model can be used to
+% compute empirical values of dynamical quantities like the orbital actions and
+% frequencies.
 
 \subsection{Modeling the Phase-space Density} \label{sec:psd}
 
@@ -467,8 +490,9 @@ An alternate path to modeling the vertical DF of a set of tracers is to parametr
 shapes of level sets of the DF, fit a general form for the DF that uses the contour
 shapes, and take derivatives of the fitted function of the phase-space density to
 measure the acceleration with the CBE.
-This idea was already discussed and referred to as ``direct contouring'' of the DF by
-\citet{Kuijken:XXXX}, but was ignored as being impractical at that time.
+This idea is closely related to an idea referred to as ``direct contouring'' of the DF
+by \citet{Kuijken:XXXX}, but this imagined using density contours of the data itself and
+so was ignored as being impractical and noisy based on available data at the time.
 However, thanks mainly to data from the \gaia\ Mission, we now have access to large
 samples of full-phase-space kinematic measurements for stars throughout the Milky Way
 disk.
@@ -496,7 +520,7 @@ elliptical radius \rzp, defined as
 \end{equation}
 for all values of the corresponding ellipsoidal angle \thzp,
 \begin{equation}
-    \tan \left(\thzp\right) = \left(\frac{z-z_0}{v_z-v_{z,0}}\right) \, \freqzero
+    \tan (\thzp) = \left(\frac{z-z_0}{v_z-v_{z,0}}\right) \, \freqzero
     \label{eq:thetazp}
 \end{equation}
 where $z_0$ and $v_{z,0}$ are the zero-point position and velocity, respectively, which
