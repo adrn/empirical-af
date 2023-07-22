@@ -3,44 +3,17 @@ import pathlib
 import agama
 import astropy.table as at
 import astropy.units as u
-import gala.potential as gp
 import numpy as np
 from gala.units import galactic
+from helpers import R0, agama_pot, gala_pot
 
 agama.setUnits(mass=u.Msun, length=u.kpc, time=u.Myr)
-
-
-def get_potentials():
-    # Create a toy, two-component Galaxy model:
-    gala_pot = gp.CCompositePotential(
-        disk=gp.MiyamotoNagaiPotential(m=6.91e10, a=3, b=0.25, units=galactic),
-        halo=gp.NFWPotential(m=5.4e11, r_s=15.0, units=galactic),
-    )
-
-    agama_pot = agama.Potential(
-        dict(
-            type="miyamotonagai",
-            mass=gala_pot["disk"].parameters["m"].value,
-            scaleradius=gala_pot["disk"].parameters["a"].value,
-            scaleheight=gala_pot["disk"].parameters["b"].value,
-        ),
-        dict(
-            type="nfw",
-            mass=gala_pot["halo"].parameters["m"].value,
-            scaleradius=gala_pot["halo"].parameters["r_s"].value,
-        ),
-    )
-
-    return gala_pot, agama_pot
 
 
 def main():
     this_path = pathlib.Path(__file__).absolute().parent
     data_path = this_path.parent / "data"
 
-    gala_pot, agama_pot = get_potentials()
-
-    R0 = 8.275 * u.kpc
     vcirc = gala_pot.circular_velocity(R0 * [1.0, 0, 0])[0]
 
     Jphi0 = (vcirc * R0).to_value(u.kpc**2 / u.Myr)
@@ -52,9 +25,7 @@ def main():
         # Gaussian in JR, Jphi - exp in Jz
         Jr, Jz, Jphi = J.T
         return np.exp(
-            -0.5 * Jr**2 / dJr**2
-            - 0.5 * ((Jphi - Jphi0) / dJphi) ** 2
-            - np.abs(Jz) / dJz
+            -np.abs(Jr) / dJr - 0.5 * ((Jphi - Jphi0) / dJphi) ** 2 - np.abs(Jz) / dJz
         )
 
     N = 50_000_000

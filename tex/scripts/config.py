@@ -1,7 +1,13 @@
+import pathlib
+
 import agama
 import astropy.units as u
 import gala.potential as gp
 from gala.units import galactic
+
+this_path = pathlib.Path(__file__).absolute().parent
+tex_path = this_path.parent
+data_path = tex_path / "data"
 
 agama.setUnits(mass=u.Msun, length=u.kpc, time=u.Myr)
 
@@ -24,3 +30,5 @@ agama_pot = agama.Potential(
         scaleradius=gala_pot["halo"].parameters["r_s"].value,
     ),
 )
+
+R0 = 8.275 * u.kpc
