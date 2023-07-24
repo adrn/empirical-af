@@ -4,8 +4,8 @@ import agama
 import astropy.table as at
 import astropy.units as u
 import numpy as np
+from config import R0, agama_pot, gala_pot, vc0
 from gala.units import galactic
-from helpers import R0, agama_pot, gala_pot, vc0
 
 agama.setUnits(mass=u.Msun, length=u.kpc, time=u.Myr)
 
@@ -16,6 +16,7 @@ def make_toy_df(overwrite=False):
     filename = data_path / "toy-df.fits"
 
     if not overwrite and filename.exists():
+        print("{filename!s} already exists - use --overwrite to re-make.")
         return
 
     vcirc_test = gala_pot.circular_velocity(R0 * [1.0, 0, 0])[0]
