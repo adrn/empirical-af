@@ -45,14 +45,16 @@ def make_toy_df(overwrite=False):
     act_finder = agama.ActionFinder(agama_pot)
     act, ang, freq = act_finder(xv, angles=True)
 
+    idx = [0, 2, 1]  # reorder to be: JR, Jphi, Jz
+
     tbl = at.QTable()
     tbl["R"] = R * galactic["length"]
     tbl["v_R"] = vR * galactic["length"] / galactic["time"]
     tbl["z"] = xv[:, 2] * galactic["length"]
     tbl["v_z"] = xv[:, 5] * galactic["length"] / galactic["time"]
-    tbl["J"] = act * galactic["length"] ** 2 / galactic["time"]
-    tbl["Omega"] = freq * u.rad / galactic["time"]
-    tbl["theta"] = ang * u.rad
+    tbl["J"] = act[:, idx] * galactic["length"] ** 2 / galactic["time"]
+    tbl["Omega"] = freq[:, idx] * u.rad / galactic["time"]
+    tbl["theta"] = ang[:, idx] * u.rad
     tbl.write(filename, overwrite=True)
 
 
