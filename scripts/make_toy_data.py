@@ -16,7 +16,7 @@ def make_toy_df(overwrite=False):
     filename = data_path / "toy-df.fits"
 
     if not overwrite and filename.exists():
-        print("{filename!s} already exists - use --overwrite to re-make.")
+        print(f"{filename!s} already exists - use --overwrite to re-make.")
         return
 
     vcirc_test = gala_pot.circular_velocity(R0 * [1.0, 0, 0])[0]
