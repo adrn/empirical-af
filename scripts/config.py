@@ -32,3 +32,4 @@ agama_pot = agama.Potential(
 )
 
 R0 = 8.275 * u.kpc
+vc0 = 220 * u.km / u.s
