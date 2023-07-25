@@ -169,3 +169,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     make_toy_df(args.overwrite)
+    make_qiso_df(args.overwrite)
