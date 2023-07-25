@@ -174,7 +174,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.name is not None:
-        getattr(globals(), f"make_{args.name}_df")(args.overwrite)
+        globals()[f"make_{args.name}_df"](args.overwrite)
 
     else:
         make_toy_df(args.overwrite)
