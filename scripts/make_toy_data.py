@@ -169,8 +169,13 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--overwrite", action="store_true", default=False)
+    parser.add_argument("-n", "--name", default=None)
+    parser.add_argument("-o", "--overwrite", action="store_true", default=False)
     args = parser.parse_args()
 
-    make_toy_df(args.overwrite)
-    make_qiso_df(args.overwrite)
+    if args.name is not None:
+        getattr(globals(), f"make_{args.name}_df")(args.overwrite)
+
+    else:
+        make_toy_df(args.overwrite)
+        make_qiso_df(args.overwrite)
