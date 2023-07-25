@@ -136,6 +136,7 @@ def make_qiso_df(overwrite=False):
         R_sigma = 7.8
         sigma_r0 = 48.3 / kms_to_kpcMyr
         sigma_z0 = 30.7 / kms_to_kpcMyr
+        L0 = 0.01  # ~10 km/s*kpc in kpc**2/Myr
 
         sigma_r = sigma_r0 * np.exp((R0 - R_c) / R_sigma)
         sigma_z = sigma_z0 * np.exp((R0 - R_c) / R_sigma)
@@ -144,16 +145,18 @@ def make_qiso_df(overwrite=False):
         Sigma_term = A * np.exp(-R_c / R_d)
         R_term = kappa / sigma_r**2 * np.exp(-kappa * Jr / sigma_r**2)
         z_term = nu / sigma_z**2 * np.exp(-nu * Jz / sigma_z**2)
-        # Jphi_term = 1 + np.tanh(Jphi / L0)
+        Jphi_term = 1 + np.tanh(Jphi / L0)
 
         # Modify Jphi term to only generate around solar orbit
-        Jphi0 = (vc0 * R0).decompose(galactic).value
-        dJphi = Jphi0 * 0.1  # spread = 10% at solar radius
-        Jphi_term = np.exp(-0.5 * (Jphi - Jphi0) ** 2 / dJphi**2)
+        # DIABLED: doesn't make sense to have a peak at solar value...
+        # Jphi0 = (vc0 * R0).decompose(galactic).value
+        # dJphi = Jphi0 * 0.05  # spread = 5% of solar Jphi
+        # Jphi_term = np.exp(-0.5 * (Jphi - Jphi0) ** 2 / dJphi**2)
 
         val = Sigma_term * Jphi_term * R_term * z_term
 
-        val[~np.isfinite(val) | (val < 0.0) | (Jphi < 1) | (Jphi > 3.0)] = 0.0
+        # Restrict to range of Jphi - roughly Rg in (6.8, 9.8) kpc
+        val[~np.isfinite(val) | (val < 0.0) | (Jphi < 1.6) | (Jphi > 2.3)] = 0.0
         return val
 
     N = 50_000_000
