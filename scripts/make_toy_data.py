@@ -19,12 +19,15 @@ def make_table(xv):
 
     idx = [0, 2, 1]  # reorder to be: JR, Jphi, Jz
 
+    vc = gala_pot.circular_velocity(xv[:, :3].T)
+
     tbl = at.QTable()
     tbl["R"] = R * galactic["length"]
     tbl["v_R"] = vR * galactic["length"] / galactic["time"]
     tbl["z"] = xv[:, 2] * galactic["length"]
     tbl["v_z"] = xv[:, 5] * galactic["length"] / galactic["time"]
     tbl["J"] = act[:, idx] * galactic["length"] ** 2 / galactic["time"]
+    tbl["Rg"] = (tbl["J"][:, 1] / vc).to(u.kpc)
     tbl["Omega"] = freq[:, idx] * u.rad / galactic["time"]
     tbl["theta"] = ang[:, idx] * u.rad
 
@@ -155,17 +158,21 @@ def make_qiso_df(overwrite=False):
 
         val = Sigma_term * Jphi_term * R_term * z_term
 
-        # Restrict to range of Jphi - roughly Rg in (6.8, 9.8) kpc
-        val[~np.isfinite(val) | (val < 0.0) | (Jphi < 1.6) | (Jphi > 2.3)] = 0.0
+        # Restrict to range of Jphi - roughly Rg in (5, 12) kpc
+        val[~np.isfinite(val) | (val < 0.0) | (Jphi < 1.17) | (Jphi > 2.8)] = 0.0
         return val
 
-    N = 50_000_000
+    N = 400_000_000
 
     gm = agama.GalaxyModel(agama_pot, df)
     xv = gm.sample(N)[0]
 
     tbl = make_table(xv)
-    tbl.write(filename, overwrite=True)
+
+    mask = (np.abs(tbl["R"] - R0) < 1.0 * u.kpc) & (
+        np.abs(tbl["R"] - tbl["Rg"]) < 1.0 * u.kpc
+    )
+    tbl[mask].write(filename, overwrite=True)
 
 
 if __name__ == "__main__":
