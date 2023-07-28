@@ -364,8 +364,8 @@ generalizable to other contexts.
 We also want to incorporate other stellar label measurements for the tracer stars (e.g.,
 element abundance ratios) into the method.
 As with most studies of stellar dynamics, we will assume that the stars are
-collisionless and we will ignore star formation and explosions (i.e. any processes that
-change the number of stars).
+collisionless and we will ignore star formation and stellar explosions (i.e. any
+processes that change the number of stars in the galaxy).
 A fundamental tool in this context is the collisionless Boltzmann equation (CBE),
 \begin{equation}
     \frac{\partial f}{\partial t} + \bs{v} \cdot \frac{\partial f}{\partial \bs{x}} - \frac{\partial \Phi}{\partial \bs{x}} \cdot \frac{\partial f}{\partial \bs{v}} = 0
@@ -373,17 +373,24 @@ A fundamental tool in this context is the collisionless Boltzmann equation (CBE)
 \end{equation}
 which relates position $\bs{x}$ and velocity $\bs{v}$ derivatives of the distribution
 function (DF) $f$ to spatial derivatives of the gravitational potential $\Phi$ (i.e.
-accelerations; CITE).
+acceleration; CITE).
 
 Though our eventual hope is to build a method that can handle time dependence and
 disequilibrium, we will start with a set of standard assumptions to simplify the setup
 and limit the dimensionality of expressions.
-In particular, for now we will assume that the system is in equilibrium ($\Phi =
-\Phi(\bs{x})$), that the DF is in steady state ($f = f(\bs{x}, \bs{v})$ so that
-$\frac{\partial f}{\partial t}=0$), and that the system is axisymmetric and separable in
-cylindrical radius $R$ and vertical position $z$.
+In particular, for now we will assume that the system is in equilibrium, that the DF is
+in steady state, that the system is axisymmetric, and that orbital motion is separable
+in cylindrical radius $R$ and vertical position $z$.
+Our assumptions are summarized as follows:
+\begin{description}
+    \item[Equilibrium \& Steady State] $\Phi = \Phi(\bs{x})$ and $f = f(\bs{x}, \bs{v})$
+      so that $\frac{\partial f}{\partial t}=0$
+    \item[Axisymmetric] $\Phi = \Phi(R, z)$
+    \item[Separable] $\Phi(R, z) = \Phi_R(R) + \Phi_z(z)$ and $f = f_{R,\phi}(R, v_R, L_z) \, f_z(z, v_z \given L_z)$
+\end{description}
 With these assumptions, we turn to the case of modeling the vertical kinematics of a
-sample of stars that are spatially localized (e.g., near the sun).
+sample of stars that are spatially localized to a region of the Galactic disk (e.g.,
+near the sun).
 
 % Historically, observations of the DF were sparse (in numbers of tracers), and many
 % phase-space dimensions were unobserved (as is still the case for most external
@@ -403,44 +410,90 @@ sample of stars that are spatially localized (e.g., near the sun).
 % with f(E_z), Right: Fit with OTI?
 
 % TODO: In discussion, duh there is no midplane, there are spirals, etc.
-The ``vertical'' phase-space of the Galactic disk is defined by the position $z$ and
+The vertical phase-space of the Galactic disk is defined by the position $z$ and
 velocity $v_z$ of tracers with respect to the Galactic midplane ($z=0$).
-With assumptions of axisymmetry, equilibrium, separability of the potential, and
-neglecting the terms involving radial derivatives, the CBE (Equation~\ref{eq:cbe}) for
-the vertical phase-space simplifies to terms involving only $z$ and $v_z$ derivatives of
-the DF and potential:
+With the assumptions listed above, the CBE (Equation~\ref{eq:cbe}) for the vertical
+phase-space simplifies to terms involving only $z$ and $v_z$ derivatives of the DF and
+potential:
 \begin{equation}
-    v_z \, \frac{\partial f_z}{\partial z} - \frac{\partial \Phi}{\partial z} \, \frac{\partial f_z}{\partial v_z} = 0 \quad .
+    v_z \, \frac{\partial f_z}{\partial z} - \frac{\partial \Phi_z}{\partial z} \, \frac{\partial f_z}{\partial v_z} = 0 \quad .
     \label{eq:cbe-1d}
 \end{equation}
 This implies a solution for the DF of the form
 \begin{align}
     f_z(z, v_z) &= f_z\Big(E_z(z, v_z)\Big)\\
-    E_z &= \frac{1}{2} v_z^2 + \Phi(z) \quad .
+    E_z &= \frac{1}{2} v_z^2 + \Phi_z(z) \quad .
 \end{align}
 Given measurements of the positions and velocities of a set of stars, one can therefore
-measure the potential $\Phi(z)$ by parameterizing $\Phi(z)$ and $f_z(E_z)$ and fitting
+measure the potential $\Phi_z(z)$ by parameterizing $\Phi(z)$ and $f_z(E_z)$ and fitting
 the data to find the optimal parameters of the assumed functions (CITE KG, Li Widrow,
 others).
 To do this, we have to decide on functional forms for both $\Phi(z)$ and $f_z(E_z)$: We
 should use functions that are flexible enough to describe the data, but $\Phi(z)$ has
 the additional constraint that its second derivative must be finite and positive
 everywhere to satisfy the Poisson equation for realistic density functions.
-(Of course, in truth, neither orbits nor realistic disk potentials are separable in $R$ and $z$: ...)
-\todo{put in an example and figure panel to demonstrate this method fitting to toy data.}
-\todo{some comments about residuals?}
-\todo{cite KG and Widrow stuff, and probably others}
-\todo{Could introduce action and angle here}
+Here, the vertical energy $E_z$, which is a dynamical invariant and isolating integral
+of motion, acts as a way to ``label'' orbits and contours of the \df.
+% In a system with one degree of freedom (i.e. the case of vertical dynamics assuming
+% the radial motion is separable), this is a convenient choice as it directly relates
+% the potential $\Phi_z$ to the shapes of orbits and contours of the \df.
 
-% \begin{figure*}[t!]
-% \begin{center}
-% \includegraphics[width=\textwidth]{illustrate-zvz.pdf}
-% \end{center}
-% \caption{%
-% TODO
-% \label{fig:zvz}
-% }
-% \end{figure*}
+In general axisymmetric systems in equilibrium (i.e. where the motion is not separable),
+the \df\ will still only depend on the phase-space coordinates through a set of
+integrals of motion.
+There is some freedom in choosing which integrals of motion to use, but a natural choice
+are the orbital actions $\bs{J}=(J_R, J_\phi, J_z)$.
+Actions are independent isolating integrals of motion that have other useful properties
+(CITE Binney \& Tremaine).
+For example, the actions are special in that they are also the momentum coordinates of a
+set of canonical coordinates known as action--angle coordinates, where the angle
+variables $\bs{\theta}$ are the conjugate position coordinates.
+
+In the vertical phase-space, the relevant action is the vertical action $J_z$ and its
+conjugate angle $\theta_z$.
+The vertical action is defined as
+\begin{equation}
+    J_z = \frac{1}{2\pi} \, \oint \dd z \, p_z =
+        \frac{1}{2\pi} \, \oint \dd z \, v_z(z) \quad,
+\end{equation}
+where the integral is done over the full orbital path.
+This shows that, conceptually, the vertical action is related to the area that an orbit
+sweeps out in the vertical phase space.
+The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
+of $J_z$ (but the same $J_R=0$ and $J_\phi$) computed in a Milky Way-like gravitational
+potential.
+The orbits are colored by their vertical action, demonstrating that orbits with larger
+vertical actions cover a larger area in vertical phase space and reach higher maximum
+heights above the midplane $z_{\textrm{max}}$.
+% Note about how it's also important that the actions define surfaces that foliate
+% phase-space?
+The vertical action provides an alternate integral of motion to use in parameterizing
+the \df\ in the vertical phase-space:
+\begin{equation}
+    f_z(z, v_z) = f_z\Big(J_z(z, v_z)\Big) \quad .
+\end{equation}
+
+Another important invariant property of orbits is the vertical frequency $\Omega_z$,
+which determines the vertical period of an orbit $T_z = 2\pi / \Omega_z$.
+The vertical period can be computed as
+\begin{equation}
+    T_z = \oint \frac{\dd z}{v_z(z)}
+\end{equation}
+where the integral is again done over the orbital path.
+In general, the vertical frequency and period of an orbit depends on its action
+$\Omega_z = \Omega_z(J_z)$.
+
+\todo{some comments about residuals?}
+
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=\textwidth]{simulated-orbits-contours.pdf}
+\end{center}
+\caption{%
+TODO
+\label{fig:sim-contours}
+}
+\end{figure*}
 
 
 \section{Orbital Torus Imaging} \label{sec:oti}
@@ -579,6 +632,7 @@ From a fitted model, we can compute the vertical acceleration at any $(z, v_z)$ 
 
 \subsection{Modeling Stellar Label} \label{sec:stellarlabels}
 
+TODO: Jeans theorem: any function of the actions / integrals of motion gives a steady-state solution of the CBE.
 
 
 \subsection{Estimating Dynamical Quantities} \label{sec:todo}
