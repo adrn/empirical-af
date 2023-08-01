@@ -433,7 +433,7 @@ should use functions that are flexible enough to describe the data, but $\Phi(z)
 the additional constraint that its second derivative must be finite and positive
 everywhere to satisfy the Poisson equation for realistic density functions.
 Here, the vertical energy $E_z$, which is a dynamical invariant and isolating integral
-of motion, acts as a way to ``label'' orbits and contours of the \df.
+of motion, acts as a way to ``label'' orbits and level sets of the \df.
 % In a system with one degree of freedom (i.e. the case of vertical dynamics assuming
 % the radial motion is separable), this is a convenient choice as it directly relates
 % the potential $\Phi_z$ to the shapes of orbits and contours of the \df.
@@ -457,8 +457,8 @@ The vertical action is defined as
         \frac{1}{2\pi} \, \oint \dd z \, v_z(z) \quad,
 \end{equation}
 where the integral is done over the full orbital path.
-This shows that, conceptually, the vertical action is related to the area that an orbit
-sweeps out in the vertical phase space.
+The vertical action is therefore related to the area that an orbit sweeps out in the
+vertical phase space.
 The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
 of $J_z$ (but the same $J_R=0$ and $J_\phi$) computed in a Milky Way-like gravitational
 potential.
@@ -483,7 +483,6 @@ where the integral is again done over the orbital path.
 In general, the vertical frequency and period of an orbit depends on its action
 $\Omega_z = \Omega_z(J_z)$.
 
-\todo{some comments about residuals?}
 
 \begin{figure*}[t!]
 \begin{center}
@@ -562,6 +561,16 @@ So how should we parametrize the shapes of these contours?
 % DF, if we could measure multiple independent invariants, these would define surfaces
 % in phase-space that correspond to the orbits. But for now, we stick to the
 % one-dimensional dynamics of the vertical phase-space.}
+
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=\textwidth]{simulated-orbits-fourier.pdf}
+\end{center}
+\caption{%
+TODO
+\label{fig:fourier-contours}
+}
+\end{figure*}
 
 Very near the galactic midplane, where the density is approximately constant, the orbit
 shapes (and therefore contours of the DF) will be close to ellipses with an aspect ratio
@@ -805,6 +814,14 @@ Like previous subsection, but $F(r_z)$ instead of $f(r_z)$
 
 \section{Applications to Simulated Data} \label{sec:applications-sim}
 
+In what follows, we demonstrate the OTI framework described above using a set of
+simulated datasets of increasing complexity.
+We start by using a one-dimensional simple harmonic oscillator potential
+(Section~\ref{sec:sim-sho}), then use a more realistic multi-component galaxy model
+(Section~\ref{sec:sim-eq}), and finally use the final snapshot from an $N$-body
+simulation of a disk galaxy perturbed by an orbiting satellite
+(Section~\ref{sec:sim-jason}).
+
 % For our implementation used in this article, we adopt the following:
 % \begin{align}
 %     m &= \left\{2, 4\right\} \\
@@ -816,6 +833,27 @@ Like previous subsection, but $F(r_z)$ instead of $f(r_z)$
 
 \subsection{Simple Harmonic Oscillator}
 \label{sec:sim-sho}
+
+As an initial application, we simulate phase-space data in a harmonic oscillator
+potential,
+\begin{equation}
+    \Phi_{z}(z) = \frac{1}{2} \, \omega^2 \, z^2
+\end{equation}
+by sampling from an isothermal distribution function\footnote{We will use $f(\cdot)$ to
+represent a \df\ that integrates to a number of stars, and $p(\cdot)$ to represent a
+normalized \df\ that integrates to 1 (i.e. a probability distribution function).}
+\begin{align}
+    p_z(z, v_z) &= \frac{1}{\sqrt{2\pi} \, s_z} e^{-\frac{E_z}{s_z^2}} \\
+    E_z &= \frac{1}{2} v_z^2 + \Phi_z(z) \quad .
+\end{align}
+We adopt $\omega = 0.08~\unit{\radian\per\mega\year}$ and $s_z = 50~\kms$ as arbitrary
+choices meant to approximately match the observed vertical kinematics of stars near the
+solar position (CITE e.g.,).
+We sample $N=\num{65536}$
+
+generate a set of
+For all cases, when fitting to the simulated data we use a maximum Fourier expansion
+order $\mmax = 2$ (so that $m={2, 4}$).
 
 
 \subsection{Simple Equilibrium Model}
