@@ -843,18 +843,75 @@ by sampling from an isothermal distribution function\footnote{We will use $f(\cd
 represent a \df\ that integrates to a number of stars, and $p(\cdot)$ to represent a
 normalized \df\ that integrates to 1 (i.e. a probability distribution function).}
 \begin{align}
-    p_z(z, v_z) &= \frac{1}{\sqrt{2\pi} \, s_z} e^{-\frac{E_z}{s_z^2}} \\
-    E_z &= \frac{1}{2} v_z^2 + \Phi_z(z) \quad .
+    p_z(J_z) &= \frac{1}{\, s_z} e^{-\frac{J_z}{s_z}} \quad ; \quad J_z \in [0, \infty)\\
+    s_z &= \sigma_{v_z}^2 / \omega\\
+    z = \sqrt{\frac{2 \, J_z}{\omega}} \, \sin\theta_z \quad &; \quad
+        v_z = \sqrt{2 \, J_z \, \omega} \, \cos\theta_z
 \end{align}
 We adopt $\omega = 0.08~\unit{\radian\per\mega\year}$ and $s_z = 50~\kms$ as arbitrary
 choices meant to approximately match the observed vertical kinematics of stars near the
 solar position (CITE e.g.,).
-We sample $N=\num{65536}$
+We sample $N=2^{18}=\num{262144}$ phase-space positions as another arbitrary choice, but note that
+the precision of our measurements (especially at high $z$) will depend on the sample
+size.
+Figure~\ref{XX}, left shows the log-number density of this simulated sample in the
+vertical phase-space.
+We will fit the phase-space density of the simulated stars, hoping to recover a constant
+frequency for all orbits and a vertical acceleration close to $a_z(z) =
+-\omega^2\,z$.
+For setting axis limits and functions below, we define a maximum elliptical radius
+$r_{z, \textrm{max}} = 5 \, \frac{s_z}{\sqrt{\omega}}$ equivalent to the $5~\sigma$
+values of the \df\ scale.
+In terms of the phase-space coordinates, we then use a maximum $z$ value of $\max(z) =
+r_{z, \textrm{max}} \times \sqrt{\omega}$ and similarly for $v_z$, $\max(v_z) = r_{z,
+\textrm{max}} / \sqrt{\omega}$.
+For the choices above, this corresponds to $\max(z) \approx 3~\kpc$ and $\max(v_z)
+\approx 250~\kms$.
 
-generate a set of
-For all cases, when fitting to the simulated data we use a maximum Fourier expansion
-order $\mmax = 2$ (so that $m={2, 4}$).
+We then need to decide on functional forms for both the log-density function,
+$\ln\left(n(\rz)\right)$, and the Fourier coefficient function, $e_2(\rzp)$.
+For each, we use a monotonic quadratic spline function defined such that the function is
+always monotonically increasing or decreasing (which must be hard-set before
+optimization).
+\todo{Describe monotonic quadratic spline in appendix}
+For the log-density function, we assert that the log-density must monotonically
+decrease from $\rz = 0$ to the maximum spline knot location.
+We use 10 spline knot locations $x_k^{(\ln n)}$ equally spaced in $\rz$ between $0$ and
+$r_{z, \textrm{max}}$.
 
+For this initial case, we include only an $m=2$ term in our Fourier distortion of the
+elliptical radius (Equation~\ref{XX}).
+For the Fourier coefficient function, we assert that the coefficient value must equal
+zero at $\rzp = 0$, i.e. $e_2(0) = 0$, and that the coefficient value monotonically
+increases with $\rzp$.
+Requiring $e_2(0) = 0$ ensures that the inferred frequency at the midplane parameter
+$\freqzero$ will correspond to the asymptotic orbital frequency as $\rzp \rightarrow 0$.
+Assuming that the coefficient value increases with $\rzp$ (so that the orbit shapes can
+only become more prolate with increasing $z_{\textrm{max}}$) is equivalent to assuming
+that the volume density increases with increasing height $z$.
+We use 5 spline knot locations $x_k^{(e_2)}$ equally spaced in $\rz$ between $0$ and
+$r_{z, \textrm{max}}$, but we require the knot value at $\rzp = 0$, $y_0^{(e_2)}$, is
+equal to zero $y_0^{(e_2)}=0$.
+
+For this application, our parameters are summarized in Table~\ref{tbl:sho-params}
+
+\begin{table}
+\begin{tabular}{c c c}
+    Parameter & Description & Bounds \\ [0.5ex]
+    \hline\hline
+    $\ln(\freqzero / (\unit{\radian\per\mega\year}))$ & Asymptotic frequency at $r_z=0$ & $(-9, 0)$\\
+    $z_0$ & Solar position relative to midplane & $(-0.5, 0.5)~\kpc$\\
+    $v_{z,0}$ & Solar velocity relative to midplane & $(-50, 50)~\kms$\\
+    $y_0^{\ln n}$ & Log phase-space density value at $r_z=0$ & TODO\\
+    $y_{1\dots K}^{\ln n}$ & Log phase-space density knot values TODO & $(0)$\\
+    $y_0^{e_2}$ & $m=2$ Fourier coefficient value at $r_z=0$ & fixed to $0$\\
+    $y_{1\dots L}^{e_2}$ & $m=2$ Fourier coefficient knot values TODO & $(0)$\\
+\end{tabular}
+\caption{
+    Sup.
+    \label{tbl:sho-params}
+}
+\end{table}
 
 \subsection{Simple Equilibrium Model}
 \label{sec:sim-eq}
