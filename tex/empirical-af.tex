@@ -458,32 +458,6 @@ where the integral is again done over the orbital path.
 In general, the vertical frequency and period of an orbit depends on its action
 $\Omega_z = \Omega_z(J_z)$.
 
-We will also assume that, for each star, we have measurements of a set of invariant
-``labels'' $\bs{F}$, and that those labels are correlated with the orbital properties of
-the tracers $\bs{F}(\bs{w})$, for now assuming the dependence is deterministic.
-The labels can consist of any quantities that are close to being invariant over a star's
-orbit and lifetime, such as surface element abundances, birth time, birth
-position, or mass, to name a few.
-% TODO: here mention "direct contouring" and that the phase-space density itself can be
-% a label?
-
-In an equilibrium system where we have measured stellar kinematics $\bs{w} = (z, v_z)$
-and invariant labels $\bs{F}$ that appear to correlate with the orbits of stars, the
-labels can only depend on the phase-space coordinates through the vertical action $J_z$
-or any function of the vertical action and not the vertical angle $\theta_z$.
-This comes from the assumption that the labels are invariant: If they depended on
-orbital angle $\theta_z$, this would imply that the labels change over the course of an
-orbit.
-TODO: correlations can appear naturally... galaxy formation...
-We can therefore use the labels as constants of motion themselves, which provides a
-means to measure the orbital structure of the Galaxy directly, without having to assume
-a form for the potential and without needing to compute the actions.
-This forms the basis of the method of Orbital Torus Imaging (OTI; CITE PW21), which we
-describe in the following section.
-We also then show how, with an OTI model of the orbit structure, this method can be used
-to compute empirical actions, angles, and frequencies that do not require assuming a
-global potential model.
-
 % With these assumptions, we turn to the case of modeling the vertical dynamics and
 % stellar labels of a sample of stars that are spatially localized to a region of the
 % Galactic disk (e.g., near the sun).
@@ -558,7 +532,8 @@ global potential model.
 
 
 
-
+% TODO: change this figure to have 3 panels. Orbits, Mean stellar label, stellar label
+% vs. Jz. Remove the phase-space density panels. Change color schemes.
 \begin{figure*}[t!]
 \begin{center}
 \includegraphics[width=\textwidth]{simulated-orbits-contours.pdf}
@@ -572,41 +547,100 @@ TODO
 
 \section{Orbital Torus Imaging} \label{sec:oti}
 
-The orbital actions are extremely useful quantities for summarizing orbits and
+The orbital actions $\bs{J}$ are extremely useful quantities for summarizing orbits and
 constructing dynamical models.
 However, they require a global model for the gravitational potential, are expensive to
 compute, and are not directly observable.
-In the previous section, we argued that in an equilibrium system with tracers tagged
-with additional invariant labels that correlate with their orbits, the functional
-dependence of the invariant labels must only be a function of the actions and not the
-angles.
-This means that we can use the labels as constants of motion themselves to trace out the
-shapes of orbits in phase-space.
-From the shapes of these orbits, we can then infer the underlying acceleration field and therefore constrain the mass distribution of the Galaxy.
-In this section, we first discuss some subtleties of using stellar labels to trace orbits (Section~\ref{sec:oti-stat}), then ...
+Fortunately, for increasingly large samples of stars in the Milky Way, we have access to
+measurements of intrinsically-invariant stellar labels.
+These stellar labels can be used instead to trace out the orbit structure of the Galaxy.
+This forms the basis of the method of Orbital Torus Imaging (OTI; CITE PW21), which we
+describe below.
+Here we build on past work (CITE PW21) by developing a new framework for using ...
 
 
-\subsection{Using moments of the stellar label distribution to map orbits}
+\subsection{Using stellar labels to map orbits}
 \label{sec:oti-stat}
 
-When we sketched out the conceptual basis for using invariant stellar labels to trace
-orbits (Section~\ref{sec:vertical}), we assumed that the labels were deterministic
-functions of the orbital actions.
-We also implicitly assumed that we would have an infinite sample of stars to trace out
-the curves of constant label value.
-If this were true, our task would be straightforward: Identify curves of constant label value in the vertical phase-space,
+% TODO: mention "direct contouring" in phase-space density below -- and that the
+% phase-space density itself can be a label
 
-With any finite sample size of tracers, we will never observe two or more stars on
-\emph{exactly} the same orbit.
-This conceptual explanation is additionally complicated by the fact that the galaxy
-formation processes that introduce correlations between stellar labels and kinematics
-also introduce scatter in the labels at fixed actions.
+% From the shapes of these orbits, we can then infer the underlying acceleration field
+% and therefore constrain the mass distribution of the Galaxy.
+% We will also assume that, for each star, we have measurements of a set of invariant
+% ``labels'' $\bs{F}$, and that those labels are correlated with the orbital properties
+% of the tracers $\bs{F}(\bs{w})$, for now assuming the dependence is deterministic.
+
+% In an equilibrium system where we have measured stellar kinematics $\bs{w} = (z, v_z)$
+% and invariant labels $\bs{F}$ that appear to correlate with the orbits of stars, the
+% labels can only depend on the phase-space coordinates through the vertical action
+% $J_z$ or any function of the vertical action and not the vertical angle $\theta_z$.
+% This comes from the assumption that the labels are invariant: If they depended on
+% orbital angle $\theta_z$, this would imply that the labels change over the course of
+% an orbit.
+
+% We also then show how, with an OTI model of the orbit structure, this method can be used
+% to compute empirical actions, angles, and frequencies that do not require assuming a
+% global potential model.
+
+Stars have a number of observable properties that are approximately invariant over their
+lifetimes, or at least over galactic orbital timescales.
+For example, the surface element abundance ratios, birth time (as a time-invariant proxy
+of age), and stellar mass, to name a few.
+We represent these quantities with the vector $\bs{Y}$, which we refer to as the
+``stellar labels''.
+In the Milky Way, these quantities are observed to correlate with the orbital
+characteristics of stellar populations.
+For example, \todo{age velocity relation, MAPs, etc.}.
+
+Under the assumptions we adopted in Section~\ref{sec:vertical}, the correlations between
+any intrinsic, time-invariant stellar properties $\bs{Y}$ and the orbital properties of
+stars can only depend on the orbital actions $\bs{J}$ and not the angles $\bs{\theta}$,
+which are time dependent.
+This is useful because it means we can use the stellar labels as constants of motion
+themselves to trace out the shapes of orbits in phase-space.
+In the context of vertical dynamics, the vertical action is, by construction, constant
+along an orbit, so any time-invariant function of the vertical action is also constant
+along an orbit.
+
+With a suitably large sample of stars, this provides a means to measure the orbital
+structure the acceleration field of the Galaxy directly, without having to assume a form
+for the potential and without needing to compute the actions.
+From the tracers, one cou;d trace the curves of constant stellar label $Y$ in the
+vertical phase space $(z, v_z)$.
+For any given invariant stellar label $Y$, the total time derivative $\Deriv{Y}{t}$ must
+be equal to zero,
+\begin{align}
+    \Deriv{Y}{t} &= \pderiv{Y}{t} +
+        \pderiv{Y}{z} \, \deriv{z}{t} + \pderiv{Y}{v_z} \, \deriv{v_z}{t} = 0 \\
+    0 &= \pderiv{Y}{z} \, v_z + \pderiv{Y}{v_z} \, a_z
+\end{align}
+where $a_z = \deriv{v_z}{t}$ is the vertical acceleration.
+Rearranging this expression, we can write the vertical acceleration as
+\begin{align}
+    a_z &= - v_z \, \pderiv{Y}{z} \left(\pderiv{Y}{v_z}\right)^{-1}
+\end{align}
+where the right hand side and partial derivatives are evaluated along a curve of
+constant $Y$.
+
+Two subtleties complicate this idea.
+For one, the labels are not deterministic functions of the actions.
 For example, processes that cause dynamical heating of stars, which may introduce a
 correlation between the vertical action, stellar age, and metallicity (CITE), are
 inherently stochastic.
-This means that at any location in phase-space, or at any value of the vertical action
-$J_z$, there will be a distribution of stellar label values.
+This means that, in general, for any value of the vertical action, $J_z$, there will be
+a distribution of possible stellar label values.
+A second complication is that we only have a finite sample of stars, so we will
+never observe two or more stars on \emph{exactly} the same orbit.
+Together, these necessitate working with the distribution of stellar label values
+conditioned on action, $p(\bs{Y} \given J_z)$, such that the distribution of stellar
+label values has properties or parameters that vary smoothly with the vertical action.
 
+In practice, ...
+However, this .... instead use moments of the ... like the mean abundance ...
+\begin{equation}
+    \mean{Y} = \int \dd Y \, Y \, p(Y \given J_z) \quad .
+\end{equation}
 
 
 % - But: f(z, vz) = C define contours
