@@ -5,6 +5,10 @@
 % - https://arxiv.org/abs/2303.18040
 
 
+% TODO:
+% - We don't actually need to bring in the CBE at all. Much simpler point about functions that are constant along an orbit.
+
+
 % Reframe paper:
 % - "Direct contouring" has advantage that don't have to assume Phi(x) or rho(x)
 % - Disadvantage that physics doesn't have to be obeyed - contours can imply Phi that depends on v_z
@@ -22,8 +26,8 @@
 % \end{figure}
 
 \PassOptionsToPackage{usenames,dvipsnames}{xcolor}
-\documentclass[modern]{aastex631}
-% \documentclass[twocolumn]{aastex631}
+% \documentclass[modern]{aastex631}
+\documentclass[twocolumn]{aastex631}
 
 % Load common packages
 \usepackage{microtype}  % ALWAYS!
@@ -38,7 +42,7 @@
 \setlist[description]{style=unboxed}
 
 % Some style hacks:
-\renewcommand{\twocolumngrid}{\onecolumngrid}
+% \renewcommand{\twocolumngrid}{\onecolumngrid}
 \setlength{\parindent}{1.1\baselineskip}
 \addtolength{\topmargin}{-0.2in}
 \addtolength{\textheight}{0.4in}
@@ -63,7 +67,7 @@
 
 \title{
     Data-driven Dynamics with Orbital Torus Imaging:  \\
-    A Flexible Model of the Vertical Phase-space of the Galaxy
+    A Flexible Model of the Vertical Phase Space of the Galaxy
 }
 % ChatGPT: Empirical Modeling of Vertical Phase-Space Density in the Milky Way: A Flexible Method for Inferring the Acceleration Field
 
@@ -169,6 +173,29 @@
 % % Conclusions
 % We conclude :shrugs:.
 
+% Hogg abstract
+% The vertical positions and velocities of stars near the Sun --- the kinematics in the
+% direction perpendicular to the disk plane --- can be used to measure the local
+% dark-matter density and surface mass density, to constrain processes of scattering and
+% heating, and to study out-of-equilibrium dynamics (e.g., with the \textsl{Gaia}
+% phase-space spiral).
+% With contemporary stellar surveys (e.g., \textsl{Gaia}, \textsl{APOGEE}, and others),
+% the tracers of vertical dynamics are so numerous and so well measured that the orbit
+% shapes are more-or-less directly visible in the data through studies of stellar density
+% or element abundances.
+% These orbits do not agree in detail with standard mass models for the Milky Way.
+% Here we present a flexible model for foliating the vertical position-velocity phase
+% space with orbits, for use in data-driven studies of dynamics.
+% Once the phase space is foliated with orbits, the orbital actions, angles, mass density,
+% and force law can all be derived directly from that orbit foliation.
+% We show that this flexible model does a good job of fitting orbits to stellar abundance
+% data (this is ``orbital torus imaging'') and to the stellar phase-space density.
+% We also show that residuals away from such fits deliver high signal-to-noise images of
+% the vertical \textsl{Gaia} phase spiral.
+% We discuss the approximations and limitations of this approach, which is orbits-first,
+% and which also implicitly separates the vertical and radial dynamics.
+% We also release an open-source tool, \texttt{torusimaging}, to accompany this article.
+
 \end{abstract}
 
 % \keywords{}
@@ -197,11 +224,11 @@ kinematics (i.e. position $\bs{x}$ and velocity $\bs{v}$) and other stellar prop
 (i.e. element abundance, age, etc.) of stars throughout the Galaxy at present day.
 That is, we do not observe the orbits of stars or even segments of their orbits, which
 would enable a more direct measurement of the acceleration field around those
-orbits.\footnote{TODO: note about phase coherence - conceptually, streams show us
-orbits.}
+orbits.
+% \footnote{TODO: note about phase coherence - conceptually, streams show us orbits.}
 Instead, we have to rely on statistical mechanics to relate the snapshot of tracer
 kinematics we observe to the underlying mass distribution (CITE intro of Kuijken \&
-Gilmore).
+Gilmore, binney tremaine).
 
 The fundamental objects of a statistical approach to Galactic dynamics are the tracer
 distribution function (DF), $f(\bs{x}, \bs{v}, t)$, which describes the probability of
@@ -351,130 +378,78 @@ orbits in projections of phase-space.
 %   we need to know df/dt.
 
 
-\section{Vertical Dynamics} \label{sec:vertical}
+\section{Vertical Dynamics in an Axisymmetric Disk} \label{sec:vertical}
 
 % TODO: cite Justin Read review, and https://arxiv.org/pdf/2012.11477.pdf
 
 Our goal, like many past efforts, is to define a framework for measuring the mass
-distribution underlying a tracer population given a snapshot of kinematic data for the
-tracers.
+distribution underlying a tracer population given a snapshot of kinematic data $\bs{w}$
+for the tracers, where $\bs{w}$ represents the phase-space coordinates.
 For this work, we will consider stars as the tracers and the particular case of modeling
-the mass distribution around the Milky Way disk, but we note that the method is
+the mass distribution around the Milky Way disk, but we note that these ideas are
 generalizable to other contexts.
-We also want to incorporate other stellar label measurements for the tracer stars (e.g.,
-element abundance ratios) into the method.
-As with most studies of stellar dynamics, we will assume that the stars are
-collisionless and we will ignore star formation and stellar explosions (i.e. any
-processes that change the number of stars in the galaxy).
-A fundamental tool in this context is the collisionless Boltzmann equation (CBE),
-\begin{equation}
-    \frac{\partial f}{\partial t} + \bs{v} \cdot \frac{\partial f}{\partial \bs{x}} - \frac{\partial \Phi}{\partial \bs{x}} \cdot \frac{\partial f}{\partial \bs{v}} = 0
-    \label{eq:cbe}
-\end{equation}
-which relates position $\bs{x}$ and velocity $\bs{v}$ derivatives of the distribution
-function (DF) $f$ to spatial derivatives of the gravitational potential $\Phi$ (i.e.
-acceleration; CITE).
-
 Though our eventual hope is to build a method that can handle time dependence and
 disequilibrium, we will start with a set of standard assumptions to simplify the setup
 and limit the dimensionality of expressions.
-In particular, for now we will assume that the system is in equilibrium, that the DF is
+In particular, for now we will assume that the Galaxy is in equilibrium, that the DF is
 in steady state, that the system is axisymmetric, and that orbital motion is separable
 in cylindrical radius $R$ and vertical position $z$.
-Our assumptions are summarized as follows:
-\begin{description}
-    \item[Equilibrium \& Steady State] $\Phi = \Phi(\bs{x})$ and $f = f(\bs{x}, \bs{v})$
-      so that $\frac{\partial f}{\partial t}=0$
-    \item[Axisymmetric] $\Phi = \Phi(R, z)$
-    \item[Separable] $\Phi(R, z) = \Phi_R(R) + \Phi_z(z)$ and $f = f_{R,\phi}(R, v_R, L_z) \, f_z(z, v_z \given L_z)$
-\end{description}
-With these assumptions, we turn to the case of modeling the vertical kinematics of a
-sample of stars that are spatially localized to a region of the Galactic disk (e.g.,
-near the sun).
+% Our assumptions are summarized as follows:
+% \begin{description}
+%     \item[Equilibrium \& Steady State] \hfill \\
+%         The mass distribution (i.e. gravitational potential) and distribution function
+%         have no explicit time dependence, $\Phi = \Phi(\bs{x})$ and
+%         $f = f(\bs{x}, \bs{v})$. % $\frac{\partial f}{\partial t}=0$.
+%     \item[Axisymmetric] \hfill \\
+%         The mass distribution and potential depend only on cylindrical radius $R$ and
+%         height $z$, $\Phi = \Phi(R, z)$.
+%     \item[Separable]
+%         The gravitational potential and distribution function are separable, but we allow the parameters of the vertical potential $\Phi_z$ to depend on radius $R$,
+%         \begin{align*}
+%             \Phi(R, z) &= \Phi_R(R) + \Phi_z(z \given R)\\  % TODO: is this right??
+%             f &= f_{R,\phi}(R, v_R, L_z) \, f_z(z, v_z \given L_z) \quad .
+%         \end{align*}
+%         % $\Phi(R, z) = \Phi_R(R) + \Phi_z(z)$ and
+%         % $f = f_{R,\phi}(R, v_R, L_z) \, f_z(z, v_z \given L_z)$.
+% \end{description}
 
-% Historically, observations of the DF were sparse (in numbers of tracers), and many
-% phase-space dimensions were unobserved (as is still the case for most external
-% galaxies).
-% In this regime, many approaches instead work with statistical moments of the CBE, which
-% form the ``Jeans equations'' (Oort? CITE many others).
-% Within the Milky Way, Jeans modeling approaches that only use low-order moments do not
-% fully exploit the wealth of information we now have available to us.
-% However, measuring high-order moments is challenging and increasingly susceptible to
-% biases due to outliers and noise properties of the data.
-% Is is therefore possible to work with the CBE directly, to
+In axisymmetric, equilibrium systems, generic orbits permit three integrals of motion
+that are useful for summarizing and labeling the orbits.
+For example, the energy $E$, $z$-component of angular momentum $L_z$, and the ``third
+integral'' $I_3$ are all conserved quantities for orbits in an axisymmetric disk.
+A more useful set of integrals of motion are the orbital actions $\bs{J} = (J_R,
+J_\phi, J_z)$ (CITE Binney \& Tremaine).
+Actions are independent isolating integrals of motion that are special in that they are
+also the momentum coordinates of a set of canonical coordinates known as action--angle
+coordinates.
+In this coordinate system, the angle variables $\bs{\theta}$ are the conjugate position
+coordinates that increase linearly with time with a rate set by the orbital frequencies
+$\bs{\Omega}$.
 
-
-% \subsection{Vertical Dynamics} \label{sec:vertical}
-
-% TODO: maybe a 3 panel figure? Left: z-vz phase-space density of toy data, Middle: fit
-% with f(E_z), Right: Fit with OTI?
-
-% TODO: In discussion, duh there is no midplane, there are spirals, etc.
-The vertical phase-space of the Galactic disk is defined by the position $z$ and
-velocity $v_z$ of tracers with respect to the Galactic midplane ($z=0$).
-With the assumptions listed above, the CBE (Equation~\ref{eq:cbe}) for the vertical
-phase-space simplifies to terms involving only $z$ and $v_z$ derivatives of the DF and
-potential:
-\begin{equation}
-    v_z \, \frac{\partial f_z}{\partial z} - \frac{\partial \Phi_z}{\partial z} \, \frac{\partial f_z}{\partial v_z} = 0 \quad .
-    \label{eq:cbe-1d}
-\end{equation}
-This implies a solution for the DF of the form
-\begin{align}
-    f_z(z, v_z) &= f_z\Big(E_z(z, v_z)\Big)\\
-    E_z &= \frac{1}{2} v_z^2 + \Phi_z(z) \quad .
-\end{align}
-Given measurements of the positions and velocities of a set of stars, one can therefore
-measure the potential $\Phi_z(z)$ by parameterizing $\Phi(z)$ and $f_z(E_z)$ and fitting
-the data to find the optimal parameters of the assumed functions (CITE KG, Li Widrow,
-others).
-To do this, we have to decide on functional forms for both $\Phi(z)$ and $f_z(E_z)$: We
-should use functions that are flexible enough to describe the data, but $\Phi(z)$ has
-the additional constraint that its second derivative must be finite and positive
-everywhere to satisfy the Poisson equation for realistic density functions.
-Here, the vertical energy $E_z$, which is a dynamical invariant and isolating integral
-of motion, acts as a way to ``label'' orbits and level sets of the \df.
-% In a system with one degree of freedom (i.e. the case of vertical dynamics assuming
-% the radial motion is separable), this is a convenient choice as it directly relates
-% the potential $\Phi_z$ to the shapes of orbits and contours of the \df.
-
-In general axisymmetric systems in equilibrium (i.e. where the motion is not separable),
-the \df\ will still only depend on the phase-space coordinates through a set of
-integrals of motion.
-There is some freedom in choosing which integrals of motion to use, but a natural choice
-are the orbital actions $\bs{J}=(J_R, J_\phi, J_z)$.
-Actions are independent isolating integrals of motion that have other useful properties
-(CITE Binney \& Tremaine).
-For example, the actions are special in that they are also the momentum coordinates of a
-set of canonical coordinates known as action--angle coordinates, where the angle
-variables $\bs{\theta}$ are the conjugate position coordinates.
-
-In the vertical phase-space, the relevant action is the vertical action $J_z$ and its
-conjugate angle $\theta_z$.
-The vertical action is defined as
+For this work, we will consider only the vertical phase-space of the Galaxy under the
+assumption that the radial and vertical motion are separable.
+Orbits in the vertical phase-space are then fully summarized by the vertical action
+$J_z$, and the phase of a star along its orbit is set by the vertical angle $\theta_z$.
+The vertical action is defined as the area that an orbit sweeps out in the vertical
+phase-space, i.e.,
 \begin{equation}
     J_z = \frac{1}{2\pi} \, \oint \dd z \, p_z =
         \frac{1}{2\pi} \, \oint \dd z \, v_z(z) \quad,
 \end{equation}
-where the integral is done over the full orbital path.
-The vertical action is therefore related to the area that an orbit sweeps out in the
-vertical phase space.
+where this integral is done over the full orbital path, which is set by the
+gravitational field.
 The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
-of $J_z$ (but the same $J_R=0$ and $J_\phi$) computed in a Milky Way-like gravitational
-potential.
+of $J_z$ (but the same values of $J_R$ and $J_\phi$, $J_R=0$) computed in a Milky
+Way-like gravitational potential. % TODO: define the potential maybe in appendix?
 The orbits are colored by their vertical action, demonstrating that orbits with larger
 vertical actions cover a larger area in vertical phase space and reach higher maximum
 heights above the midplane $z_{\textrm{max}}$.
-% Note about how it's also important that the actions define surfaces that foliate
-% phase-space?
-The vertical action provides an alternate integral of motion to use in parameterizing
-the \df\ in the vertical phase-space:
-\begin{equation}
-    f_z(z, v_z) = f_z\Big(J_z(z, v_z)\Big) \quad .
-\end{equation}
+Note that the actions define surfaces that foliate the phase space; in the case of
+vertical dynamics, the 1D curves of constant $J_z$ (i.e. the orbits) can never
+intersect.
 
 Another important invariant property of orbits is the vertical frequency $\Omega_z$,
-which determines the vertical period of an orbit $T_z = 2\pi / \Omega_z$.
+which is related to the vertical period of an orbit $T_z = 2\pi / \Omega_z$.
 The vertical period can be computed as
 \begin{equation}
     T_z = \oint \frac{\dd z}{v_z(z)}
@@ -482,6 +457,106 @@ The vertical period can be computed as
 where the integral is again done over the orbital path.
 In general, the vertical frequency and period of an orbit depends on its action
 $\Omega_z = \Omega_z(J_z)$.
+
+We will also assume that, for each star, we have measurements of a set of invariant
+``labels'' $\bs{F}$, and that those labels are correlated with the orbital properties of
+the tracers $\bs{F}(\bs{w})$, for now assuming the dependence is deterministic.
+The labels can consist of any quantities that are close to being invariant over a star's
+orbit and lifetime, such as surface element abundances, birth time, birth
+position, or mass, to name a few.
+% TODO: here mention "direct contouring" and that the phase-space density itself can be
+% a label?
+
+In an equilibrium system where we have measured stellar kinematics $\bs{w} = (z, v_z)$
+and invariant labels $\bs{F}$ that appear to correlate with the orbits of stars, the
+labels can only depend on the phase-space coordinates through the vertical action $J_z$
+or any function of the vertical action and not the vertical angle $\theta_z$.
+This comes from the assumption that the labels are invariant: If they depended on
+orbital angle $\theta_z$, this would imply that the labels change over the course of an
+orbit.
+TODO: correlations can appear naturally... galaxy formation...
+We can therefore use the labels as constants of motion themselves, which provides a
+means to measure the orbital structure of the Galaxy directly, without having to assume
+a form for the potential and without needing to compute the actions.
+This forms the basis of the method of Orbital Torus Imaging (OTI; CITE PW21), which we
+describe in the following section.
+We also then show how, with an OTI model of the orbit structure, this method can be used
+to compute empirical actions, angles, and frequencies that do not require assuming a
+global potential model.
+
+% With these assumptions, we turn to the case of modeling the vertical dynamics and
+% stellar labels of a sample of stars that are spatially localized to a region of the
+% Galactic disk (e.g., near the sun).
+% That is, we take $\bs{w} = (z, v_z)$ and assume that the sample has been sub-selected to
+% a small range of cylindrical radius $R$. % TODO: or guiding radius?
+
+
+% We also want to incorporate other stellar label measurements for the tracer stars (e.g.,
+% element abundance ratios) into the method.
+% As with most studies of stellar dynamics, we will assume that the stars are
+% collisionless and we will ignore star formation and stellar explosions (i.e. any
+% processes that change the number of stars in the galaxy).
+% A fundamental tool in this context is the collisionless Boltzmann equation (CBE),
+% \begin{equation}
+%     \frac{\partial f}{\partial t} + \bs{v} \cdot \frac{\partial f}{\partial \bs{x}} - \frac{\partial \Phi}{\partial \bs{x}} \cdot \frac{\partial f}{\partial \bs{v}} = 0
+%     \label{eq:cbe}
+% \end{equation}
+% which relates position $\bs{x}$ and velocity $\bs{v}$ derivatives of the distribution
+% function (DF) $f$ to spatial derivatives of the gravitational potential $\Phi$ (i.e.
+% acceleration; CITE).
+
+
+
+% % Historically, observations of the DF were sparse (in numbers of tracers), and many
+% % phase-space dimensions were unobserved (as is still the case for most external
+% % galaxies).
+% % In this regime, many approaches instead work with statistical moments of the CBE, which
+% % form the ``Jeans equations'' (Oort? CITE many others).
+% % Within the Milky Way, Jeans modeling approaches that only use low-order moments do not
+% % fully exploit the wealth of information we now have available to us.
+% % However, measuring high-order moments is challenging and increasingly susceptible to
+% % biases due to outliers and noise properties of the data.
+% % Is is therefore possible to work with the CBE directly, to
+
+
+% % \subsection{Vertical Dynamics} \label{sec:vertical}
+
+% % TODO: maybe a 3 panel figure? Left: z-vz phase-space density of toy data, Middle: fit
+% % with f(E_z), Right: Fit with OTI?
+
+% % TODO: In discussion, duh there is no midplane, there are spirals, etc.
+% The vertical phase-space of the Galactic disk is defined by the position $z$ and
+% velocity $v_z$ of tracers with respect to the Galactic midplane ($z=0$).
+% With the assumptions listed above, the CBE (Equation~\ref{eq:cbe}) for the vertical
+% phase-space simplifies to terms involving only $z$ and $v_z$ derivatives of the DF and
+% potential:
+% \begin{equation}
+%     v_z \, \frac{\partial f_z}{\partial z} - \frac{\partial \Phi_z}{\partial z} \, \frac{\partial f_z}{\partial v_z} = 0 \quad .
+%     \label{eq:cbe-1d}
+% \end{equation}
+% This implies a solution for the DF of the form
+% \begin{align}
+%     f_z(z, v_z) &= f_z\Big(E_z(z, v_z)\Big)\\
+%     E_z &= \frac{1}{2} v_z^2 + \Phi_z(z) \quad .
+% \end{align}
+
+% \todo{Here, instead of the text below, discuss that any function that labels orbits will satisfy the CBE. Natural choice is an integral of motion, like Ez or action (introduce action). But that then means any function of the action or energy also satisfies this, as long as it has a non-zero gradient?? Known element abundance gradients with action (PW21, others). Can use those instead, if we infer the function. }
+
+% Given measurements of the positions and velocities of a set of stars, one can therefore
+% measure the potential $\Phi_z(z)$ by parameterizing $\Phi(z)$ and $f_z(E_z)$ and fitting
+% the data to find the optimal parameters of the assumed functions (CITE KG, Li Widrow,
+% others).
+% To do this, we have to decide on functional forms for both $\Phi(z)$ and $f_z(E_z)$: We
+% should use functions that are flexible enough to describe the data, but $\Phi(z)$ has
+% the additional constraint that its second derivative must be finite and positive
+% everywhere to satisfy the Poisson equation for realistic density functions.
+% Here, the vertical energy $E_z$, which is a dynamical invariant and isolating integral
+% of motion, acts as a way to ``label'' orbits and level sets of the \df.
+% % In a system with one degree of freedom (i.e. the case of vertical dynamics assuming
+% % the radial motion is separable), this is a convenient choice as it directly relates
+% % the potential $\Phi_z$ to the shapes of orbits and contours of the \df.
+
+
 
 
 \begin{figure*}[t!]
@@ -497,32 +572,69 @@ TODO
 
 \section{Orbital Torus Imaging} \label{sec:oti}
 
+The orbital actions are extremely useful quantities for summarizing orbits and
+constructing dynamical models.
+However, they require a global model for the gravitational potential, are expensive to
+compute, and are not directly observable.
+In the previous section, we argued that in an equilibrium system with tracers tagged
+with additional invariant labels that correlate with their orbits, the functional
+dependence of the invariant labels must only be a function of the actions and not the
+angles.
+This means that we can use the labels as constants of motion themselves to trace out the
+shapes of orbits in phase-space.
+From the shapes of these orbits, we can then infer the underlying acceleration field and therefore constrain the mass distribution of the Galaxy.
+In this section, we first discuss some subtleties of using stellar labels to trace orbits (Section~\ref{sec:oti-stat}), then ...
+
+
+\subsection{Using moments of the stellar label distribution to map orbits}
+\label{sec:oti-stat}
+
+When we sketched out the conceptual basis for using invariant stellar labels to trace
+orbits (Section~\ref{sec:vertical}), we assumed that the labels were deterministic
+functions of the orbital actions.
+We also implicitly assumed that we would have an infinite sample of stars to trace out
+the curves of constant label value.
+If this were true, our task would be straightforward: Identify curves of constant label value in the vertical phase-space,
+
+With any finite sample size of tracers, we will never observe two or more stars on
+\emph{exactly} the same orbit.
+This conceptual explanation is additionally complicated by the fact that the galaxy
+formation processes that introduce correlations between stellar labels and kinematics
+also introduce scatter in the labels at fixed actions.
+For example, processes that cause dynamical heating of stars, which may introduce a
+correlation between the vertical action, stellar age, and metallicity (CITE), are
+inherently stochastic.
+This means that at any location in phase-space, or at any value of the vertical action
+$J_z$, there will be a distribution of stellar label values.
+
+
+
 % - But: f(z, vz) = C define contours
 %     - fit contours, can take derivatives
 %     - Another benefit: contours are orbits, so can derive actions, angles, etc.
 %     - Method called "direct contouring" by (KG paper 1)
 % - <Explain our way of fitting shape of contours>
 
-The framework described in Section~\ref{sec:vertical} is a standard approach to modeling
-the vertical kinematics of tracers in the Milky Way disk to measure properties of the
-mass distribution, like the vertical acceleration or surface mass density.
-Here we describe an alternative approach, built off of the idea of Orbital Torus Imaging
-\citep[OTI;][]{Price-Whelan:2021}.
-OTI is the idea that, in an equilibrium system, any function of the phase-space
-coordinates that ``labels'' the orbits (e.g., the orbital actions or any function of
-the actions) can be used to constrain the shapes of contours of the DF.
-This is useful because the shapes of these contours are directly related to the
-acceleration (and therefore mass distribution) through the CBE
-(Equation~\ref{eq:cbe-1d}).
-In a system with one degree of freedom, these contours are closed curves in phase-space
-that also correspond to orbital trajectories.
-In what follows, we start by considering the case of using the phase-space density or
-the value of the DF itself to fit these contours.
-We then discuss how this generalizes to using stellar label data, which we assume are
-only functions of the orbital actions and not of orbital phase (i.e. conjugate angle).
-We finally show how, in the vertical phase-space, a fitted OTI model can be used to
-compute empirical values of dynamical quantities like the orbital actions, frequencies,
-and angles.
+% The framework described in Section~\ref{sec:vertical} is a standard approach to modeling
+% the vertical kinematics of tracers in the Milky Way disk to measure properties of the
+% mass distribution, like the vertical acceleration or surface mass density.
+% Here we describe an alternative approach, built off of the idea of Orbital Torus Imaging
+% \citep[OTI;][]{Price-Whelan:2021}.
+% OTI is the idea that, in an equilibrium system, any function of the phase-space
+% coordinates that ``labels'' the orbits (e.g., the orbital actions or any function of
+% the actions) can be used to constrain the shapes of contours of the DF.
+% This is useful because the shapes of these contours are directly related to the
+% acceleration (and therefore mass distribution) through the CBE
+% (Equation~\ref{eq:cbe-1d}).
+% In a system with one degree of freedom, these contours are closed curves in phase-space
+% that also correspond to orbital trajectories.
+% In what follows, we start by considering the case of using the phase-space density or
+% the value of the DF itself to fit these contours.
+% We then discuss how this generalizes to using stellar label data, which we assume are
+% only functions of the orbital actions and not of orbital phase (i.e. conjugate angle).
+% We finally show how, in the vertical phase-space, a fitted OTI model can be used to
+% compute empirical values of dynamical quantities like the orbital actions, frequencies,
+% and angles.
 
 % A core motivation for OTI is that the derivatives of the DF that appear in the CBE
 % (e.g., Equation~\ref{eq:cbe-1d}) only depend on the shapes of the curves defined by
