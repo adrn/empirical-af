@@ -534,15 +534,15 @@ $\Omega_z = \Omega_z(J_z)$.
 
 % TODO: change this figure to have 3 panels. Orbits, Mean stellar label, stellar label
 % vs. Jz. Remove the phase-space density panels. Change color schemes.
-\begin{figure*}[t!]
-\begin{center}
-\includegraphics[width=\textwidth]{simulated-orbits-contours.pdf}
-\end{center}
-\caption{%
-TODO
-\label{fig:sim-contours}
-}
-\end{figure*}
+% \begin{figure*}[t!]
+% \begin{center}
+% \includegraphics[width=\textwidth]{simulated-orbits-contours.pdf}
+% \end{center}
+% \caption{%
+% TODO
+% \label{fig:sim-contours}
+% }
+% \end{figure*}
 
 
 \section{Orbital Torus Imaging} \label{sec:oti}
@@ -552,11 +552,14 @@ constructing dynamical models.
 However, they require a global model for the gravitational potential, are expensive to
 compute, and are not directly observable.
 Fortunately, for increasingly large samples of stars in the Milky Way, we have access to
-measurements of intrinsically-invariant stellar labels.
+measurements of intrinsically-invariant stellar labels, such as surface element
+abundance ratios or stellar ages.
 These stellar labels can be used instead to trace out the orbit structure of the Galaxy.
 This forms the basis of the method of Orbital Torus Imaging (OTI; CITE PW21), which we
 describe below.
-Here we build on past work (CITE PW21) by developing a new framework for using ...
+Here we build on past work (CITE PW21) by developing a new framework and implementation
+of OTI that leverages modern auto-differentiation tools (e.g., \jax; \citealt{jax:2018})
+to generalize and accelerate the model construction and fitting.
 
 
 \subsection{Using stellar labels to map orbits}
@@ -587,11 +590,11 @@ Stars have a number of observable properties that are approximately invariant ov
 lifetimes, or at least over galactic orbital timescales.
 For example, the surface element abundance ratios, birth time (as a time-invariant proxy
 of age), and stellar mass, to name a few.
-We represent these quantities with the vector $\bs{Y}$, which we refer to as the
-``stellar labels''.
+We represent these quantities with the vector $\bs{Y}$, which we refer to as ``stellar
+labels''.
 In the Milky Way, these quantities are observed to correlate with the orbital
-characteristics of stellar populations.
-For example, \todo{age velocity relation, MAPs, etc.}.
+properties of stellar populations.
+For example, this is apparent in the ... \todo{age velocity relation, MAPs, etc.}.
 
 Under the assumptions we adopted in Section~\ref{sec:vertical}, the correlations between
 any intrinsic, time-invariant stellar properties $\bs{Y}$ and the orbital properties of
@@ -599,17 +602,22 @@ stars can only depend on the orbital actions $\bs{J}$ and not the angles $\bs{\t
 which are time dependent.
 This is useful because it means we can use the stellar labels as constants of motion
 themselves to trace out the shapes of orbits in phase-space.
-In the context of vertical dynamics, the vertical action is, by construction, constant
-along an orbit, so any time-invariant function of the vertical action is also constant
-along an orbit.
+In the context of vertical dynamics, the vertical action $J_z$ is, by construction,
+constant along an orbit, so any time-invariant function of the vertical action is also
+constant along an orbit.
 
 With a suitably large sample of stars, this provides a means to measure the orbital
 structure the acceleration field of the Galaxy directly, without having to assume a form
 for the potential and without needing to compute the actions.
-From the tracers, one cou;d trace the curves of constant stellar label $Y$ in the
-vertical phase space $(z, v_z)$.
-For any given invariant stellar label $Y$, the total time derivative $\Deriv{Y}{t}$ must
-be equal to zero,
+As long as the gradient in stellar labels as a function of vertical action
+$\deriv{Y}{J}$ is non-zero (i.e. not flat), we can use the level sets of constant
+stellar label $Y$ to ``contour'' the orbits in the vertical phase space $(z,
+v_z)$.\footnote{We note that this idea, in the context of using the phase-space density
+as a stellar label, was briefly discussed in \citet{Kuijken:19XX} and referred to as
+``direct contouring'' of the DF.}
+From the orbit contours, we can directly measure the vertical acceleration $a_z$: For
+any invariant stellar label $Y$, the total time derivative $\Deriv{Y}{t}$ must be equal
+to zero,
 \begin{align}
     \Deriv{Y}{t} &= \pderiv{Y}{t} +
         \pderiv{Y}{z} \, \deriv{z}{t} + \pderiv{Y}{v_z} \, \deriv{v_z}{t} = 0 \\
@@ -618,29 +626,56 @@ be equal to zero,
 where $a_z = \deriv{v_z}{t}$ is the vertical acceleration.
 Rearranging this expression, we can write the vertical acceleration as
 \begin{align}
-    a_z &= - v_z \, \pderiv{Y}{z} \left(\pderiv{Y}{v_z}\right)^{-1}
+    a_z &= - v_z \, \pderiv{Y}{z} \left(\pderiv{Y}{v_z}\right)^{-1} \label{eq:Y-az}
 \end{align}
 where the right hand side and partial derivatives are evaluated along a curve of
 constant $Y$.
+
+A simple example of this is the case where the stellar label $Y$ is a function of the
+vertical energy $Y=Y(E_z)$ where
+\begin{equation}
+    E_z = \frac{1}{2} v_z^2 + \Phi_z(z)
+\end{equation}
+and $\Phi_z(z)$ is the vertical potential.
+In this case, the partial derivatives in Equation~\ref{eq:Y-az} are:
+\begin{align}
+    \pderiv{Y}{z} &= \pderiv{Y}{E_z} \, \pderiv{\Phi_z}{z}\\
+    \pderiv{Y}{v_z} &= \pderiv{Y}{E_z} \, v_z
+\end{align}
+so that
+\begin{align}
+    a_z &= - v_z \, \pderiv{\Phi_z}{z} \, \pderiv{Y}{E_z} \, \left(\pderiv{Y}{E_z} \, v_z\right)^{-1} \\
+    a_z &= - \pderiv{\Phi_z}{z}
+\end{align}
+as expected.
 
 Two subtleties complicate this idea.
 For one, the labels are not deterministic functions of the actions.
 For example, processes that cause dynamical heating of stars, which may introduce a
 correlation between the vertical action, stellar age, and metallicity (CITE), are
 inherently stochastic.
-This means that, in general, for any value of the vertical action, $J_z$, there will be
+This means that, in general, for any value of the vertical action $J_z$, there will be
 a distribution of possible stellar label values.
 A second complication is that we only have a finite sample of stars, so we will
 never observe two or more stars on \emph{exactly} the same orbit.
 Together, these necessitate working with the distribution of stellar label values
-conditioned on action, $p(\bs{Y} \given J_z)$, such that the distribution of stellar
-label values has properties or parameters that vary smoothly with the vertical action.
+conditioned on action, $p(\bs{Y} \given J_z(z, v_z))$, such that the distribution of
+stellar label values has properties or parameters that vary smoothly with the vertical
+action.
 
-In practice, ...
-However, this .... instead use moments of the ... like the mean abundance ...
+In the next section, we develop a method for fitting the contours of constant stellar
+label that does not assume a form for the potential $\Phi_z(z_)$.
+Instead of modeling the full distribution $p(\bs{Y} \given z, v_z)$, we assume that our
+data are measurements of \emph{moments} of the distribution at different locations in
+phase-space.
+Contours of constant moments of the stellar label distribution equivalently satisfy the
+expressions above (e.g., Equation~\ref{eq:Y-az}).
+For example, the mean value of a stellar label $\mean{Y}$ is
 \begin{equation}
     \mean{Y} = \int \dd Y \, Y \, p(Y \given J_z) \quad .
 \end{equation}
+It is straightforward to show that this also satisfies $\Deriv{\mean{Y}}{t} = 0$, along
+with other moments of this distribution.
 
 
 % - But: f(z, vz) = C define contours
