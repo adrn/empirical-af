@@ -173,28 +173,26 @@
 % % Conclusions
 % We conclude :shrugs:.
 
-% Hogg abstract
-% The vertical positions and velocities of stars near the Sun --- the kinematics in the
-% direction perpendicular to the disk plane --- can be used to measure the local
-% dark-matter density and surface mass density, to constrain processes of scattering and
-% heating, and to study out-of-equilibrium dynamics (e.g., with the \textsl{Gaia}
-% phase-space spiral).
-% With contemporary stellar surveys (e.g., \textsl{Gaia}, \textsl{APOGEE}, and others),
-% the tracers of vertical dynamics are so numerous and so well measured that the orbit
-% shapes are more-or-less directly visible in the data through studies of stellar density
-% or element abundances.
-% These orbits do not agree in detail with standard mass models for the Milky Way.
-% Here we present a flexible model for foliating the vertical position-velocity phase
-% space with orbits, for use in data-driven studies of dynamics.
-% Once the phase space is foliated with orbits, the orbital actions, angles, mass density,
-% and force law can all be derived directly from that orbit foliation.
-% We show that this flexible model does a good job of fitting orbits to stellar abundance
-% data (this is ``orbital torus imaging'') and to the stellar phase-space density.
-% We also show that residuals away from such fits deliver high signal-to-noise images of
-% the vertical \textsl{Gaia} phase spiral.
-% We discuss the approximations and limitations of this approach, which is orbits-first,
-% and which also implicitly separates the vertical and radial dynamics.
-% We also release an open-source tool, \texttt{torusimaging}, to accompany this article.
+The vertical positions and velocities of stars near the Sun can be used to measure the
+local dark-matter density and surface mass density, to constrain processes of scattering
+and heating, and to study out-of-equilibrium dynamics (e.g., with the \gaia\ phase-space
+spiral).
+With contemporary stellar surveys (e.g., \gaia, \apogee, and others), the tracers of
+vertical dynamics are so numerous and so well measured that the orbit shapes are
+more-or-less directly visible in the data through studies of stellar density or element
+abundances.
+These orbits do not agree in detail with standard mass models for the Milky Way.
+Here we present a flexible model for foliating the vertical position--velocity phase
+space with orbits, for use in data-driven studies of dynamics.
+Once the phase space is foliated with orbits, the orbital actions, angles, mass density,
+and vertical acceleration field can all be derived directly from that orbit foliation.
+We show that this model does a good job of fitting orbits to stellar abundance
+data (this is ``Orbital Torus Imaging'') and to the stellar phase-space density.
+We also show that residuals away from such fits deliver high signal-to-noise images of
+the vertical \textsl{Gaia} phase spiral.
+We discuss the approximations and limitations of this approach, which is orbits-first,
+and which also presently separates the vertical and radial dynamics.
+We also release an open-source tool, \texttt{torusimaging}, to accompany this article.
 
 \end{abstract}
 
@@ -220,42 +218,38 @@ Until direct measurements of the Galactic acceleration field become more ubiquit
 (CITE), our best hope for studying the mass and dark matter content of the Milky Way
 comes from modeling stellar kinematics (CITE binney tremaine).
 The principle challenge of this problem is that we only observe a \emph{snapshot} of the
-kinematics (i.e. position $\bs{x}$ and velocity $\bs{v}$) and other stellar properties
-(i.e. element abundance, age, etc.) of stars throughout the Galaxy at present day.
+kinematics (i.e. position $\bs{x}$ and velocity $\bs{v}$) of stars throughout the Galaxy
+at present day.
 That is, we do not observe the orbits of stars or even segments of their orbits, which
-would enable a more direct measurement of the acceleration field around those
-orbits.
+would enable a more direct measurement of the acceleration field around those orbits.
 % \footnote{TODO: note about phase coherence - conceptually, streams show us orbits.}
 Instead, we have to rely on statistical mechanics to relate the snapshot of tracer
 kinematics we observe to the underlying mass distribution (CITE intro of Kuijken \&
-Gilmore, binney tremaine).
+Gilmore, binney tremaine, modern refs like Green).
 
-The fundamental objects of a statistical approach to Galactic dynamics are the tracer
-distribution function (DF), $f(\bs{x}, \bs{v}, t)$, which describes the probability of
-observing a star at position $\bs{x}$ and velocity $\bs{v}$ at time $t$, and the total
-gravitational potential, $\Phi(\bs{x}, t)$, which is related to the mass density
-distribution we seek $\rho(\bs{x}, t)$ through Poisson's equation $\nabla^2 \Phi = 4\pi
-G \, \rho$.
-Many dynamical inference methods have been built to connect these two objects (the DF
-and the potential) in order to measure properties of the mass distribution of the Milky
-Way and other galaxies (CITE).
-These methods can be broadly categorized into two classes: those that work with
-gradients of the DF to measure gradients of the potential (CITE), or those that model
-the form of the DF itself (CITE).
-In either case, the majority of applications of these methods have assumed that the
-Galaxy is in equilibrium and the DF is in steady state so that the explicit time
-dependence of the DF and potential can be ignored.
-Most applications also assume that the DF and potential are separable in some
-coordinates (for example, cylindrical radius $R$ and height $z$, for disk modeling), and
-that the DF and/or potential can be expressed by a set of smooth, parametric model terms
-for which the parameters can be inferred from the data.
-These methods and assumptions have enabled a wide array of measurements of the structure
-and mass distribution of the Milky Way's disk, central region, stellar halo, and dark
-matter content over the last century (CITE).
+% The fundamental objects of a statistical approach to Galactic dynamics are the tracer
+% distribution function (DF), $f(\bs{x}, \bs{v}, t)$, which describes the probability of
+% observing a star at position $\bs{x}$ and velocity $\bs{v}$ at time $t$, and the total
+% gravitational potential, $\Phi(\bs{x}, t)$, which is related to the mass density
+% distribution we seek $\rho(\bs{x}, t)$ through Poisson's equation $\nabla^2 \Phi =
+% 4\pi G \, \rho$. Many dynamical inference methods have been built to connect these two
+% objects (the DF and the potential) in order to measure properties of the mass
+% distribution of the Milky Way and other galaxies (CITE). These methods can be broadly
+% categorized into two classes: those that work with gradients of the DF to measure
+% gradients of the potential (CITE), or those that model the form of the DF itself
+% (CITE). In either case, the majority of applications of these methods have assumed
+% that the Galaxy is in equilibrium and the DF is in steady state so that the explicit
+% time dependence of the DF and potential can be ignored. Most applications also assume
+% that the DF and potential are separable in some coordinates (for example, cylindrical
+% radius $R$ and height $z$, for disk modeling), and that the DF and/or potential can be
+% expressed by a set of smooth, parametric model terms for which the parameters can be
+% inferred from the data. These methods and assumptions have enabled a wide array of
+% measurements of the structure and mass distribution of the Milky Way's disk, central
+% region, stellar halo, and dark matter content over the last century (CITE).
 
-Contemporary stellar surveys have opened up a new era of Galactic dynamical inferences
-by providing an abundance of high-quality stellar label and kinematic data for millions
-to billions of stars throughout our Galaxy.
+Contemporary stellar surveys have opened up a new dimension of Galactic dynamical
+inferences by providing an abundance of high-quality stellar label and kinematic data
+for millions to billions of stars throughout our Galaxy.
 This includes the transformative astrometric, photometric, and spectroscopic data from
 the \gaia\ Mission (CITE), deep, multi-band photometric surveys such as the Sloan
 Digital Sky Survey (SDSS; CITE), and high-resolution spectroscopic surveys such as the
@@ -264,66 +258,59 @@ Many other stellar surveys are currently underway or planned for the near future
 will expand (or are expanding) the volume, number of stars, and precision of the
 available data for Milky Way stars even further (CITE; LAMOST, GALAH, WEAVE, 4MOST,
 SDSS-V).
-
-The wealth of stellar survey data presently available brings an opportunity to make
+This wealth of stellar survey data presently available brings an opportunity to make
 precise measurements of the detailed structure of dark matter throughout the Milky Way
-and learn about its formation history (CITE).
-However, the current data volume and precision presents a challenge to current and past
-dynamical inference methods that make use of stellar kinematics.
-Many of these methods rely on assumptions that are violated at very high signal-to-noise
-ratio --- that is, the principle ``challenge'' of utilizing modern stellar kinematic
-data is that large surveys have revealed the complexity of the Milky Way at high
-significance.
-For example, the observed DF of stars in the Milky Way disk is highly sub-structured on
-small and large-scales in phase-space.
-This includes local features like the \gaia\ ``phase spiral'' in the vertical kinematics
-of stars (CITE), or the historically-named ``moving groups'' in the in-plane kinematics
-or integrals of motions (CITE Trick, Hunt, etc.).
-But this also includes large-scale features like ``ridges'' in the vertical velocity as
-a function of Galactic radius (CITE), an overall warp and flaring of the disk (CITE),
-and significant bulk motion of stars in their in-plane velocities (CITE Katz, Eilers),
-to name a few.
-These features of the DF suggest that the underlying mass distribution or gravitational
-potential is significantly time dependent.
-With historical data volumes and precision, these things could be ignored and averaged
-over because the signatures were subtle.
-However, with the quality and volume of data at present, ignoring these features (which
-appear in most phase-space dimensions as deviations from steady-state at the 10--50\%
-level; CITE) will produce very precise but biased measurements about the Milky Way and
-its dark matter.
+and learn about its formation history (CITE) by combining stellar label and kinematic
+data.
 
-To study signatures of disequilibrium and non-steady-state features in the DF, there has
-been significant effort in using equilibrium models as a means to subtract a smooth
-model from the data and thereby reveal the underlying substructure and deviations from
-equilibrium (CITE).
-This has enabled tracing features like the \gaia\ phase spiral throughout the Milky Way
-disk (CITE) and in stellar invariants like element abundances (CITE Neige).
-However, to \emph{model} or fit these non-equilibrium features, there is no universal
-framework for doing this.
-One approach to dealing with the observed complexity of the stellar kinematics in the
-Milky Way is to build explicit parametric model components of the DF and potential to
-account for all time dependence of both.
-In principle, with flexible enough parametrizations, this should work fine to produce
-unbiased measurements of the potential and therefore the dark matter and mass
-distribution of the Galaxy.
-However, this requires making decisions about how to parametrize the time dependence,
-which could be arbitrarily complex.
+% However, the current data volume and precision presents a challenge to current and
+% past dynamical inference methods that make use of stellar kinematics. Many of these
+% methods rely on assumptions that are violated at very high signal-to-noise ratio ---
+% that is, the principle ``challenge'' of utilizing modern stellar kinematic data is
+% that large surveys have revealed the complexity of the Milky Way at high significance.
+% For example, the observed DF of stars in the Milky Way disk is highly sub-structured
+% on small and large-scales in phase-space. This includes local features like the \gaia\
+% ``phase spiral'' in the vertical kinematics of stars (CITE), or the historically-named
+% ``moving groups'' in the in-plane kinematics or integrals of motions (CITE Trick,
+% Hunt, etc.). But this also includes large-scale features like ``ridges'' in the
+% vertical velocity as a function of Galactic radius (CITE), an overall warp and flaring
+% of the disk (CITE), and significant bulk motion of stars in their in-plane velocities
+% (CITE Katz, Eilers), to name a few. These features of the DF suggest that the
+% underlying mass distribution or gravitational potential is significantly time
+% dependent. With historical data volumes and precision, these things could be ignored
+% and averaged over because the signatures were subtle. However, with the quality and
+% volume of data at present, ignoring these features (which appear in most phase-space
+% dimensions as deviations from steady-state at the 10--50\% level; CITE) will produce
+% very precise but biased measurements about the Milky Way and its dark matter.
 
-With the present data volumes and precisions, which lead to incredibly precise parameter
-constraints, these decisions can easily lead to biased model fits.
-This motivates developing flexible dynamical inference methods that make fewer explicit
-assumptions about the potential and DF.
-Conceptually, we imagine developing new methods that can separate the tasks of ``fitting
-the data'' and ``interpreting the model fits in terms of dynamics.''
-The benefit of this approach is that, by releasing both in any study of stellar
-kinematics, subsequent work can build on the interpretation without having to rebuild
-the data analysis aspects of the method.
+% To study signatures of disequilibrium and non-steady-state features in the DF, there
+% has been significant effort in using equilibrium models as a means to subtract a
+% smooth model from the data and thereby reveal the underlying substructure and
+% deviations from equilibrium (CITE). This has enabled tracing features like the \gaia\
+% phase spiral throughout the Milky Way disk (CITE) and in stellar invariants like
+% element abundances (CITE Neige). However, to \emph{model} or fit these non-equilibrium
+% features, there is no universal framework for doing this. One approach to dealing with
+% the observed complexity of the stellar kinematics in the Milky Way is to build
+% explicit parametric model components of the DF and potential to account for all time
+% dependence of both. In principle, with flexible enough parametrizations, this should
+% work fine to produce unbiased measurements of the potential and therefore the dark
+% matter and mass distribution of the Galaxy. However, this requires making decisions
+% about how to parametrize the time dependence, which could be arbitrarily complex.
+
+% With the present data volumes and precisions, which lead to incredibly precise
+% parameter constraints, these decisions can easily lead to biased model fits. This
+% motivates developing flexible dynamical inference methods that make fewer explicit
+% assumptions about the potential and DF. Conceptually, we imagine developing new
+% methods that can separate the tasks of ``fitting the data'' and ``interpreting the
+% model fits in terms of dynamics.'' The benefit of this approach is that, by releasing
+% both in any study of stellar kinematics, subsequent work can build on the
+% interpretation without having to rebuild the data analysis aspects of the method.
 
 % TODO: the power of orbital *labels* - can use action or abundance
 
-Another major motivator for thinking about new methods is that many stellar surveys
-deliver stellar parameters and element abundances alongside kinematic measurements.
-These additional stellar labels are complementary to measurements of phase-space
+% Another major motivator for thinking about new methods is that many stellar surveys
+% deliver stellar parameters and element abundances alongside kinematic measurements.
+Near-invariant stellar labels are complementary to measurements of phase-space
 dimensions and can serve as invariant tracers that provide important information in
 dynamical analyses (CITE e.g., chemical tagging).
 This idea has already been used and exploited in a few different contexts.
