@@ -365,7 +365,7 @@ orbits in projections of phase-space.
 %   we need to know df/dt.
 
 
-\section{Vertical Dynamics in an Axisymmetric Disk} \label{sec:vertical}
+\section{Vertical Dynamics in an Axisymmetric Disk} \label{sec:dynreview}
 
 % TODO: cite Justin Read review, and https://arxiv.org/pdf/2012.11477.pdf
 
@@ -399,6 +399,31 @@ in cylindrical radius $R$ and vertical position $z$.
 %         % $\Phi(R, z) = \Phi_R(R) + \Phi_z(z)$ and
 %         % $f = f_{R,\phi}(R, v_R, L_z) \, f_z(z, v_z \given L_z)$.
 % \end{description}
+
+\todo{Wait - is $a_R$ really the same as $\deriv{\Phi}{R}$?}
+Under the assumptions stated above, the orbits in such a system are governed by a
+gravitational potential $\bs{a}(R, z)$ that is related to the underlying mass density
+through Poisson's equation,
+\begin{equation}
+    \frac{1}{R} \, \pderiv{}{R}\left(R \, a_R\right) + \pderiv{a_z}{z}
+        = 4\pi \, G \, \rho(R, z) \quad .
+\end{equation}
+If we assume that we will always work in a small annular volume, the radial gradient in
+the left hand side will be small and can be neglected, leaving only the vertical terms
+\begin{equation}
+    \pderiv{a_z}{z}|_R = 4\pi \, G \, \rho_z(z \,;\, R)
+\end{equation}
+where the expressions are implicitly done at some fixed radius $R$.
+Very near the galactic midplane, the mass density distribution is approximately
+constant,
+\begin{equation}
+    \rho(z) \approx \rho_0
+\end{equation}
+so the shapes of orbits in the vertical phase space are close to ellipses with an aspect
+ratio set by the asymptotic midplane vertical frequency,
+\begin{equation}
+    \freqzero^2 = 4\pi\,G \, \rho_0 \quad .
+\end{equation}
 
 In axisymmetric, equilibrium systems, generic orbits permit three integrals of motion
 that are useful for summarizing and labeling the orbits.
@@ -445,6 +470,7 @@ where the integral is again done over the orbital path.
 In general, the vertical frequency and period of an orbit depends on its action
 $\Omega_z = \Omega_z(J_z)$.
 
+
 % With these assumptions, we turn to the case of modeling the vertical dynamics and
 % stellar labels of a sample of stars that are spatially localized to a region of the
 % Galactic disk (e.g., near the sun).
@@ -480,7 +506,7 @@ $\Omega_z = \Omega_z(J_z)$.
 % % Is is therefore possible to work with the CBE directly, to
 
 
-% % \subsection{Vertical Dynamics} \label{sec:vertical}
+% % \subsection{Vertical Dynamics} \label{sec:dynreview}
 
 % % TODO: maybe a 3 panel figure? Left: z-vz phase-space density of toy data, Middle: fit
 % % with f(E_z), Right: Fit with OTI?
@@ -583,10 +609,10 @@ In the Milky Way, these quantities are observed to correlate with the orbital
 properties of stellar populations.
 For example, this is apparent in the ... \todo{age velocity relation, MAPs, etc.}.
 
-Under the assumptions we adopted in Section~\ref{sec:vertical}, the correlations between
-any intrinsic, time-invariant stellar properties $\bs{Y}$ and the orbital properties of
-stars can only depend on the orbital actions $\bs{J}$ and not the angles $\bs{\theta}$,
-which are time dependent.
+Under the assumptions we adopted in Section~\ref{sec:dynreview}, the correlations
+between any intrinsic, time-invariant stellar properties $\bs{Y}$ and the orbital
+properties of stars can only depend on the orbital actions $\bs{J}$ and not the angles
+$\bs{\theta}$, which are time dependent.
 This is useful because it means we can use the stellar labels as constants of motion
 themselves to trace out the shapes of orbits in phase-space.
 In the context of vertical dynamics, the vertical action $J_z$ is, by construction,
@@ -704,31 +730,26 @@ with other moments of this distribution.
 % compute empirical values of dynamical quantities like the orbital actions and
 % frequencies.
 
-\subsection{Modeling the Phase-space Density} \label{sec:psd}
+\subsection{Modeling Stellar Label Moments that Correlate with Dynamics} \label{sec:}
 
-An alternate path to modeling the vertical DF of a set of tracers is to parametrize the
-shapes of level sets of the DF, fit a general form for the DF that uses the contour
-shapes, and take derivatives of the fitted function of the phase-space density to
-measure the acceleration with the CBE.
-This idea is closely related to an idea referred to as ``direct contouring'' of the DF
-by \citet{Kuijken:XXXX}, but this imagined using density contours of the data itself and
-so was ignored as being impractical and noisy based on available data at the time.
-However, thanks mainly to data from the \gaia\ Mission, we now have access to large
-samples of full-phase-space kinematic measurements for stars throughout the Milky Way
-disk.
-An interesting aspect of this approach is that, in a one degree-of-freedom system, the
-level sets of the DF correspond to the orbits of individual stars:
-the curves of constant phase-space density $f_z(z, v_z)$ (i.e. value of DF) define
-orbits.
-\todo{reference figure to demonstrate this}
-In other words, given a DF, solving the expression $f_z(z, v_z) = C$ for $v_z(z)$ at
-some value $C$ would produce a contour of the DF that is equivalent to an orbit.
-So how should we parametrize the shapes of these contours?
+% TODO: re-write intro to be about moments of abundance distribution
+
+% An alternate path to modeling the vertical DF of a set of tracers is to parametrize
+% the shapes of level sets of the DF, fit a general form for the DF that uses the
+% contour shapes, and take derivatives of the fitted function of the phase-space density
+% to measure the acceleration with the CBE. This idea is closely related to an idea
+% referred to as ``direct contouring'' of the DF by \citet{Kuijken:XXXX}, but this
+% imagined using density contours of the data itself and so was ignored as being
+% impractical and noisy based on available data at the time. However, thanks mainly to
+% data from the \gaia\ Mission, we now have access to large samples of full-phase-space
+% kinematic measurements for stars throughout the Milky Way disk. An interesting aspect
+% of this approach is that, in a one degree-of-freedom system, the level sets of the DF
+% correspond to the orbits of individual stars: the curves of constant phase-space
+% density $f_z(z, v_z)$ (i.e. value of DF) define orbits. \todo{reference figure to
+% demonstrate this} In other words, given a DF, solving the expression $f_z(z, v_z) = C$
+% for $v_z(z)$ at some value $C$ would produce a contour of the DF that is equivalent to
+% an orbit. So how should we parametrize the shapes of these contours?
 % TODO: move this down and reference the discussion here in the stellar label section
-% \footnote{As an aside, this is a generally useful statement: For a higher-dimensional
-% DF, if we could measure multiple independent invariants, these would define surfaces
-% in phase-space that correspond to the orbits. But for now, we stick to the
-% one-dimensional dynamics of the vertical phase-space.}
 
 \begin{figure*}[t!]
 \begin{center}
@@ -740,9 +761,7 @@ TODO
 }
 \end{figure*}
 
-Very near the galactic midplane, where the density is approximately constant, the orbit
-shapes (and therefore contours of the DF) will be close to ellipses with an aspect ratio
-that depends on the asymptotic vertical frequency at the midplane, \freqzero.
+
 That is, near the midplane, contours of the DF will correspond to curves of constant
 elliptical radius \rzp, defined as
 \begin{equation}
