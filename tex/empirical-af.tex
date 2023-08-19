@@ -7,12 +7,8 @@
 
 % TODO:
 % - We don't actually need to bring in the CBE at all. Much simpler point about functions that are constant along an orbit.
+% - cite Justin Read review, and https://arxiv.org/pdf/2012.11477.pdf
 
-
-% Reframe paper:
-% - "Direct contouring" has advantage that don't have to assume Phi(x) or rho(x)
-% - Disadvantage that physics doesn't have to be obeyed - contours can imply Phi that depends on v_z
-% - Also: Under assumption of orbits, can compute actions angles freqs
 
 % \begin{figure}[!t]
 % \begin{center}
@@ -200,6 +196,9 @@ We also release an open-source tool, \texttt{torusimaging}, to accompany this ar
 
 \section{Introduction} \label{sec:intro}
 
+% TODO: Make sure there are references to figures for motivating the trends between
+% stellar labels and kinematics
+
 Measuring and studying the mass distribution of the Milky Way is an important venture
 for many applications in astrophysics.
 For one, the total mass distribution determines the orbits of its gas, stars, star
@@ -365,22 +364,20 @@ orbits in projections of phase-space.
 %   we need to know df/dt.
 
 
-\section{Vertical Dynamics in an Axisymmetric Disk} \label{sec:dynreview}
-
-% TODO: cite Justin Read review, and https://arxiv.org/pdf/2012.11477.pdf
+\section{Review of Vertical Dynamics in an Axisymmetric Disk} \label{sec:dynreview}
 
 Our goal, like many past efforts, is to define a framework for measuring the mass
-distribution underlying a tracer population given a snapshot of kinematic data $\bs{w}$
-for the tracers, where $\bs{w}$ represents the phase-space coordinates.
+distribution underlying a tracer population given a snapshot of kinematic data for the
+tracers.
 For this work, we will consider stars as the tracers and the particular case of modeling
 the mass distribution around the Milky Way disk, but we note that these ideas are
 generalizable to other contexts.
 Though our eventual hope is to build a method that can handle time dependence and
 disequilibrium, we will start with a set of standard assumptions to simplify the setup
 and limit the dimensionality of expressions.
-In particular, for now we will assume that the Galaxy is in equilibrium, that the DF is
-in steady state, that the system is axisymmetric, and that orbital motion is separable
-in cylindrical radius $R$ and vertical position $z$.
+In particular, for now we will assume that the Galaxy is in equilibrium, that the
+distribution function (\df) is in steady state, that the system is axisymmetric, and
+that orbital motion is separable in cylindrical radius $R$ and vertical position $z$.
 % Our assumptions are summarized as follows:
 % \begin{description}
 %     \item[Equilibrium \& Steady State] \hfill \\
@@ -400,20 +397,23 @@ in cylindrical radius $R$ and vertical position $z$.
 %         % $f = f_{R,\phi}(R, v_R, L_z) \, f_z(z, v_z \given L_z)$.
 % \end{description}
 
-\todo{Wait - is $a_R$ really the same as $\deriv{\Phi}{R}$?}
 Under the assumptions stated above, the orbits in such a system are governed by a
-gravitational potential $\bs{a}(R, z)$ that is related to the underlying mass density
-through Poisson's equation,
-\begin{equation}
+gravitational acceleration field $\bs{a}(R, z)$ that is related to the underlying mass
+density $\rho$ through Poisson's equation,
+\begin{align}
     \frac{1}{R} \, \pderiv{}{R}\left(R \, a_R\right) + \pderiv{a_z}{z}
-        = 4\pi \, G \, \rho(R, z) \quad .
-\end{equation}
-If we assume that we will always work in a small annular volume, the radial gradient in
-the left hand side will be small and can be neglected, leaving only the vertical terms
+        &= - 4\pi \, G \, \rho(R, z) \\
+    a_R = -\pderiv{\Phi}{R} \quad &; \quad a_z = -\pderiv{\Phi}{z}
+\end{align}
+where $\Phi(R, z)$ is the gravitational potential.
+If we assume that we will always work in a small annular volume (i.e. a small range of
+$R$), the radial gradient in the left hand side will be small and can be neglected,
+leaving only the vertical terms
 \begin{equation}
-    \pderiv{a_z}{z}|_R = 4\pi \, G \, \rho_z(z \,;\, R)
+    \pderiv{a_z}{z}\biggr\rvert_R = 4\pi \, G \, \rho_z(z \,;\, R)
 \end{equation}
-where the expressions are implicitly done at some fixed radius $R$.
+where the expressions are assumed to be valid at some fixed radius $R$.
+% Based on historical measurements of the vertical mass density distribution of the Milky Way disk, commonly-adopted forms for $\rho_z(z)$ are a single exponential, a double exponential, or a $\textrm{sech}(z)^2$ profile (CITE).
 Very near the galactic midplane, the mass density distribution is approximately
 constant,
 \begin{equation}
@@ -424,8 +424,14 @@ ratio set by the asymptotic midplane vertical frequency,
 \begin{equation}
     \freqzero^2 = 4\pi\,G \, \rho_0 \quad .
 \end{equation}
+Orbits that stray further from the midplane will feel an anharmonic potential such that
+the vertical frequency decreases for orbits that reach successively higher maximum
+heights, $z_{\textrm{max}}$.
+See \citet{Read:2014} for a review of mass-modeling methods that use the vertical
+kinematics of stars to infer the vertical density or surface mass density structure of
+the Milky Way.
 
-In axisymmetric, equilibrium systems, generic orbits permit three integrals of motion
+Orbits in generic axisymmetric, equilibrium systems permit three integrals of motion
 that are useful for summarizing and labeling the orbits.
 For example, the energy $E$, $z$-component of angular momentum $L_z$, and the ``third
 integral'' $I_3$ are all conserved quantities for orbits in an axisymmetric disk.
@@ -448,18 +454,7 @@ phase-space, i.e.,
     J_z = \frac{1}{2\pi} \, \oint \dd z \, p_z =
         \frac{1}{2\pi} \, \oint \dd z \, v_z(z) \quad,
 \end{equation}
-where this integral is done over the full orbital path, which is set by the
-gravitational field.
-The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
-of $J_z$ (but the same values of $J_R$ and $J_\phi$, $J_R=0$) computed in a Milky
-Way-like gravitational potential. % TODO: define the potential maybe in appendix?
-The orbits are colored by their vertical action, demonstrating that orbits with larger
-vertical actions cover a larger area in vertical phase space and reach higher maximum
-heights above the midplane $z_{\textrm{max}}$.
-Note that the actions define surfaces that foliate the phase space; in the case of
-vertical dynamics, the 1D curves of constant $J_z$ (i.e. the orbits) can never
-intersect.
-
+where this integral is done over the full orbital path.
 Another important invariant property of orbits is the vertical frequency $\Omega_z$,
 which is related to the vertical period of an orbit $T_z = 2\pi / \Omega_z$.
 The vertical period can be computed as
@@ -545,22 +540,9 @@ $\Omega_z = \Omega_z(J_z)$.
 
 
 
-% TODO: change this figure to have 3 panels. Orbits, Mean stellar label, stellar label
-% vs. Jz. Remove the phase-space density panels. Change color schemes.
-% \begin{figure*}[t!]
-% \begin{center}
-% \includegraphics[width=\textwidth]{simulated-orbits-contours.pdf}
-% \end{center}
-% \caption{%
-% TODO
-% \label{fig:sim-contours}
-% }
-% \end{figure*}
-
-
 \section{Orbital Torus Imaging} \label{sec:oti}
 
-The orbital actions $\bs{J}$ are extremely useful quantities for summarizing orbits and
+The orbital actions $\bs{J}$ are useful quantities for summarizing orbits and
 constructing dynamical models.
 However, they require a global model for the gravitational potential, are expensive to
 compute, and are not directly observable.
@@ -599,15 +581,38 @@ to generalize and accelerate the model construction and fitting.
 % to compute empirical actions, angles, and frequencies that do not require assuming a
 % global potential model.
 
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{mgfe-zvz.pdf}
+\end{center}
+\caption{%
+TODO
+\label{fig:mgfe-zvz}
+}
+\end{figure*}
+
 Stars have a number of observable properties that are approximately invariant over their
 lifetimes, or at least over galactic orbital timescales.
 For example, the surface element abundance ratios, birth time (as a time-invariant proxy
 of age), and stellar mass, to name a few.
-We represent these quantities with the vector $\bs{Y}$, which we refer to as ``stellar
-labels''.
+We represent these quantities with the vector $\bs{Y}$, which we refer to as the
+``stellar labels''.
 In the Milky Way, these quantities are observed to correlate with the orbital
 properties of stellar populations.
 For example, this is apparent in the ... \todo{age velocity relation, MAPs, etc.}.
+Figure~\ref{fig:mgfe-zvz} shows the mean abundance
+
+
+% The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
+% of $J_z$ (but the same values of $J_R=0$ and a $J_\phi$ similar to the solar value)
+% computed in a Milky Way-like gravitational potential (see
+% Section~\ref{sec:appendix-potential}). \todo{define potential in appendix}
+% The orbits are colored by their vertical action, demonstrating that orbits with larger
+% vertical actions cover a larger area in vertical phase space and reach higher maximum
+% heights above the midplane $z_{\textrm{max}}$.
+% Note that the actions define surfaces that foliate the phase space; in the case of
+% vertical dynamics, the 1D curves of constant $J_z$ (i.e. the orbits) can never
+% intersect.
 
 Under the assumptions we adopted in Section~\ref{sec:dynreview}, the correlations
 between any intrinsic, time-invariant stellar properties $\bs{Y}$ and the orbital
