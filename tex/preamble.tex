@@ -59,7 +59,8 @@
 \newcommand{\muas}{\unit{\micro\arcsecond}}
 \newcommand{\kms}{\unit{\km\per\s}}
 \newcommand{\kpc}{\unit{\kilo\parsec}}
-
+\newcommand{\usurfdens}{\unit{\msun.\parsec^{-2}}}
+\newcommand{\uvoldens}{\unit{\msun.\parsec^{-3}}}
 
 
 % Misc.
@@ -67,8 +68,10 @@
 
 % Astronomy
 \newcommand{\DM}{{\rm DM}}
-\newcommand{\feh}{\ensuremath{{[{\rm Fe}/{\rm H}]}}}
-\newcommand{\mh}{\ensuremath{{[{\rm M}/{\rm H}]}}}
+\newcommand{\abun}[2]{\ensuremath{{[\mathrm{#1}/\mathrm{#2}]}}}
+\newcommand{\feh}{\abun{Fe}{H}}
+\newcommand{\afe}{\abun{\alpha}{Fe}}
+\newcommand{\mgfe}{\abun{Mg}{Fe}}
 \newcommand{\logg}{\ensuremath{\log g}}
 \newcommand{\Teff}{\ensuremath{T_{\textrm{eff}}}}
 \newcommand{\vsini}{\ensuremath{v\,\sin i}}
@@ -76,6 +79,7 @@
 
 % Dynamics
 \newcommand{\df}{\acronym{DF}}
+\newcommand{\zmax}{\ensuremath{z_{\textrm{max}}}}
 
 % TO DO
 \newcommand{\todo}[1]{{\color{red} TODO: #1}}

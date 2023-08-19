@@ -538,6 +538,31 @@ $\Omega_z = \Omega_z(J_z)$.
 % % the radial motion is separable), this is a convenient choice as it directly relates
 % % the potential $\Phi_z$ to the shapes of orbits and contours of the \df.
 
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{mgfe-zvz.pdf}
+\end{center}
+\caption{%
+An example stellar label --- the \abun{Mg}{Fe} abundance ratio as measured in \apogee\
+\dr{17} --- that correlates with stellar kinematics in the vertical phase space of the
+Milky Way disk.
+\textbf{Left panel:} The mean \abun{Mg}{Fe} abundance for stars in the low-$\alpha$
+sequence and with angular momenta $L_z$ within $\pm 15\%$ of the value for a circular
+orbit at the Sun's position ($L_{z, c} \approx 1900$).
+The mean \abun{Mg}{Fe} abundance is shown in small bins of the vertical position, $z$,
+and velocity, $v_z$.
+The mean abundance is systematically different for stars with low vertical action $J_z$
+(i.e. near $(z, v_z) \sim (0, 0)$) as compared to stars with larger vertical action.
+\label{fig:mgfe-zvz}
+\textbf{Right panel:} The column-normalized density of stars in \abun{Mg}{Fe} as a
+function of an observable proxy for the maximum height above the midplane reached by a
+star, $\zmax$.
+We estimate a proxy for \zmax\ without using a potential model by selecting only stars
+with $|v_z| < 10~\kms$ (i.e. stars that are near their vertical apocenter).
+The over-plotted dashed (orange) line shows a linear relation between \abun{Mg}{Fe} and
+\zmax.
+}
+\end{figure*}
 
 
 \section{Orbital Torus Imaging} \label{sec:oti}
@@ -581,16 +606,6 @@ to generalize and accelerate the model construction and fitting.
 % to compute empirical actions, angles, and frequencies that do not require assuming a
 % global potential model.
 
-\begin{figure*}[t!]
-\begin{center}
-\includegraphics[width=0.8\textwidth]{mgfe-zvz.pdf}
-\end{center}
-\caption{%
-TODO
-\label{fig:mgfe-zvz}
-}
-\end{figure*}
-
 Stars have a number of observable properties that are approximately invariant over their
 lifetimes, or at least over galactic orbital timescales.
 For example, the surface element abundance ratios, birth time (as a time-invariant proxy
@@ -598,9 +613,13 @@ of age), and stellar mass, to name a few.
 We represent these quantities with the vector $\bs{Y}$, which we refer to as the
 ``stellar labels''.
 In the Milky Way, these quantities are observed to correlate with the orbital
-properties of stellar populations.
-For example, this is apparent in the ... \todo{age velocity relation, MAPs, etc.}.
-Figure~\ref{fig:mgfe-zvz} shows the mean abundance
+properties of stellar populations \todo{cite age velocity relation, MAPs, etc.}.
+Figure~\ref{fig:mgfe-zvz} shows an example of this: The left panel shows the mean
+\abun{Mg}{Fe} abundance for stars in different locations of the vertical phase space,
+demonstrating that stars with low-$J_z$ orbits (i.e. those that stay near the center)
+have systematically different element abundances than stars with large-$J_z$ orbits
+(i.e. those that stay far from the center of this phase plane).
+
 
 
 % The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
