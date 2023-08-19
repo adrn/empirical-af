@@ -1,6 +1,7 @@
 import pathlib
 
 import agama
+import astropy.coordinates as coord
 import astropy.units as u
 import gala.potential as gp
 from gala.units import galactic
@@ -33,3 +34,7 @@ agama_pot = agama.Potential(
 
 R0 = 8.275 * u.kpc
 vc0 = 229 * u.km / u.s
+
+galcen_frame = coord.Galactocentric(
+    galcen_distance=R0, galcen_v_sun=[8.4, 251.8, 8.4] * u.km / u.s
+)
