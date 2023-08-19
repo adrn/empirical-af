@@ -433,7 +433,7 @@ should use functions that are flexible enough to describe the data, but $\Phi(z)
 the additional constraint that its second derivative must be finite and positive
 everywhere to satisfy the Poisson equation for realistic density functions.
 Here, the vertical energy $E_z$, which is a dynamical invariant and isolating integral
-of motion, acts as a way to ``label'' orbits and contours of the \df.
+of motion, acts as a way to ``label'' orbits and level sets of the \df.
 % In a system with one degree of freedom (i.e. the case of vertical dynamics assuming
 % the radial motion is separable), this is a convenient choice as it directly relates
 % the potential $\Phi_z$ to the shapes of orbits and contours of the \df.
@@ -457,8 +457,8 @@ The vertical action is defined as
         \frac{1}{2\pi} \, \oint \dd z \, v_z(z) \quad,
 \end{equation}
 where the integral is done over the full orbital path.
-This shows that, conceptually, the vertical action is related to the area that an orbit
-sweeps out in the vertical phase space.
+The vertical action is therefore related to the area that an orbit sweeps out in the
+vertical phase space.
 The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
 of $J_z$ (but the same $J_R=0$ and $J_\phi$) computed in a Milky Way-like gravitational
 potential.
@@ -483,7 +483,6 @@ where the integral is again done over the orbital path.
 In general, the vertical frequency and period of an orbit depends on its action
 $\Omega_z = \Omega_z(J_z)$.
 
-\todo{some comments about residuals?}
 
 \begin{figure*}[t!]
 \begin{center}
@@ -562,6 +561,16 @@ So how should we parametrize the shapes of these contours?
 % DF, if we could measure multiple independent invariants, these would define surfaces
 % in phase-space that correspond to the orbits. But for now, we stick to the
 % one-dimensional dynamics of the vertical phase-space.}
+
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=\textwidth]{simulated-orbits-fourier.pdf}
+\end{center}
+\caption{%
+TODO
+\label{fig:fourier-contours}
+}
+\end{figure*}
 
 Very near the galactic midplane, where the density is approximately constant, the orbit
 shapes (and therefore contours of the DF) will be close to ellipses with an aspect ratio
@@ -805,6 +814,14 @@ Like previous subsection, but $F(r_z)$ instead of $f(r_z)$
 
 \section{Applications to Simulated Data} \label{sec:applications-sim}
 
+In what follows, we demonstrate the OTI framework described above using a set of
+simulated datasets of increasing complexity.
+We start by using a one-dimensional simple harmonic oscillator potential
+(Section~\ref{sec:sim-sho}), then use a more realistic multi-component galaxy model
+(Section~\ref{sec:sim-eq}), and finally use the final snapshot from an $N$-body
+simulation of a disk galaxy perturbed by an orbiting satellite
+(Section~\ref{sec:sim-jason}).
+
 % For our implementation used in this article, we adopt the following:
 % \begin{align}
 %     m &= \left\{2, 4\right\} \\
@@ -817,6 +834,102 @@ Like previous subsection, but $F(r_z)$ instead of $f(r_z)$
 \subsection{Simple Harmonic Oscillator}
 \label{sec:sim-sho}
 
+As an initial application, we simulate phase-space data in a harmonic oscillator
+potential,
+\begin{equation}
+    \Phi_{z}(z) = \frac{1}{2} \, \omega^2 \, z^2
+\end{equation}
+by sampling from an isothermal distribution function\footnote{We will use $f(\cdot)$ to
+represent a \df\ that integrates to a number of stars, and $p(\cdot)$ to represent a
+normalized \df\ that integrates to 1 (i.e. a probability distribution function).}
+\begin{align}
+    p_z(J_z) &= \frac{1}{\, s_z} e^{-\frac{J_z}{s_z}} \quad ; \quad J_z \in [0, \infty)\\
+    s_z &= \sigma_{v_z}^2 / \omega\\
+    z = \sqrt{\frac{2 \, J_z}{\omega}} \, \sin\theta_z \quad &; \quad
+        v_z = \sqrt{2 \, J_z \, \omega} \, \cos\theta_z
+\end{align}
+We adopt $\omega = 0.08~\unit{\radian\per\mega\year}$ and $s_z = 50~\kms$ as arbitrary
+choices meant to approximately match the observed vertical kinematics of stars near the
+solar position (CITE e.g.,).
+We sample $N=2^{18}=\num{262144}$ phase-space positions as another arbitrary choice, but note that
+the precision of our measurements (especially at high $z$) will depend on the sample
+size.
+Figure~\ref{fig:sho-data-model} (left panel) shows the log-number density of this
+simulated sample in the vertical phase-space.
+We will first fit the phase-space density of the simulated stars, hoping to recover a
+constant frequency for all orbits and a vertical acceleration close to $a_z(z) =
+-\omega^2\,z$.
+For setting axis limits and functions below, we define a maximum elliptical radius
+$r_{z, \textrm{max}} = 5 \, \frac{s_z}{\sqrt{\omega}}$ equivalent to the $5~\sigma$
+values of the \df\ scale.
+In terms of the phase-space coordinates, we then use a maximum $z$ value of $\max(z) =
+r_{z, \textrm{max}} \times \sqrt{\omega}$ and similarly for $v_z$, $\max(v_z) = r_{z,
+\textrm{max}} / \sqrt{\omega}$.
+For the choices above, this corresponds to $\max(z) \approx 3~\kpc$ and $\max(v_z)
+\approx 250~\kms$.
+
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=\textwidth]{sho-data-model.pdf}
+\end{center}
+\caption{%
+TODO
+\label{fig:sho-data-model}
+}
+\end{figure*}
+
+We then need to decide on functional forms for both the log-density function,
+$\ln\left(n(\rz)\right)$, and the Fourier coefficient function, $e_2(\rzp)$.
+For each, we use a monotonic quadratic spline function defined such that the function is
+always monotonically increasing or decreasing (which must be hard-set before
+optimization).
+\todo{Describe monotonic quadratic spline in appendix}
+For the log-density function, we assert that the log-density must monotonically
+decrease from $\rz = 0$ to the maximum spline knot location.
+We use 10 spline knot locations $x_k^{(\ln n)}$ equally spaced in $\rz$ between $0$ and
+$r_{z, \textrm{max}}$.
+
+For this initial case, we include only an $m=2$ term in our Fourier distortion of the
+elliptical radius (Equation~\ref{eq:rz}).
+For the Fourier coefficient function, we require that the coefficient value must equal
+zero at $\rzp = 0$, i.e. $e_2(0) = 0$, and that the coefficient value monotonically
+increases with $\rzp$.
+Requiring $e_2(0) = 0$ ensures that the parameter $\freqzero$ corresponds to the
+asymptotic orbital frequency as $\rzp \rightarrow 0$.
+Assuming that the coefficient value increases with $\rzp$ (so that the orbit shapes
+can only become more prolate with increasing $z_{\textrm{max}}$) is equivalent to
+assuming that the volume density increases with increasing height $z$.
+We use 5 spline knot locations $x_k^{(e_2)}$ equally spaced in $\rz$ between $0$ and
+$r_{z, \textrm{max}}$, but we require the knot value at $\rzp = 0$ to be equal to zero
+$y_0^{(e_2)}=0$.
+
+All of the parameters used in this demonstrative model fit are summarized in
+Table~\ref{tbl:sho-params}.
+
+\begin{table}
+    \begin{centering}
+\begin{tabular}{c c c}
+    \multicolumn{3}{c}{\textbf{Simple Harmonic Oscillator Model Fit}} \\ [0.75ex]
+    Parameter & Description & Bounds \\ [0.5ex]
+    \hline\hline
+    $\ln(\freqzero / (\unit{\radian\per\mega\year}))$ & Asymptotic frequency at $r_z=0$ & $(-9, 0)$\\
+    $z_0$ & Solar position relative to midplane & $(-0.5, 0.5)~\kpc$\\
+    $v_{z,0}$ & Solar velocity relative to midplane & $(-50, 50)~\kms$\\
+    $y_0^{\ln n}$ & Log-phase-space density function value at $r_z=0$ & $(-5, 25)$\\
+    $y_{1\dots K}^{\ln n}$ & Log-phase-space density function derivative values & $(-25, 0)$\\
+    $y_0^{e_2}$ & $m=2$ Fourier coefficient function value at $r_z=0$ & fixed to $0$\\
+    $y_{1\dots L}^{e_2}$ & $m=2$ Fourier coefficient function derivative values & $(0, 1)$\\
+\end{tabular}
+\caption{
+    A summary of the parameters and parameter bounds used for fitting the simulated
+    simple harmonic oscillator data in Section~\ref{sec:sim-sho}.
+    We use $K=10$ spline knots for the log-phase-space density spline function and $L=5$
+    spline knots for the $m=2$ Fourier coefficient spline function.
+    In total, this model has 17 free parameters.
+    \label{tbl:sho-params}
+}
+\end{centering}
+\end{table}
 
 \subsection{Simple Equilibrium Model}
 \label{sec:sim-eq}
