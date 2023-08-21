@@ -621,7 +621,6 @@ have systematically different element abundances than stars with large-$J_z$ orb
 (i.e. those that stay far from the center of this phase plane).
 
 
-
 % The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
 % of $J_z$ (but the same values of $J_R=0$ and a $J_\phi$ similar to the solar value)
 % computed in a Milky Way-like gravitational potential (see
@@ -756,25 +755,6 @@ with other moments of this distribution.
 
 \subsection{Modeling Stellar Label Moments that Correlate with Dynamics} \label{sec:}
 
-% TODO: re-write intro to be about moments of abundance distribution
-
-% An alternate path to modeling the vertical DF of a set of tracers is to parametrize
-% the shapes of level sets of the DF, fit a general form for the DF that uses the
-% contour shapes, and take derivatives of the fitted function of the phase-space density
-% to measure the acceleration with the CBE. This idea is closely related to an idea
-% referred to as ``direct contouring'' of the DF by \citet{Kuijken:XXXX}, but this
-% imagined using density contours of the data itself and so was ignored as being
-% impractical and noisy based on available data at the time. However, thanks mainly to
-% data from the \gaia\ Mission, we now have access to large samples of full-phase-space
-% kinematic measurements for stars throughout the Milky Way disk. An interesting aspect
-% of this approach is that, in a one degree-of-freedom system, the level sets of the DF
-% correspond to the orbits of individual stars: the curves of constant phase-space
-% density $f_z(z, v_z)$ (i.e. value of DF) define orbits. \todo{reference figure to
-% demonstrate this} In other words, given a DF, solving the expression $f_z(z, v_z) = C$
-% for $v_z(z)$ at some value $C$ would produce a contour of the DF that is equivalent to
-% an orbit. So how should we parametrize the shapes of these contours?
-% TODO: move this down and reference the discussion here in the stellar label section
-
 \begin{figure*}[t!]
 \begin{center}
 \includegraphics[width=\textwidth]{simulated-orbits-fourier.pdf}
@@ -784,6 +764,29 @@ TODO
 \label{fig:fourier-contours}
 }
 \end{figure*}
+
+Here we develop a method to fit the shapes of contours of constant stellar label moments
+in the vertical phase space of the Milky Way disk.
+An example of the type of data we would like to model is shown in the left panel of
+Figure~\ref{fig:mgfe-zvz}.
+As we showed in the previous section (Section~\ref{sec:oti-stat}), the shapes of these
+contours correspond to the shapes of orbits in the vertical phase space (under the
+assumptions listed above).
+Figure~\ref{fig:XX} demonstrates this visually using simulated data.
+We generate simulated stellar positions and velocities by sampling from a
+quasi-isothermal distribution function (\df; CITE Binney, Sanders and Binney) embedded
+in a static, axisymmetric model for the Milky Way.
+The Milky Way potential model is described in Appendix~\ref{sec:appendix-potential}, and
+we use the \agama\ package (CITE) to generate \todo{N} samples from the \df.
+We then sub-select a sample of star particles that are spatially localized near the
+solar radius, $|R - 8.3~\kpc| < 0.5~\kpc$, and are near their guiding radius, $|R - R_G|
+< 0.5~\kpc$ where $R_G \equiv L_z / v_c(R)$ and $v_c(R)$ is the circular velocity at the
+radius $R$.
+We compute the maximum height above the midplane reached by each star particle, \zmax,
+and use the linear relation between \zmax\ and \abun{Mg}{Fe} seen in the \apogee\ data
+(see the right panel of Figure~\ref{fig:mgfe-zvz}) to compute simulated \abun{Mg}{Fe}
+abundances for the star particles.
+The leftmost panel of Figure~\ref{fig:XX} ...
 
 
 That is, near the midplane, contours of the DF will correspond to curves of constant
