@@ -16,12 +16,13 @@
 \newcommand{\project}[1]{\textsl{#1}}
 
 % Packages / projects / programming
-\newcommand{\package}[1]{\textsl{#1}}
+\newcommand{\package}[1]{\texttt{#1}}
 \newcommand{\acronym}[1]{{\small{#1}}}
-\newcommand{\github}{\package{GitHub}}
-\newcommand{\python}{\package{Python}}
+\newcommand{\github}{\textsl{GitHub}}
+\newcommand{\python}{\textsl{Python}}
 \newcommand{\jax}{\package{JAX}}
-\newcommand{\emcee}{\project{emcee}}
+\newcommand{\agama}{\package{Agama}}
+\newcommand{\gala}{\package{gala}}
 
 % Stats / probability
 \newcommand{\given}{\,|\,}
@@ -31,7 +32,10 @@
 % Maths
 \newcommand{\dd}{\mathrm{d}}
 \newcommand{\deriv}[2]{\frac{\mathrm{d}{#1}}{\mathrm{d}{#2}}}
+\newcommand{\dderiv}[2]{\frac{\mathrm{d^2}{#1}}{\mathrm{d}{#2}^2}}
+\newcommand{\Deriv}[2]{\frac{\mathrm{D}{#1}}{\mathrm{D}{#2}}}
 \newcommand{\pderiv}[2]{\frac{\partial {#1}}{\partial {#2}}}
+\newcommand{\ppderiv}[2]{\frac{\partial^2 {#1}}{\partial {#2}^2}}
 \newcommand{\transpose}[1]{{#1}^{\mathsf{T}}}
 \newcommand{\inverse}[1]{{#1}^{-1}}
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
@@ -50,11 +54,14 @@
 \restoresymbol{SIX}{tablenum}
 \DeclareSIUnit\year{yr}
 \DeclareSIUnit\parsec{pc}
+\DeclareSIUnit\Msun{M_\odot}
+\DeclareSIUnit\Rsun{R_\odot}
 \newcommand{\mas}{\unit{\milli\arcsecond}}
 \newcommand{\muas}{\unit{\micro\arcsecond}}
 \newcommand{\kms}{\unit{\km\per\s}}
 \newcommand{\kpc}{\unit{\kilo\parsec}}
-
+\newcommand{\usurfdens}{\unit{\msun.\parsec^{-2}}}
+\newcommand{\uvoldens}{\unit{\msun.\parsec^{-3}}}
 
 
 % Misc.
@@ -62,8 +69,10 @@
 
 % Astronomy
 \newcommand{\DM}{{\rm DM}}
-\newcommand{\feh}{\ensuremath{{[{\rm Fe}/{\rm H}]}}}
-\newcommand{\mh}{\ensuremath{{[{\rm M}/{\rm H}]}}}
+\newcommand{\abun}[2]{\ensuremath{{[\mathrm{#1}/\mathrm{#2}]}}}
+\newcommand{\feh}{\abun{Fe}{H}}
+\newcommand{\afe}{\abun{\alpha}{Fe}}
+\newcommand{\mgfe}{\abun{Mg}{Fe}}
 \newcommand{\logg}{\ensuremath{\log g}}
 \newcommand{\Teff}{\ensuremath{T_{\textrm{eff}}}}
 \newcommand{\vsini}{\ensuremath{v\,\sin i}}
@@ -71,6 +80,7 @@
 
 % Dynamics
 \newcommand{\df}{\acronym{DF}}
+\newcommand{\zmax}{\ensuremath{z_{\textrm{max}}}}
 
 % TO DO
 \newcommand{\todo}[1]{{\color{red} TODO: #1}}
@@ -81,4 +91,3 @@
 \newcommand{\apogee}{\acronym{APOGEE}}
 \newcommand{\sdss}{\acronym{SDSS}}
 \newcommand{\sdssiv}{\acronym{SDSS-IV}}
-\newcommand{\thejoker}{\project{The~Joker}}
