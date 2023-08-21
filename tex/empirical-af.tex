@@ -540,13 +540,19 @@ $\Omega_z = \Omega_z(J_z)$.
 
 \begin{figure*}[t!]
 \begin{center}
-\includegraphics[width=0.8\textwidth]{mgfe-zvz.pdf}
+\includegraphics[width=1\textwidth]{mgfe-zvz.pdf}
 \end{center}
 \caption{%
-An example stellar label --- the \abun{Mg}{Fe} abundance ratio as measured in \apogee\
-\dr{17} --- that correlates with stellar kinematics in the vertical phase space of the
-Milky Way disk.
-\textbf{Left panel:} The mean \abun{Mg}{Fe} abundance for stars in the low-$\alpha$
+A demonstration that stellar labels correlate with stellar orbits in the vertical phase
+space of the Milky Way disk.
+\textbf{Left panel:} Seven orbits computed in a Milky Way mass model (see
+Appendix~\ref{sec:appendix-potential}) and shown in the vertical phase space, $(z,
+v_z)$.
+The orbits have equally-spaced values of the maximum height above the midplane each
+orbit reaches, \zmax.
+The vertical action, $J_z$, of these orbits scales approximately like $J_z \propto
+\zmax^2$, and all orbits have $J_R=0$ and $J_\phi\approx 1900~\kms~\kpc$.
+\textbf{Middle panel:} The mean \abun{Mg}{Fe} abundance for stars in the low-$\alpha$
 sequence and with angular momenta $L_z$ within $\pm 15\%$ of the value for a circular
 orbit at the Sun's position ($L_{z, c} \approx 1900$).
 The mean \abun{Mg}{Fe} abundance is shown in small bins of the vertical position, $z$,
@@ -613,12 +619,23 @@ of age), and stellar mass, to name a few.
 We represent these quantities with the vector $\bs{Y}$, which we refer to as the
 ``stellar labels''.
 In the Milky Way, these quantities are observed to correlate with the orbital
-properties of stellar populations \todo{cite age velocity relation, MAPs, etc.}.
-Figure~\ref{fig:mgfe-zvz} shows an example of this: The left panel shows the mean
-\abun{Mg}{Fe} abundance for stars in different locations of the vertical phase space,
-demonstrating that stars with low-$J_z$ orbits (i.e. those that stay near the center)
-have systematically different element abundances than stars with large-$J_z$ orbits
-(i.e. those that stay far from the center of this phase plane).
+properties of stellar populations.
+For example, there is a long known correlation between stellar age and velocity
+dispersion (CITE), the kinematic properties of mono-abundance stellar populations depend
+on the value of the abundance (CITE), and there are known gradients in stellar element
+abundances and Galactic position (CITE).
+Figure~\ref{fig:mgfe-zvz} shows an example of such a correlation in the vertical
+kinematics of stars in the Milky Way.
+The left panel of Figure~\ref{fig:mgfe-zvz} shows seven orbits in the vertical phase
+space (with $J_R=0$ and $J_\phi \approx 1900~\kms~\kpc$), with equally-spaced values of
+\zmax\ as computed in a Milky Way-like gravitational potential around the solar position
+(see Section~\ref{sec:appendix-potential}).
+The vertical action scales approximately with $J_z \propto \zmax^2$.
+The middle panel shows the mean \abun{Mg}{Fe} abundance for stars in different locations
+of the vertical phase space, demonstrating that stars with low-$J_z$ orbits (i.e. those
+that stay near the center of this phase space) have systematically different element
+abundances than stars with large-$J_z$ orbits (i.e. those that stay far from the center
+of this phase space).
 
 
 % The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
@@ -765,8 +782,8 @@ TODO
 }
 \end{figure*}
 
-Here we develop a method to fit the shapes of contours of constant stellar label moments
-in the vertical phase space of the Milky Way disk.
+In this section, we develop a method to fit the shapes of contours of constant stellar
+label moments in the vertical phase space of the Milky Way disk.
 An example of the type of data we would like to model is shown in the left panel of
 Figure~\ref{fig:mgfe-zvz}.
 As we showed in the previous section (Section~\ref{sec:oti-stat}), the shapes of these
@@ -1233,6 +1250,11 @@ participating in the {\it Gaia} Multilateral Agreement.
 }
 
 \appendix
+
+\section{A Toy Milky Way Mass Model}
+\label{sec:appendix-potential}
+
+TODO.
 
 \section{Evaluation of the Vertical Acceleration from an OTI Model}
 \label{sec:appendix-math}
