@@ -353,15 +353,9 @@ Torus Imaging idea to outline an approach that only requires modeling the shapes
 orbits in projections of phase-space.
 
 
-% Figure 1: Show that contours of DF = orbits
-% Figure 2: rz' vs. thetaz' for a few different orbits - show that m=2, m=4??
-% Figure 3: Test on simple case: isothermal or SHO, simple?? Can recover actions, frequencies, etc.
-% Figure 4: Real galaxy - not separable. Agama equilibrium model. Still does well!
-% Figure 5:
+\section{Data} \label{sec:data}
 
-% Notes:
-% - We measure the DF, so can take gradients, but to get to acceleration and potential,
-%   we need to know df/dt.
+\todo{standard blurbs about APOGEE and Gaia}
 
 
 \section{Review of Vertical Dynamics in an Axisymmetric Disk} \label{sec:dynreview}
@@ -422,7 +416,7 @@ constant,
 so the shapes of orbits in the vertical phase space are close to ellipses with an aspect
 ratio set by the asymptotic midplane vertical frequency,
 \begin{equation}
-    \freqzero^2 = 4\pi\,G \, \rho_0 \quad .
+    \freqzero^2 = 4\pi\,G \, \rho_0 \quad . \label{eq:freqzero}
 \end{equation}
 Orbits that stray further from the midplane will feel an anharmonic potential such that
 the vertical frequency decreases for orbits that reach successively higher maximum
@@ -540,13 +534,19 @@ $\Omega_z = \Omega_z(J_z)$.
 
 \begin{figure*}[t!]
 \begin{center}
-\includegraphics[width=0.8\textwidth]{mgfe-zvz.pdf}
+\includegraphics[width=1\textwidth]{mgfe-zvz.pdf}
 \end{center}
 \caption{%
-An example stellar label --- the \abun{Mg}{Fe} abundance ratio as measured in \apogee\
-\dr{17} --- that correlates with stellar kinematics in the vertical phase space of the
-Milky Way disk.
-\textbf{Left panel:} The mean \abun{Mg}{Fe} abundance for stars in the low-$\alpha$
+A demonstration that stellar labels correlate with stellar orbits in the vertical phase
+space of the Milky Way disk.
+\textbf{Left panel:} Seven orbits computed in a Milky Way mass model (see
+Appendix~\ref{sec:appendix-potential}) and shown in the vertical phase space, $(z,
+v_z)$.
+The orbits have equally-spaced values of the maximum height above the midplane each
+orbit reaches, \zmax.
+The vertical action, $J_z$, of these orbits scales approximately like $J_z \propto
+\zmax^2$, and all orbits have $J_R=0$ and $J_\phi\approx 1900~\kms~\kpc$.
+\textbf{Middle panel:} The mean \abun{Mg}{Fe} abundance for stars in the low-$\alpha$
 sequence and with angular momenta $L_z$ within $\pm 15\%$ of the value for a circular
 orbit at the Sun's position ($L_{z, c} \approx 1900$).
 The mean \abun{Mg}{Fe} abundance is shown in small bins of the vertical position, $z$,
@@ -555,10 +555,10 @@ The mean abundance is systematically different for stars with low vertical actio
 (i.e. near $(z, v_z) \sim (0, 0)$) as compared to stars with larger vertical action.
 \label{fig:mgfe-zvz}
 \textbf{Right panel:} The column-normalized density of stars in \abun{Mg}{Fe} as a
-function of an observable proxy for the maximum height above the midplane reached by a
-star, $\zmax$.
-We estimate a proxy for \zmax\ without using a potential model by selecting only stars
-with $|v_z| < 10~\kms$ (i.e. stars that are near their vertical apocenter).
+function of an observable proxy for $\zmax$.
+We estimate a proxy for \zmax\ for the data \emph{without using a potential model} by
+selecting only stars with $|v_z| < 10~\kms$ (i.e. stars that are near their vertical
+apocenter).
 The over-plotted dashed (orange) line shows a linear relation between \abun{Mg}{Fe} and
 \zmax.
 }
@@ -613,12 +613,23 @@ of age), and stellar mass, to name a few.
 We represent these quantities with the vector $\bs{Y}$, which we refer to as the
 ``stellar labels''.
 In the Milky Way, these quantities are observed to correlate with the orbital
-properties of stellar populations \todo{cite age velocity relation, MAPs, etc.}.
-Figure~\ref{fig:mgfe-zvz} shows an example of this: The left panel shows the mean
-\abun{Mg}{Fe} abundance for stars in different locations of the vertical phase space,
-demonstrating that stars with low-$J_z$ orbits (i.e. those that stay near the center)
-have systematically different element abundances than stars with large-$J_z$ orbits
-(i.e. those that stay far from the center of this phase plane).
+properties of stellar populations.
+For example, there is a long known correlation between stellar age and velocity
+dispersion (CITE), the kinematic properties of mono-abundance stellar populations depend
+on the value of the abundance (CITE), and there are known gradients in stellar element
+abundances and Galactic position (CITE).
+Figure~\ref{fig:mgfe-zvz} shows an example of such a correlation in the vertical
+kinematics of stars in the Milky Way.
+The left panel of Figure~\ref{fig:mgfe-zvz} shows seven orbits in the vertical phase
+space (with $J_R=0$ and $J_\phi \approx 1900~\kms~\kpc$), with equally-spaced values of
+\zmax\ as computed in a Milky Way-like gravitational potential around the solar position
+(see Section~\ref{sec:appendix-potential}).
+The vertical action scales approximately with $J_z \propto \zmax^2$.
+The middle panel shows the mean \abun{Mg}{Fe} abundance (as measured by the \apogee\
+surveys, \dr{17}; CITE) for stars in different locations of the vertical phase space.
+This demonstrates that stars with low-$J_z$ orbits (i.e. those that stay near the center
+of this phase space) have systematically different element abundances than stars with
+large-$J_z$ orbits (i.e. those that stay far from the center of this phase space).
 
 
 % The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
@@ -632,10 +643,10 @@ have systematically different element abundances than stars with large-$J_z$ orb
 % vertical dynamics, the 1D curves of constant $J_z$ (i.e. the orbits) can never
 % intersect.
 
-Under the assumptions we adopted in Section~\ref{sec:dynreview}, the correlations
-between any intrinsic, time-invariant stellar properties $\bs{Y}$ and the orbital
-properties of stars can only depend on the orbital actions $\bs{J}$ and not the angles
-$\bs{\theta}$, which are time dependent.
+Under the assumptions listed in Section~\ref{sec:dynreview}, the correlations between
+any intrinsic, time-invariant stellar properties $\bs{Y}$ and the orbital properties of
+stars can only depend on the orbital actions $\bs{J}$ and not the angles $\bs{\theta}$,
+which are time dependent.
 This is useful because it means we can use the stellar labels as constants of motion
 themselves to trace out the shapes of orbits in phase-space.
 In the context of vertical dynamics, the vertical action $J_z$ is, by construction,
@@ -700,7 +711,7 @@ stellar label values has properties or parameters that vary smoothly with the ve
 action.
 
 In the next section, we develop a method for fitting the contours of constant stellar
-label that does not assume a form for the potential $\Phi_z(z_)$.
+label that does not assume a form for the potential $\Phi_z(z)$.
 Instead of modeling the full distribution $p(\bs{Y} \given z, v_z)$, we assume that our
 data are measurements of \emph{moments} of the distribution at different locations in
 phase-space.
@@ -753,11 +764,27 @@ with other moments of this distribution.
 % compute empirical values of dynamical quantities like the orbital actions and
 % frequencies.
 
-\subsection{Modeling Stellar Label Moments that Correlate with Dynamics} \label{sec:}
+\subsection{A Flexible Model of Stellar Label Moments in Phase Space}
+\label{sec:oti-fourier}
+
+% Using simulated data, Figure~\ref{fig:XX} demonstrates that the contours actually
+% correspond very closely to orbits themselves. We generate simulated stellar positions
+% and velocities by sampling from a quasi-isothermal distribution function (\df; CITE
+% Binney, Sanders and Binney) embedded in a static, axisymmetric model for the Milky
+% Way. The Milky Way potential model is described in
+% Appendix~\ref{sec:appendix-potential}, and we use the \agama\ package (CITE) to
+% generate \todo{N} samples from the \df. We then sub-select a sample of star particles
+% that are spatially localized near the solar radius, $|R - 8.3~\kpc| < 0.5~\kpc$, and
+% are near their guiding radius, $|R - R_G| < 0.5~\kpc$ where $R_G \equiv L_z / v_c(R)$
+% and $v_c(R)$ is the circular velocity at the radius $R$. We compute the maximum height
+% above the midplane reached by each star particle, \zmax, and use the linear relation
+% between \zmax\ and \abun{Mg}{Fe} seen in the \apogee\ data (see the right panel of
+% Figure~\ref{fig:mgfe-zvz}) to compute simulated \abun{Mg}{Fe} abundances for the star
+% particles. The leftmost panel of Figure~\ref{fig:XX} ...
 
 \begin{figure*}[t!]
 \begin{center}
-\includegraphics[width=\textwidth]{simulated-orbits-fourier.pdf}
+\includegraphics[width=0.8\textwidth]{simulated-orbits-fourier.pdf}
 \end{center}
 \caption{%
 TODO
@@ -765,270 +792,103 @@ TODO
 }
 \end{figure*}
 
-Here we develop a method to fit the shapes of contours of constant stellar label moments
-in the vertical phase space of the Milky Way disk.
-An example of the type of data we would like to model is shown in the left panel of
-Figure~\ref{fig:mgfe-zvz}.
-As we showed in the previous section (Section~\ref{sec:oti-stat}), the shapes of these
-contours correspond to the shapes of orbits in the vertical phase space (under the
-assumptions listed above).
-Figure~\ref{fig:XX} demonstrates this visually using simulated data.
-We generate simulated stellar positions and velocities by sampling from a
-quasi-isothermal distribution function (\df; CITE Binney, Sanders and Binney) embedded
-in a static, axisymmetric model for the Milky Way.
-The Milky Way potential model is described in Appendix~\ref{sec:appendix-potential}, and
-we use the \agama\ package (CITE) to generate \todo{N} samples from the \df.
-We then sub-select a sample of star particles that are spatially localized near the
-solar radius, $|R - 8.3~\kpc| < 0.5~\kpc$, and are near their guiding radius, $|R - R_G|
-< 0.5~\kpc$ where $R_G \equiv L_z / v_c(R)$ and $v_c(R)$ is the circular velocity at the
-radius $R$.
-We compute the maximum height above the midplane reached by each star particle, \zmax,
-and use the linear relation between \zmax\ and \abun{Mg}{Fe} seen in the \apogee\ data
-(see the right panel of Figure~\ref{fig:mgfe-zvz}) to compute simulated \abun{Mg}{Fe}
-abundances for the star particles.
-The leftmost panel of Figure~\ref{fig:XX} ...
+In this section, we develop a method to fit the shapes of contours of constant stellar
+label moments in the vertical phase space of the Milky Way disk.
+An example of the type of data we would like to model is shown in the middle panel of
+Figure~\ref{fig:mgfe-zvz}, which shows the mean \abun{Mg}{Fe} abundances of stars in
+bins of vertical phase-space coordinates for stars on near-circular orbits in the solar
+neighborhood.
+As we showed in the previous section (Section~\ref{sec:oti-stat}), these contours of
+observed mean \abun{Mg}{Fe} abundance (or any moments of stellar labels) correspond to
+orbital trajectories, under the assumptions adopted above.
+To parametrize the shapes of the contours of constant stellar label, we use a Fourier
+expansion away from an elliptical radius in the vertical phase space, as described
+below.
 
-
-That is, near the midplane, contours of the DF will correspond to curves of constant
-elliptical radius \rzp, defined as
+As mentioned above (Section~\ref{sec:dynreview}), orbits near the Galactic midplane ($z
+\approx 0$) feel an approximately uniform mass density, $\rho(z) \approx \rho_0$.
+This implies that the vertical gravitational potential near the midplane will be close
+to a harmonic oscillator potential in which orbits have a constant vertical frequency
+$\freqzero$ (Equation~\ref{eq:freqzero}).
+These orbits therefore trace closed ellipses of constant elliptical radius \rzp\ defined
+as
 \begin{equation}
-    \rzp = \sqrt{(z-z_0)^2 \, \freqzero + (v_z-v_{z,0})^2 \, \freqzero^{-1}} \label{eq:rzp}
+    \rzp = \sqrt{z^2 \, \freqzero + v_z^2 \, \freqzero^{-1}} \label{eq:rzp}
 \end{equation}
 for all values of the corresponding ellipsoidal angle \thzp,
 \begin{equation}
-    \tan (\thzp) = \left(\frac{z-z_0}{v_z-v_{z,0}}\right) \, \freqzero
+    \tan (\thzp) = \left(\frac{z}{v_z}\right) \, \freqzero \quad .
     \label{eq:thetazp}
 \end{equation}
-where $z_0$ and $v_{z,0}$ are the zero-point position and velocity, respectively, which
-we include as parameters in our model.
+% where $z_0$ and $v_{z,0}$ are the midplane position and velocity, respectively.
+
 Away from the midplane, the shapes of orbits have steadily decreasing frequencies with
 increasing maximum height $z_{\textrm{max}}$, which leads to, to first order, a changing
-aspect ratio of the contours.\todo{reference a figure panel?}
+aspect ratio of the contours.
+For example, the orbits in the left panel of Figure~\ref{fig:mgfe-zvz} start oblate for
+the lowest values of \zmax\ and become more prolate for the largest values of \zmax.
 For contours with sufficiently large $z_{\textrm{max}}$ values (i.e. orbits that reach
 many scale heights above the disk), the influence of the dark matter halo's potential
 distorts the orbit shapes, and the contours of the DF are no longer well-approximated by
-ellipses.\todo{a figure to show this point?}
-The halo potential causes the orbits to deform from ellipses to more diamond-like shapes
-that are reminiscent of $m=4$ Fourier modes.
+ellipses (e.g., the orbits with $\zmax \gtrsim 1~\kpc$ in Figure~\ref{fig:mgfe-zvz}).
+The halo potential causes the orbits to deform from ellipses to more ``diamond-like''
+shapes.
 
-To model more general contour shapes (i.e. beyond ellipses), we use a low-order Fourier
-expansion in the ellipsoidal angle \thzp\ to distort the ellipsoidal radius \rzp\
-into the distorted ellipsoidal radius \rz, defined as
+To represent more general contour shapes (i.e. beyond ellipses), we use a low-order
+Fourier expansion in the ellipsoidal angle \thzp\ to distort the ellipsoidal radius
+\rzp\ into the distorted ellipsoidal radius \rz, defined as
 \begin{equation}
     \rz = \rzp \, \left[1 + \sum_m \epsilon_m(\rzp) \, \cos{\left(m\,\thzp\right)}\right] \label{eq:rz}
 \end{equation}
 where, for the vertical kinematics, we only consider even $m$ values to preserve the
 symmetry of the contour shapes.
 The functions $\epsilon_m(\rzp)$ describe the radius-dependent amplitude of the Fourier
-terms, which we require to all be zero at $\rzp=0$, and the values are typically $\ll
-1$ within a few disk scale heights.
+terms, which we require to be zero at $\rzp=0$, and the values are typically $\ll 1$
+for the orbits we consider (i.e. with $\zmax \lesssim 2~\kpc$ or so).
 This expansion is motivated by the fact that we expect to need just a few Fourier terms:
 an $m=2$ distortion with an amplitude that varies with \rzp\ will change the aspect
 ratio of the elliptical contours as a function of \rzp, which acts like a changing
 frequency as a function of $z_{\textrm{max}}$.
 An $m=4$ distortion can ``pinch'' the contour shapes to make then more diamond-like,
 which mimics the effect of an orbit feeling the halo potential.
-In applications below, we try different maximum $m$ values, \mmax, beyond
-$m=4$.
-\todo{Could show plots of rzp vs thetazp with different Fourier mmax fits?}
+Figure~\ref{fig:fourier-contours} shows the same orbits as in the left panel of
+Figure~\ref{fig:mgfe-zvz} (solid black lines) along with a low-order Fourier expansion
+fit to these orbits (dashed pink lines), showing that even with just $m=\{2, 4\}$
+Fourier terms, we can accurately model the shapes of the orbits.
+The left panel of Figure~\ref{fig:fourier-contours} shows the orbits and Fourier fits in
+the vertical phase space, and the right panel shows the same orbits and Fourier fits in
+the elliptical radius and angle coordinates, \rzp\ and \thzp.
 
-The distorted radius \rz\ (Equation~\ref{eq:rz}) is effectively a label for the orbits
-and therefore also labels contours of the DF.
-To fit the phase-space density with the distorted radius \rz, we then need to specify
-a functional form for the dependence of the phase-space density on \rz, $f_z(\rz)$.
+When fitting stellar label data, we assume that the contours of constant stellar label
+are only functions of the distorted radius, \rz (Equation~\ref{eq:rz}).
+This then enforces that \rz\ is constant along a contour of constant label value and,
+therefore, nearly constant along a vertical orbit.
+We then need to specify a functional form for the dependence of the stellar label moment
+on \rz, $Y(\rz)$, which we assume is a smooth function of \rz\ but is otherwise
+customizable (we adopt choices below in the demonstrations in
+Sections~\ref{sec:applications-sim}--\ref{sec:applications-data}).
+The model components that must be specified in order to fit this model given a sample of
+stellar phase-space positions and labels are: the Fourier distortion amplitude functions
+$\epsilon_m(\rzp)$ for all $m$ orders up to the specified \mmax, the functional form and
+any parameters of the stellar label function $Y(\rz)$, and the asymptotic midplane
+orbital frequency \freqzero.
+As we will be fitting this model to data where we do not know the true zero-point
+position or velocity of the midplane, we additionally include parameters $z_0$ and
+$v_{z,0}$ to represent these zero-point values --- we then replace $z$ and $v_z$ in
+Equations~\ref{eq:rzp}--\ref{eq:thetazp} with $z-z_0$ and $v_z - v_{z, 0}$.
 
-The model components that must be specified in order to fit the phase-space density
-distribution of a sample of stellar phase-space positions are then: the Fourier
-distortion amplitude functions $\epsilon_m(\rzp)$ for all $m$ orders up to the specified
-\mmax, the functional form of the phase-space density $f_z(\rz)$, and the
-zero-point position and velocity $z_0$ and $v_{z,0}$.
 We have implemented this framework in \python\ using \jax\ \citep{jax:2018} to
 accelerate the model evaluation and to use automatic differentiation to compute the
 gradients of the model with respect to the (many) model parameters.
-This framework is therefore very general and accepts any functional forms for the model
-components.
-We discuss specific choices for these components in the applications below
-(Sections~\ref{sec:applications-sim} and \ref{sec:applications-data}).
-
-From a fitted model, we can compute the vertical acceleration at any $(z, v_z)$ ...
-
-
-\subsection{Modeling Stellar Label} \label{sec:stellarlabels}
-
-TODO: Jeans theorem: any function of the actions / integrals of motion gives a steady-state solution of the CBE.
-
-
-\subsection{Estimating Dynamical Quantities} \label{sec:todo}
-
-Given an orbital trajectory in the vertical phase-space, and after fitting a model to
-the DF (Section~\ref{sec:psd}) or stellar label distribution
-(Section~\ref{sec:stellarlabels}), we can estimate dynamical quantities like the orbital
-actions, angles, and frequencies without needing to assume a form for the gravitational
-potential.
-In terms of the vertical position and velocity $z, v_z$, if we are given a function
-$v_z(z)$ along an orbit, we can compute the vertical action $J_z$ and vertical period
-$T_z$ as
-\begin{align}
-    J_z &= 4 \times \frac{1}{2\,\pi} \, \int_0^{z_{\textrm{max}}} \dd z \, v_z(z) \\
-    T_z &= 4 \times \int_0^{z_{\textrm{max}}} \frac{\dd z}{v_z(z)}\quad ,
-\end{align}
-from which the vertical frequency follows, $\Omega_z = \frac{2\pi}{T_z}$.
-For a given instantaneous position and velocity $z^*, v_z^*$, the vertical angle
-\thz\ at that point can be computed as the fraction of an orbital period traversed
-up to that point,
-\begin{equation}
-    \thz = \frac{2\pi}{T_z} \, \int_0^{z} \frac{\dd z'}{v_z(z' \,;\, \rz(z^*, v_z^*))} \quad ,
-\end{equation}
-where $z'$ is an integration variable, and the function $v_z(z' \,;\, \rz(z^*, v_z^*))$
-indicates that this is a curve at constant \rz\ as determined by the model parameters
-and given phase-space position $(z^*, v_z^*)$.
-
-In principle, if we could observe the stellar tracer DF with infinite particle
-resolution, we could extract contours of constant density (or stellar labels) to
-numerically and directly estimate the integrals described above.
-This would obviate the need for the modeling framework described in the previous two
-subsections (Sections~\ref{sec:psd}--\ref{sec:stellarlabels}).
-Of course, in practice, we are limited by the finite number of stars in our sample so
-that this procedure would be noisy and unstable in regions of low phase-space density,
-which are often the most interesting (e.g., the transition from disk-dominated to
-halo-dominated kinematics where dark matter dominates the gravitational potential).
-Instead, the framework described above allows us to fit a smooth model to the tracer data and to use this to semi-empirically estimate the dynamical quantities of interest.
-
-
-
-
-\subsection{Estimating Dynamical Quantities from the Phase-space Density}
-
-Given a distribution of $N$ stellar positions and velocities $\{z, v_z\}_N$, our task is
-to infer the parameters of a functional model for the number density $n(z, v_z)$ that
-also allows use to compute the dynamical quantities ($J_z$, $\Omega_z$, $\theta_z$) for
-any individual $z, v_z$.
-With our assumption that the \df\ is phase-mixed, the number density should only depend
-on the phase-space coordinates through the action, so that $n(z, v_z) = n(J_z(z, v_z))$
-At fixed $z$, say $z=0$, we expect that $J_z$ increases with increasing $v_z$ (orbits
-with larger velocity at the midplane will reach larger heights) and $\Omega_z$
-decreases with increasing $v_z$ (orbits that reach larger heights above the midplane
-have longer periods).
-Similar arguments can be made at fixed $v_z=0$ in considering how $J_z$ and $\Omega_z$
-vary with increasing $z$.
-It is therefore useful to construct an ellipsoidal polar coordinate system in the $z,
-v_z$ plane with a radius coordinate \rzp\ and a corresponding angle coordinates
-$\theta_z'$ defined as
-\begin{align}
-    \rzp &= \sqrt{z^2 \, \omega_0 + v_z^2 \, \omega_0^{-1}} \label{eq:rzp} \\
-    \theta_z' &= \tan^{-1}\left(\frac{z}{v_z}\,\omega_0\right) \label{eq:thetazp}
-\end{align}
-where $\omega_0$ is a scale frequency.
-The vertical action $J_z$ and frequency $\Omega_z$ should be close to monotonic
-functions of this polar radius $r_z'$.
-
-For example, in a simple harmonic oscillator (SHO) potential,
-\begin{equation}
-    \Phi(z) = \frac{1}{2} \, \omega^2 \, z^2
-\end{equation}
-the Hamiltonian (total energy per unit mass) is
-\begin{equation}
-    H(z, v_z) = E_z = \frac{1}{2} \, v_z^2 + \frac{1}{2} \, \omega^2 \,z^2
-\end{equation}
-and the orbital action $J_z$ is given by
-\begin{equation}
-    J_z = \frac{E_z}{\omega} \quad .
-\end{equation}
-All orbits have the same frequency $\omega$ and are elliptical in the 1D phase-space.
-In this case, the scale frequency $\omega_0$ in $r_z'$ corresponds to the frequency of
-the oscillator $\omega_0=\omega$, the radius $r_z'$ is related to the action $J_z$ as
-\begin{equation}
-    J_z = \frac{1}{2} r_z'^2
-\end{equation}
-and the conjugate angle $\theta_z$ (conjugate to the action $J_z$) is equal to the
-ellipsoidal angle $\theta_z = \theta_z'$.
-The phase-mixed \df\ $f(J_z)$ can therefore be expressed as some
-function of the polar radius alone $f(J_z)=g(r_z')$.
-
-Orbits in even simple galactic mass models are more complex.
-For example, in a two-component mass model consisting of a Galactic disk embedded in a
-dark matter halo, the morphology of an orbit will depend on whether it is confined to
-the disk or whether it feels the transition from the disk- to the halo-dominated region
-of the mass distribution.
-Figure~\ref{fig:zvz} (left panel) is an illustration that shows several sample orbits
-with different values of the vertical action (spaced uniformly in $\sqrt{J_z}$), all
-with $J_R=0$ and the same $J_\phi$ in a two-component galaxy model consisting of a
-Miyamoyo--Nagai disk component \citep{Miyamoto:1975} and a Navarro--Frenk--White (NFW)
-halo component \citep{NFW:1996}.
-For this toy galaxy model, parameters are chosen to roughly match the local circular
-velocity and scale height of the Milky Way disk, but this potential model is only used
-for illustrative purposes (the parameter values are not important).
-For smaller values of the vertical action, orbits are close to elliptical in shape.
-Moving out in ``radius'' or vertical action $J_z$, orbits have frequencies that decrease
-with increasing action (which manifests as a changing axis ratio of the orbits).
-For orbits with larger vertical action (i.e. orbits that reach scale heights more than a
-few times the adopted scale height $h_z=0.25~\kpc$), the orbits begin to significantly
-feel the influence of the dark matter halo and the orbital trajectory shapes become more
-``pinched'' or ``diamond''-like near $z=0$.
-We expect these features to be generic for slices of the vertical kinematics in galaxies
-like the Milky Way: The vertical frequency should be a smooth function of the vertical
-action, and orbits will have more complex morphologies (i.e. more complex than
-ellipses).
-
-Whereas in a SHO potential the orbital trajectories are functionally equivalent
-(ellipses) and scaled by the value of the action, in a more generic galactic mass model
-we expect the trajectories to distort away from ellipses.
-As we saw in Figure~\ref{fig:zvz}, this distortion changes the orbital frequency of
-orbits with increased size or vertical action (i.e., changes the scale frequency of the
-ellipse), but also introduces a morphological change by making the orbits more
-diamond-shaped, especially close to $z=0$.
-In terms of action--angle coordinates, this means that the ellipsoidal angle introduced
-above (Equation~\ref{eq:thetazp}) is no longer equal to the conjugate angle $\theta_z$,
-and any functional model for the phase-mixed \df\ $f(J)$ must be a function of both the
-ellipsoidal radius and angle:
-\begin{equation}
-    f(J) = g(r_z', \theta_z') \quad .
-\end{equation}
-We choose to express this density model as a function of an auxiliary variable $r_z$
-that is defined as a low-order Fourier expansion distortion to the ellipsoidal radius
-$r_z'$:
-\begin{align}
-    r_z &= r_z' \, \left[1 + \sum_m \epsilon_m(r_z') \, \cos{\left(m\,\theta_z'\right)}\right] \label{eq:rz} \\
-    n(z, v_z) &= n(r_z(r_z', \theta_z'))
-\end{align}
-where $n(\cdot)$ represents a density function and $\epsilon_m(r_z')$ represents a
-distortion amplitude, whose magnitude is hopefully must smaller than one for all
-relevant values of $r_z'$ --- that is, we assume that
-\begin{equation}
-    |\epsilon_m(r_z')| \ll 1 \,\, \forall r_z', m \quad .
-\end{equation}
-
-With this parametrization, the action and frequency are monotonic and smooth functions
-of the distorted radius $r_z$: $J_z = J_z(r_z)$ and $\Omega_z = \Omega_z(r_z)$.
-We can also now compute the dynamical quantities with integrals over the ellipsoidal
-angle $\theta_z'$
-\begin{align}
-    J_z(r_z) &= \frac{2}{\pi} \, \int_0^{\pi/2} \dd \theta_z' \, v_z(\theta_z')
-        \, \left|\frac{\dd z}{\dd \theta_z'}\right| \\
-    T_z &= 4 \, \int_0^{\pi/2} \frac{\dd \theta_z'}{v_z(\theta_z')}
-        \, \left|\frac{\dd z}{\dd \theta_z'}\right|
-\end{align}
-where
-\begin{align}
-    v_z(\theta_z') &= \sqrt{\omega_0} \, r_z'(r_z, \theta_z') \, \cos{(\theta_z')} \\
-    z(\theta_z') &= \frac{1}{\sqrt{\omega_0}} \, r_z'(r_z, \theta_z') \, \sin{(\theta_z')}
-\end{align}
-and $r_z'(r_z, \theta_z')$ in general has to be found by numerical root-finding of
-Equation~\ref{eq:rz}.
-
-
-\subsection{Orbital Torus Imaging with Stellar Labels} \label{sec:oti-labels}
-Like previous subsection, but $F(r_z)$ instead of $f(r_z)$
-- But wait, there's more!
-- Functions of f also satisfy CBE, so we can contour anything that has a gradient with dynamics!
-- For example, moments of element abundances
-- Advantage: Easier to measure from data and less subject to selection effects
-- Show how
+We release a software package, \texttt{torusimaging}, along with this Article that
+contains our implementation.
+This framework is therefore very general and our implementation accepts any functional
+forms for the model components.
 
 
 \section{Applications to Simulated Data} \label{sec:applications-sim}
 
-In what follows, we demonstrate the OTI framework described above using a set of
+In this section, we demonstrate the OTI framework described above using a set of
 simulated datasets of increasing complexity.
 We start by using a one-dimensional simple harmonic oscillator potential
 (Section~\ref{sec:sim-sho}), then use a more realistic multi-component galaxy model
@@ -1233,6 +1093,11 @@ participating in the {\it Gaia} Multilateral Agreement.
 }
 
 \appendix
+
+\section{A Toy Milky Way Mass Model}
+\label{sec:appendix-potential}
+
+TODO.
 
 \section{Evaluation of the Vertical Acceleration from an OTI Model}
 \label{sec:appendix-math}
