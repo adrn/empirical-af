@@ -714,7 +714,7 @@ The under-plotted (gray) ellipses show ellipses with the same values of $v_{z,
 (i.e. frequency) with increased vertical action $J_z$.
 \textbf{Right panel:} The same orbits, Fourier series representations, and
 constant-frequency ellipses, but now shown in the elliptical radius, \rzp\
-(Equation~\ref{eq:rzp}), and angle, \thzp\ (Equation~\ref{eq:thetazp}).
+(Equation~\ref{eq:rzp}) and angle, \thzp\ (Equation~\ref{eq:thetazp}).
 \label{fig:fourier-contours}
 }
 \end{figure*}
@@ -899,6 +899,25 @@ This framework is therefore very general and our implementation accepts any func
 forms for the model components.
 
 
+% With this parametrization, the action and frequency are monotonic and smooth functions
+% of the distorted radius $r_z$: $J_z = J_z(r_z)$ and $\Omega_z = \Omega_z(r_z)$.
+% We can also now compute the dynamical quantities with integrals over the ellipsoidal
+% angle $\theta_z'$
+% \begin{align}
+%     J_z(r_z) &= \frac{2}{\pi} \, \int_0^{\pi/2} \dd \theta_z' \, v_z(\theta_z')
+%         \, \left|\frac{\dd z}{\dd \theta_z'}\right| \\
+%     T_z &= 4 \, \int_0^{\pi/2} \frac{\dd \theta_z'}{v_z(\theta_z')}
+%         \, \left|\frac{\dd z}{\dd \theta_z'}\right|
+% \end{align}
+% where
+% \begin{align}
+%     v_z(\theta_z') &= \sqrt{\omega_0} \, r_z'(r_z, \theta_z') \, \cos{(\theta_z')} \\
+%     z(\theta_z') &= \frac{1}{\sqrt{\omega_0}} \, r_z'(r_z, \theta_z') \, \sin{(\theta_z')}
+% \end{align}
+% and $r_z'(r_z, \theta_z')$ in general has to be found by numerical root-finding of
+% Equation~\ref{eq:rz}.
+
+
 \section{Applications to Simulated Data} \label{sec:applications-sim}
 
 In this section, we demonstrate the OTI framework described above using a set of
@@ -937,10 +956,10 @@ normalized \df\ that integrates to 1 (i.e. a probability distribution function).
 \end{align}
 We adopt $\omega = 0.08~\unit{\radian\per\mega\year}$ and $s_z = 50~\kms$ as arbitrary
 choices meant to approximately match the observed vertical kinematics of stars near the
-solar position (CITE e.g.,).
-We sample $N=2^{18}=\num{262144}$ phase-space positions as another arbitrary choice, but note that
-the precision of our measurements (especially at high $z$) will depend on the sample
-size.
+solar position.
+We sample $N=2^{18}=\num{262144}$ phase-space positions as another arbitrary choice, but
+note that the precision of our measurements (especially at high $z$) will depend on the
+sample size.
 Figure~\ref{fig:sho-data-model} (left panel) shows the log-number density of this
 simulated sample in the vertical phase-space.
 We will first fit the phase-space density of the simulated stars, hoping to recover a
