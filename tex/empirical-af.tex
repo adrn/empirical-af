@@ -696,6 +696,29 @@ so that
 \end{align}
 as expected.
 
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{simulated-orbits-fourier.pdf}
+\end{center}
+\caption{%
+A demonstration that a low-order Fourier series expansion away from an ellipse can
+represent orbit shapes in the vertical phase space of the Milky Way disk.
+\textbf{Left panel:} The solid (black) lines show the same orbits as in
+Figure~\ref{fig:mgfe-zvz}: These are seven orbits with equally-spaced values of the
+maximum height above the midplane each orbit reaches, \zmax, computed in a mass model
+for the Milky Way (see Appendix~\ref{sec:appendix-potential}).
+The dashed (pink) lines show a Fourier series expansion with $m=\{2, 4\}$ with
+parameters ($\rz, e_2, e_4$) determined by fitting to each orbit.
+The under-plotted (gray) ellipses show ellipses with the same values of $v_{z,
+\textrm{max}}$ as the orbits to emphasize that the orbits have a changing oblateness
+(i.e. frequency) with increased vertical action $J_z$.
+\textbf{Right panel:} The same orbits, Fourier series representations, and
+constant-frequency ellipses, but now shown in the elliptical radius, \rzp\
+(Equation~\ref{eq:rzp}), and angle, \thzp\ (Equation~\ref{eq:thetazp}).
+\label{fig:fourier-contours}
+}
+\end{figure*}
+
 Two subtleties complicate this idea.
 For one, the labels are not deterministic functions of the actions.
 For example, processes that cause dynamical heating of stars, which may introduce a
@@ -782,16 +805,6 @@ with other moments of this distribution.
 % Figure~\ref{fig:mgfe-zvz}) to compute simulated \abun{Mg}{Fe} abundances for the star
 % particles. The leftmost panel of Figure~\ref{fig:XX} ...
 
-\begin{figure*}[t!]
-\begin{center}
-\includegraphics[width=0.8\textwidth]{simulated-orbits-fourier.pdf}
-\end{center}
-\caption{%
-TODO
-\label{fig:fourier-contours}
-}
-\end{figure*}
-
 In this section, we develop a method to fit the shapes of contours of constant stellar
 label moments in the vertical phase space of the Milky Way disk.
 An example of the type of data we would like to model is shown in the middle panel of
@@ -860,7 +873,7 @@ the vertical phase space, and the right panel shows the same orbits and Fourier 
 the elliptical radius and angle coordinates, \rzp\ and \thzp.
 
 When fitting stellar label data, we assume that the contours of constant stellar label
-are only functions of the distorted radius, \rz (Equation~\ref{eq:rz}).
+are only functions of the distorted radius, \rz\ (Equation~\ref{eq:rz}).
 This then enforces that \rz\ is constant along a contour of constant label value and,
 therefore, nearly constant along a vertical orbit.
 We then need to specify a functional form for the dependence of the stellar label moment
