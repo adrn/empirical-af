@@ -1,0 +1,192 @@
+from functools import partial
+
+import astropy.units as u
+import jax.numpy as jnp
+import numpy as np
+import torusimaging as oti
+from astropy.constants import G
+from gala.units import galactic
+
+
+def label_func_base(r, label_vals, knots):
+    return oti.model_helpers.monotonic_quadratic_spline(knots, label_vals, r)
+
+
+def e_func_base(r_e, vals, sign, knots):
+    return sign * oti.model_helpers.monotonic_quadratic_spline(
+        knots, jnp.concatenate((jnp.array([0.0]), vals)), r_e
+    )
+
+
+def regularization_func_base(params, e_regularize: bool, e_regularize_sigmas: dict):
+    p = 0.0
+
+    if e_regularize:
+        # L2
+        for m in params["e_params"]:
+            p += jnp.sum((params["e_params"][m]["vals"] / e_regularize_sigmas[m]) ** 2)
+
+    return p
+
+
+class SplineLabelModelWrapper:
+    def __init__(
+        self,
+        r_e_max: float,
+        label_n_knots: int,
+        label0_bounds: tuple,
+        label_grad_sign: float,
+        e_n_knots: dict,
+        e_signs=None,
+        e_regularize=True,
+        e_regularize_sigmas=None,
+        unit_sys=galactic,
+    ):
+        self.unit_sys = unit_sys
+
+        # ------------------------------------------------------------------------------
+        # Set up the label function bits:
+
+        # Knot locations, spaced equally in r_z
+        self.label_knots = jnp.linspace(0, r_e_max, label_n_knots)
+        label_func = partial(label_func_base, knots=self.label_knots)
+
+        if label_grad_sign > 0:
+            label_func_bounds = {
+                "label_vals": (
+                    np.concatenate(
+                        ([label0_bounds[0]], jnp.full(label_n_knots - 1, 0.0))
+                    ),
+                    np.concatenate(
+                        ([label0_bounds[1]], jnp.full(label_n_knots - 1, 10.0))
+                    ),
+                )
+            }
+        else:
+            label_func_bounds = {
+                "label_vals": (
+                    np.concatenate(
+                        ([label0_bounds[0]], jnp.full(label_n_knots - 1, -10.0))
+                    ),
+                    np.concatenate(
+                        ([label0_bounds[1]], jnp.full(label_n_knots - 1, 0.0))
+                    ),
+                )
+            }
+
+        # ------------------------------------------------------------------------------
+        # Set up the e function components:
+        self.e_n_knots = e_n_knots
+        self.e_knots = {
+            m: jnp.linspace(0, r_e_max, knots) for m, knots in e_n_knots.items()
+        }
+        if e_signs is None:
+            e_signs = {m: (-1.0 if (m / 2) % 2 == 0 else 1.0) for m in self.e_knots}
+
+        e_funcs = {
+            m: partial(e_func_base, sign=e_signs[m], knots=self.e_knots)
+            for m in self.e_knots
+        }
+
+        e_bounds = {
+            m: {"vals": (jnp.full(n - 1, 0), jnp.full(n - 1, 1))} for m, n in e_n_knots
+        }
+
+        if e_regularize_sigmas is None:
+            # Default value of L2 regularization stddev:
+            e_regularize_sigmas = {m: 0.1 for m in self.e_knots}
+
+        # ------------------------------------------------------------------------------
+        # Setup the regularization function:
+        reg_func = partial(
+            regularization_func_base,
+            e_regularize=e_regularize,
+            e_regularize_sigmas=e_regularize_sigmas,
+        )
+
+        self.label_model = oti.LabelOrbitModel(
+            label_func=label_func,
+            e_funcs=e_funcs,
+            regularization_func=reg_func,
+            unit_sys=self.unit_sys,
+        )
+
+        self._bounds = {}
+
+        # Reasonable bounds for the midplane density
+        dens0_bounds = [0.01, 10] * u.Msun / u.pc**3
+        self._bounds["ln_Omega"] = 0.5 * np.log(
+            (4 * np.pi * G * dens0_bounds).decompose(self.unit_sys).value
+        )
+        self._bounds["z0"] = (-0.5, 0.5)
+        self._bounds["vz0"] = (-0.05, 0.05)  # ~50 km/s
+        self._bounds["e_params"] = e_bounds
+        self._bounds["label_params"] = label_func_bounds
+
+    def get_init_params(self, oti_data, label_name=None):
+        if label_name is None:
+            if len(oti_data.labels) == 1:
+                label_name = list(oti_data.labels.keys())[0]
+            else:
+                raise ValueError("must specify label_name")
+
+        label = oti_data.labels[label_name]
+
+        params0 = self.label_model.get_params_init(oti_data.pos, oti_data.vel, label)
+        r_e, _ = self.label_model.get_elliptical_coords(
+            oti_data._pos, oti_data._vel, params0
+        )
+
+        params0["e_params"] = {
+            m: {"vals": jnp.zeros(self.e_n_knots[m] - 1)} for m in self.e_knots
+        }
+
+        # Estimate the label value near r_e = 0 and slopes for knot values:
+        r1, r2 = np.nanpercentile(r_e, [10, 90])
+        label0 = np.nanmean(label["label"][r_e <= r1])
+        label_slope = (np.nanmedian(label["label"][r_e >= r2]) - label0) / (r2 - r1)
+
+        params0["label_params"] = {
+            "label_vals": np.concatenate(
+                (
+                    [label0],
+                    np.full(len(self.label_knots) - 1, label_slope),
+                )
+            )
+        }
+
+        return params0
+
+    def run(self, oti_data, bins, label_name=None, data_kw=None, jaxopt_kw=None):
+        if data_kw is None:
+            data_kw = {}
+        if jaxopt_kw is None:
+            jaxopt_kw = {}
+        jaxopt_kw.setdefault("tol", 1e-12)
+
+        bdata = oti_data.get_binned_label(bins, label_name=label_name, **data_kw)
+        p0 = self.get_init_params(oti_data, label_name=label_name)
+
+        # First check that objective evaluates to a finite value:
+        test_val = self.label_model.objective(
+            p0,
+            z=bdata["pos"].decompose(self.unit_sys).value,
+            vz=bdata["vel"].decompose(self.unit_sys).value,
+            label=bdata["label"],
+            label_err=bdata["label_err"],
+        )
+        if not np.isfinite(test_val):
+            raise RuntimeError("Objective function evaluated to non-finite value")
+
+        mask = np.isfinite(bdata["label"])
+        res = self.label_model.optimize(
+            params0=p0,
+            bounds=self._bounds,
+            jaxopt_kwargs=jaxopt_kw,
+            z=bdata["pos"].decompose(self.unit_sys).value[mask],
+            vz=bdata["vel"].decompose(self.unit_sys).value[mask],
+            label=bdata["label"][mask],
+            label_err=bdata["label_err"][mask],
+        )
+
+        return res
