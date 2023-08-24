@@ -38,3 +38,7 @@ vc0 = 229 * u.km / u.s
 galcen_frame = coord.Galactocentric(
     galcen_distance=R0, galcen_v_sun=[8.4, 251.8, 8.4] * u.km / u.s
 )
+
+# Plot customization:
+mgfe_cbar_vlim = (-0.05, 0.18)
+mgfe_cbar_xlim = (0, 0.15)
