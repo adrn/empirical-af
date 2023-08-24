@@ -26,6 +26,12 @@ def regularization_func_base(params, e_regularize: bool, e_regularize_sigmas: di
         for m in params["e_params"]:
             p += jnp.sum((params["e_params"][m]["vals"] / e_regularize_sigmas[m]) ** 2)
 
+        # # L1
+        # for m in params["e_params"]:
+        #     p += jnp.sum(
+        #         jnp.abs(params["e_params"][m]["vals"] / e_regularize_sigmas[m])
+        #     )
+
     return p
 
 
@@ -84,12 +90,13 @@ class SplineLabelModelWrapper:
             e_signs = {m: (-1.0 if (m / 2) % 2 == 0 else 1.0) for m in self.e_knots}
 
         e_funcs = {
-            m: partial(e_func_base, sign=e_signs[m], knots=self.e_knots)
+            m: partial(e_func_base, sign=e_signs[m], knots=self.e_knots[m])
             for m in self.e_knots
         }
 
         e_bounds = {
-            m: {"vals": (jnp.full(n - 1, 0), jnp.full(n - 1, 1))} for m, n in e_n_knots
+            m: {"vals": (jnp.full(n - 1, 0), jnp.full(n - 1, 1))}
+            for m, n in e_n_knots.items()
         }
 
         if e_regularize_sigmas is None:
@@ -143,8 +150,8 @@ class SplineLabelModelWrapper:
 
         # Estimate the label value near r_e = 0 and slopes for knot values:
         r1, r2 = np.nanpercentile(r_e, [10, 90])
-        label0 = np.nanmean(label["label"][r_e <= r1])
-        label_slope = (np.nanmedian(label["label"][r_e >= r2]) - label0) / (r2 - r1)
+        label0 = np.nanmean(label[r_e <= r1])
+        label_slope = (np.nanmedian(label[r_e >= r2]) - label0) / (r2 - r1)
 
         params0["label_params"] = {
             "label_vals": np.concatenate(
@@ -157,36 +164,49 @@ class SplineLabelModelWrapper:
 
         return params0
 
-    def run(self, oti_data, bins, label_name=None, data_kw=None, jaxopt_kw=None):
+    def run(
+        self,
+        oti_data,
+        bins,
+        label_name=None,
+        label_err_floor=0.02,
+        data_kw=None,
+        jaxopt_kw=None,
+    ):
         if data_kw is None:
             data_kw = {}
         if jaxopt_kw is None:
             jaxopt_kw = {}
         jaxopt_kw.setdefault("tol", 1e-12)
 
-        bdata = oti_data.get_binned_label(bins, label_name=label_name, **data_kw)
+        bdata, label_name = oti_data.get_binned_label(
+            bins, label_name=label_name, **data_kw
+        )
+
+        tmp, _ = oti_data.get_binned_label(
+            bins,
+            label_name=label_name,
+            statistic=lambda x: np.sqrt(label_err_floor**2 + np.nanvar(x))
+            / np.sqrt(len(x)),
+            **data_kw,
+        )
+        bdata[f"{label_name}_err"] = tmp[label_name]
         p0 = self.get_init_params(oti_data, label_name=label_name)
 
         # First check that objective evaluates to a finite value:
-        test_val = self.label_model.objective(
-            p0,
-            z=bdata["pos"].decompose(self.unit_sys).value,
-            vz=bdata["vel"].decompose(self.unit_sys).value,
-            label=bdata["label"],
-            label_err=bdata["label_err"],
+        mask = np.isfinite(bdata[label_name])
+        data = dict(
+            pos=bdata["pos"].decompose(self.unit_sys).value[mask],
+            vel=bdata["vel"].decompose(self.unit_sys).value[mask],
+            label=bdata[label_name][mask],
+            label_err=bdata[f"{label_name}_err"][mask],
         )
+        test_val = self.label_model.objective(p0, **data)
         if not np.isfinite(test_val):
             raise RuntimeError("Objective function evaluated to non-finite value")
 
-        mask = np.isfinite(bdata["label"])
         res = self.label_model.optimize(
-            params0=p0,
-            bounds=self._bounds,
-            jaxopt_kwargs=jaxopt_kw,
-            z=bdata["pos"].decompose(self.unit_sys).value[mask],
-            vz=bdata["vel"].decompose(self.unit_sys).value[mask],
-            label=bdata["label"][mask],
-            label_err=bdata["label_err"][mask],
+            params0=p0, bounds=self._bounds, jaxopt_kwargs=jaxopt_kw, **data
         )
 
-        return res
+        return bdata, res
