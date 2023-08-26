@@ -22,8 +22,8 @@
 % \end{figure}
 
 \PassOptionsToPackage{usenames,dvipsnames}{xcolor}
-% \documentclass[modern]{aastex631}
-\documentclass[twocolumn]{aastex631}
+\documentclass[modern]{aastex631}
+% \documentclass[twocolumn]{aastex631}
 
 % Load common packages
 \usepackage{microtype}  % ALWAYS!
@@ -954,17 +954,21 @@ normalized \df\ that integrates to 1 (i.e. a probability distribution function).
     z = \sqrt{\frac{2 \, J_z}{\omega}} \, \sin\theta_z \quad &; \quad
         v_z = \sqrt{2 \, J_z \, \omega} \, \cos\theta_z
 \end{align}
-We adopt $\omega = 0.08~\unit{\radian\per\mega\year}$ and $s_z = 50~\kms$ as arbitrary
-choices meant to approximately match the observed vertical kinematics of stars near the
-solar position.
-We sample $N=2^{18}=\num{262144}$ phase-space positions as another arbitrary choice, but
-note that the precision of our measurements (especially at high $z$) will depend on the
-sample size.
-Figure~\ref{fig:sho-data-model} (left panel) shows the log-number density of this
-simulated sample in the vertical phase-space.
-We will first fit the phase-space density of the simulated stars, hoping to recover a
-constant frequency for all orbits and a vertical acceleration close to $a_z(z) =
--\omega^2\,z$.
+We adopt $\omega = 0.08~\unit{\radian\per\mega\year}$ and $\sigma_{v_z} = 50~\kms$ as
+arbitrary choices meant to approximately match the observed vertical kinematics of stars
+near the solar position.
+We sample $N=2^{18}=\num{262144}$ phase-space positions to use as data, but note that
+the precision of our measurements (especially at high $z$) will depend on the sample
+size.
+We then assign each star a simulated element abundance value to serve as a stellar label
+$Y$: We use the relation between \abun{Mg}{Fe} and $z_{\textrm{max}}$ from the \apogee\
+data (see the right panel of Figure~\ref{fig:mgfe-zvz}) to assign each star a simulated
+value of \abun{Mg}{Fe} by drawing from a Gaussian centered on the mean value from the
+linear relation with a standard deviation of $0.05~\textrm{dex}$.
+
+Figure~\ref{fig:sho-data-model} (left panel) shows the mean simulated \abun{Mg}{Fe}
+abundance for stars in bins of vertical phase-space coordinates with the same color
+scale as in the middle panel of Figure~\ref{fig:mgfe-zvz} (i.e. the real data).
 For setting axis limits and functions below, we define a maximum elliptical radius
 $r_{z, \textrm{max}} = 5 \, \frac{s_z}{\sqrt{\omega}}$ equivalent to the $5~\sigma$
 values of the \df\ scale.
@@ -984,22 +988,24 @@ TODO
 }
 \end{figure*}
 
-We then need to decide on functional forms for both the log-density function,
-$\ln\left(n(\rz)\right)$, and the Fourier coefficient function, $e_2(\rzp)$.
-For each, we use a monotonic quadratic spline function defined such that the function is
-always monotonically increasing or decreasing (which must be hard-set before
-optimization).
+We then fit the simulated mean \abun{Mg}{Fe} abundance data using the OTI framework
+described above (Section~\ref{sec:oti}).
+To do this, we need to decide on functional forms for both the label function, $Y(\rz)$,
+and the Fourier coefficient functions.
+For all of these functions, we use a monotonic quadratic spline function defined such
+that the function is always monotonically increasing or decreasing (which must be
+hard-set before optimization).
 \todo{Describe monotonic quadratic spline in appendix}
-For the log-density function, we assert that the log-density must monotonically
-decrease from $\rz = 0$ to the maximum spline knot location.
-We use 10 spline knot locations $x_k^{(\ln n)}$ equally spaced in $\rz$ between $0$ and
+For the label function, we assert that the value must monotonically increase from $\rz =
+0$ to the maximum spline knot location.
+We use 10 spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$ and
 $r_{z, \textrm{max}}$.
 
 For this initial case, we include only an $m=2$ term in our Fourier distortion of the
 elliptical radius (Equation~\ref{eq:rz}).
-For the Fourier coefficient function, we require that the coefficient value must equal
-zero at $\rzp = 0$, i.e. $e_2(0) = 0$, and that the coefficient value monotonically
-increases with $\rzp$.
+For the Fourier coefficient function, $e_2(\rzp)$, we require that the coefficient value
+must equal zero at $\rzp = 0$, $e_2(0) = 0$, and that the coefficient value
+monotonically increases with $\rzp$.
 Requiring $e_2(0) = 0$ ensures that the parameter $\freqzero$ corresponds to the
 asymptotic orbital frequency as $\rzp \rightarrow 0$.
 Assuming that the coefficient value increases with $\rzp$ (so that the orbit shapes
@@ -1008,9 +1014,28 @@ assuming that the volume density increases with increasing height $z$.
 We use 5 spline knot locations $x_k^{(e_2)}$ equally spaced in $\rz$ between $0$ and
 $r_{z, \textrm{max}}$, but we require the knot value at $\rzp = 0$ to be equal to zero
 $y_0^{(e_2)}=0$.
+All of the parameters used in this demonstrative model fit and the adopted bounds used
+when optimizing are summarized in Table~\ref{tbl:sho-params}.
 
-All of the parameters used in this demonstrative model fit are summarized in
-Table~\ref{tbl:sho-params}.
+Our framework is implemented with \jax\ so that our objective function is just-in-time
+compiled and we can use automatic differentiation to compute the gradients of the
+objective function with respect to the (in this case) 17 model parameters.
+We use a Gaussian log-likelihood of the mean \abun{Mg}{Fe} abundance data as our
+objective function where we also measure the empirical scatter of the abundances values
+in each pixel of the vertical phase space and adopt this as the uncertainty on the mean
+abundance value in each pixel.
+We additionally use an L2 regularization on the Fourier coefficient function values
+$y^{(e_2)}$ with a standard deviation of 0.1 to try to keep these values near zero.
+We use a standard L-BFGS-B optimizer \citep{Byrd:1995} to minimize the regularized
+negative log-likelihood, implemented in \texttt{JAXopt} \cite{jaxopt:2021}.
+For this simulated data, the optimization runs in $\sim 10~\unit{\second}$ on a single
+CPU.
+The middle panel of Figure~\ref{fig:sho-data-model} shows the best-fit model evaluated
+over the domain of our simulated data (left panel), and the right panel shows the
+residuals.
+Figure~\ref{fig:sho-validation} shows
+
+
 
 \begin{table}
     \begin{centering}
@@ -1036,6 +1061,16 @@ Table~\ref{tbl:sho-params}.
 }
 \end{centering}
 \end{table}
+
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{sho-validation.pdf}
+\end{center}
+\caption{%
+TODO
+\label{fig:sho-validation}
+}
+\end{figure*}
 
 \subsection{Simple Equilibrium Model}
 \label{sec:sim-eq}
