@@ -899,6 +899,8 @@ This framework is therefore very general and our implementation accepts any func
 forms for the model components.
 
 
+\subsection{Computing empirical actions and angles}
+
 % With this parametrization, the action and frequency are monotonic and smooth functions
 % of the distorted radius $r_z$: $J_z = J_z(r_z)$ and $\Omega_z = \Omega_z(r_z)$.
 % We can also now compute the dynamical quantities with integrals over the ellipsoidal
@@ -983,7 +985,15 @@ For the choices above, this corresponds to $\max(z) \approx 3~\kpc$ and $\max(v_
 \includegraphics[width=\textwidth]{sho-data-model.pdf}
 \end{center}
 \caption{%
-TODO
+A demonstration of a best-fit OTI model using simulated data in a simple harmonic
+oscillator potential.
+\textbf{Left panel:} Simulated kinematic data in the vertical phase space with an
+isothermal distribution function and a linear relation between \abun{Mg}{Fe} and
+$z_{\textrm{max}}$ (see Figure~\ref{fig:mgfe-zvz}).
+\textbf{Middle panel:} An optimized OTI model evaluated on the same grid of phase-space
+coordinates as the data (left panel).
+\textbf{Right panel:} The residuals of the best-fit model (i.e. the simulated data minus
+the best-fit model evaluated on the same grid of phase-space coordinates).
 \label{fig:sho-data-model}
 }
 \end{figure*}
@@ -1019,10 +1029,10 @@ when optimizing are summarized in Table~\ref{tbl:sho-params}.
 
 Our framework is implemented with \jax\ so that our objective function is just-in-time
 compiled and we can use automatic differentiation to compute the gradients of the
-objective function with respect to the (in this case) 17 model parameters.
-We use a Gaussian log-likelihood of the mean \abun{Mg}{Fe} abundance data as our
-objective function where we also measure the empirical scatter of the abundances values
-in each pixel of the vertical phase space and adopt this as the uncertainty on the mean
+objective function with respect to the, in this case, 17 model parameters.
+We use a Gaussian log-likelihood for the mean \abun{Mg}{Fe} abundance data as our
+objective function: We also measure the empirical scatter of the abundance values in
+each pixel of the vertical phase space and adopt this as the uncertainty on the mean
 abundance value in each pixel.
 We additionally use an L2 regularization on the Fourier coefficient function values
 $y^{(e_2)}$ with a standard deviation of 0.1 to try to keep these values near zero.
@@ -1033,7 +1043,23 @@ CPU.
 The middle panel of Figure~\ref{fig:sho-data-model} shows the best-fit model evaluated
 over the domain of our simulated data (left panel), and the right panel shows the
 residuals.
-Figure~\ref{fig:sho-validation} shows
+
+We estimate uncertainties on the best-fit model parameters by using \jax\
+(auto-differentiation) to compute the Hessian of the log-likelihood (i.e. a standard
+Fisher analysis).
+The left panel of Figure~\ref{fig:sho-validation} shows the inferred vertical
+acceleration profile, $a_z(z)$, from the OTI model in Figure~\ref{fig:sho-data-model}:
+The dashed (green) line shows the true vertical acceleration relation, $a_z = -\omega^2
+\, z$, and the solid (black) line shows the best-fit OTI model, demonstrating that for
+this toy dataset we are able to recover the true acceleration profile.
+The gray shaded region shows the 16th to 84th percentile acceleration trends using the
+error propagation described above.
+The right panel of Figure~\ref{fig:sho-validation} shows the true vertical action values
+for all simulated particles on the vertical axis (i.e. the samples from the \df\ used to
+create the mean abundance data shown in the left panel of
+Figure~\ref{fig:sho-data-model}) and our estimates for the vertical action of each star
+particle as the black point markers.
+We estimate
 
 
 
