@@ -446,14 +446,14 @@ The vertical action is defined as the area that an orbit sweeps out in the verti
 phase-space, i.e.,
 \begin{equation}
     J_z = \frac{1}{2\pi} \, \oint \dd z \, p_z =
-        \frac{1}{2\pi} \, \oint \dd z \, v_z(z) \quad,
+        \frac{1}{2\pi} \, \oint \dd z \, v_z(z) \quad, \label{eq:Jz}
 \end{equation}
 where this integral is done over the full orbital path.
 Another important invariant property of orbits is the vertical frequency $\Omega_z$,
 which is related to the vertical period of an orbit $T_z = 2\pi / \Omega_z$.
 The vertical period can be computed as
 \begin{equation}
-    T_z = \oint \frac{\dd z}{v_z(z)}
+    T_z = \oint \frac{\dd z}{v_z(z)} \label{eq:Tz}
 \end{equation}
 where the integral is again done over the orbital path.
 In general, the vertical frequency and period of an orbit depends on its action
@@ -890,6 +890,8 @@ position or velocity of the midplane, we additionally include parameters $z_0$ a
 $v_{z,0}$ to represent these zero-point values --- we then replace $z$ and $v_z$ in
 Equations~\ref{eq:rzp}--\ref{eq:thetazp} with $z-z_0$ and $v_z - v_{z, 0}$.
 
+\todo{words about drz/drzp, foliation, non-overlapping contours}
+
 We have implemented this framework in \python\ using \jax\ \citep{jax:2018} to
 accelerate the model evaluation and to use automatic differentiation to compute the
 gradients of the model with respect to the (many) model parameters.
@@ -901,24 +903,28 @@ forms for the model components.
 
 \subsection{Computing empirical actions and angles}
 
-% With this parametrization, the action and frequency are monotonic and smooth functions
-% of the distorted radius $r_z$: $J_z = J_z(r_z)$ and $\Omega_z = \Omega_z(r_z)$.
-% We can also now compute the dynamical quantities with integrals over the ellipsoidal
-% angle $\theta_z'$
-% \begin{align}
-%     J_z(r_z) &= \frac{2}{\pi} \, \int_0^{\pi/2} \dd \theta_z' \, v_z(\theta_z')
-%         \, \left|\frac{\dd z}{\dd \theta_z'}\right| \\
-%     T_z &= 4 \, \int_0^{\pi/2} \frac{\dd \theta_z'}{v_z(\theta_z')}
-%         \, \left|\frac{\dd z}{\dd \theta_z'}\right|
-% \end{align}
-% where
-% \begin{align}
-%     v_z(\theta_z') &= \sqrt{\omega_0} \, r_z'(r_z, \theta_z') \, \cos{(\theta_z')} \\
-%     z(\theta_z') &= \frac{1}{\sqrt{\omega_0}} \, r_z'(r_z, \theta_z') \, \sin{(\theta_z')}
-% \end{align}
-% and $r_z'(r_z, \theta_z')$ in general has to be found by numerical root-finding of
-% Equation~\ref{eq:rz}.
-
+With the model described above, fitted to a given sample of data in a projection of
+phase space, we can use the model to compute empirical values of the orbital actions,
+angles, and frequencies.
+The action and frequency are monotonic and smooth functions of the distorted radius \rz,
+i.e. $J_z = J_z(\rz)$ and $\Omega_z = \Omega_z(\rz)$.
+We can compute these dynamical quantities using the integrals in
+Equations~\ref{eq:Jz}--\ref{eq:Tz} by integrating over the ellipsoidal angle $\thzp$
+along a contour of constant $\rz$:
+\begin{align}
+    J_z &= \frac{2}{\pi} \, \int_0^{\pi/2} \dd \thzp \, v_z(\thzp)
+        \, \left|\frac{\dd z}{\dd \thzp}\right| \\
+    T_z &= 4 \, \int_0^{\pi/2} \frac{\dd \thzp}{v_z(\thzp)}
+        \, \left|\frac{\dd z}{\dd \thzp}\right| \quad .
+\end{align}
+That is, for a given phase-space coordinate $(z, v_z)^*$ at the current ellipsoidal
+coordinates $(\rzp, \thzp)^*$, the integrals above are done along the curve of constant
+$\rz^*$.
+The conjugate angle variable $\theta_z$ is computed as the fractional time
+\begin{equation}
+    \theta_z = \frac{2\pi}{T_z} \, \int_0^{\thzp^*} \frac{\dd \thzp}{v_z(\thzp)}
+        \, \left|\frac{\dd z}{\dd \thzp}\right| \quad .
+\end{equation}
 
 \section{Applications to Simulated Data} \label{sec:applications-sim}
 
