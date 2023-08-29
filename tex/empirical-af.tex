@@ -902,25 +902,28 @@ forms for the model components.
 
 
 \subsection{Computing empirical actions and angles}
+\label{sec:empirical-aaf}
 
-With the model described above, fitted to a given sample of data in a projection of
-phase space, we can use the model to compute empirical values of the orbital actions,
-angles, and frequencies.
-The action and frequency are monotonic and smooth functions of the distorted radius \rz,
-i.e. $J_z = J_z(\rz)$ and $\Omega_z = \Omega_z(\rz)$.
-We can compute these dynamical quantities using the integrals in
+The distorted elliptical radius \rz\ will be close to constant along orbits in the
+vertical phase space.
+The orbital action and frequency should therefore be monotonic and smooth functions of
+\rz, i.e. $J_z = J_z(\rz)$ and $\Omega_z = \Omega_z(\rz)$.
+We can therefore use a fitted model of the contours of constant stellar label to compute
+empirical values of the action, conjugate angle, and frequency for a given phase-space
+position $(z, v_z)^*$.
+We compute these dynamical quantities using the integrals in
 Equations~\ref{eq:Jz}--\ref{eq:Tz} by integrating over the ellipsoidal angle $\thzp$
 along a contour of constant $\rz$:
 \begin{align}
     J_z &= \frac{2}{\pi} \, \int_0^{\pi/2} \dd \thzp \, v_z(\thzp)
         \, \left|\frac{\dd z}{\dd \thzp}\right| \\
     T_z &= 4 \, \int_0^{\pi/2} \frac{\dd \thzp}{v_z(\thzp)}
-        \, \left|\frac{\dd z}{\dd \thzp}\right| \quad .
+        \, \left|\frac{\dd z}{\dd \thzp}\right|
 \end{align}
-That is, for a given phase-space coordinate $(z, v_z)^*$ at the current ellipsoidal
-coordinates $(\rzp, \thzp)^*$, the integrals above are done along the curve of constant
-$\rz^*$.
-The conjugate angle variable $\theta_z$ is computed as the fractional time
+where the function $v_z(\thzp)$ and the Jacobian term $\left|\frac{\dd z}{\dd
+\thzp}\right|$ are evaluated along a curve of constant $\rz$ corresponding to the
+phase-space coordinates $(z, v_z)^*$.
+The conjugate angle variable, $\theta_z$, is computed as the fractional time
 \begin{equation}
     \theta_z = \frac{2\pi}{T_z} \, \int_0^{\thzp^*} \frac{\dd \thzp}{v_z(\thzp)}
         \, \left|\frac{\dd z}{\dd \thzp}\right| \quad .
