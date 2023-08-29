@@ -890,11 +890,52 @@ position or velocity of the midplane, we additionally include parameters $z_0$ a
 $v_{z,0}$ to represent these zero-point values --- we then replace $z$ and $v_z$ in
 Equations~\ref{eq:rzp}--\ref{eq:thetazp} with $z-z_0$ and $v_z - v_{z, 0}$.
 
-\todo{words about drz/drzp, foliation, non-overlapping contours}
+As the label function only depends on the distorted radius \rz, we can compute the
+vertical acceleration from a fitted OTI model directly from the dependence of \rz\ on
+the phase space coordinates.
+That is, from Equation~\ref{eq:Y-az} and applying the chain rule, we have
+\begin{equation}
+    a_z = - v_z \, \pderiv{r_z}{z} \left(\pderiv{r_z}{v_z}\right)^{-1} \quad .
+\end{equation}
+From the definition of \rz\ and after some manipulation (see
+Appendix~\ref{sec:appendix-az}), we find that
+\begin{equation}
+    a_z(z) = - \freqzero^2 \, z \,
+    \frac{\left[
+        1 + \sum_{j=1}^{\mmax/2} (-1)^{j} \,
+            \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+    \right]_{\rzp = \sqrt{\freqzero}\,z}}{\left[
+        1 + \sum_{j=1}^{\mmax/2} (-1)^{j} \,
+            \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+    \right]_{\rzp = \sqrt{\freqzero}\,z}} \label{eq:az-ugly}
+\end{equation}
+where $m=2\,j$ and $\mmax$ is the maximum (even) order of the Fourier expansion of the
+distorted radius, and the expression is evaluated at $\rzp = \sqrt{\freqzero}\,z$.
+Note that when $e_m = 0$ for all $m$ (i.e. when there is no distortion of the
+ellipsoidal radius), this reduces to the expected expression for the simple harmonic
+oscillator.
 
-We have implemented this framework in \python\ using \jax\ \citep{jax:2018} to
-accelerate the model evaluation and to use automatic differentiation to compute the
-gradients of the model with respect to the (many) model parameters.
+We obtain the expression above for $a_z(z)$ (Equation~\ref{eq:az-ugly}) by taking the
+limit $\thzp \rightarrow \pi/2$, which, in our definition, is equivalent to the limit
+$v_z \rightarrow 0$.
+However, because our model parametrizes the shapes of orbits without imposing
+physicality, our inferred force law can end up depending on velocity.
+This is unphysical, but is a tradeoff we make to allow for a flexible model of the phase
+space --- we discuss this point further in the Discussion
+(Section~\ref{sec:discussion-vz-dependence}).
+Another potential pathology of our model setup is that, for some settings of the
+functions $e_m(\rzp)$, the orbits can cross (i.e. the contours of constant label can
+intersect).
+In a truly separable system, this would also lead to unphysical interpretations of the
+force field inferred from the model, as the orbits should foliate the phase space.
+We do not find this to be a problem in practice with sufficient bounds set on the
+Fourier distortion functions to keep their amplitudes small.
+% \todo{words about drz/drzp, foliation, non-overlapping contours}
+
+We have implemented this new Orbital Torus Imaging (OTI) framework in \python\ using
+\jax\ \citep{jax:2018} to accelerate the model evaluation and to use automatic
+differentiation to compute the gradients of the model with respect to the (many) model
+parameters.
 We release a software package, \texttt{torusimaging}, along with this Article that
 contains our implementation.
 This framework is therefore very general and our implementation accepts any functional
@@ -966,22 +1007,28 @@ normalized \df\ that integrates to 1 (i.e. a probability distribution function).
         v_z = \sqrt{2 \, J_z \, \omega} \, \cos\theta_z
 \end{align}
 We adopt $\omega = 0.08~\unit{\radian\per\mega\year}$ and $\sigma_{v_z} = 50~\kms$ as
-arbitrary choices meant to approximately match the observed vertical kinematics of stars
-near the solar position.
-We sample $N=2^{18}=\num{262144}$ phase-space positions to use as data, but note that
-the precision of our measurements (especially at high $z$) will depend on the sample
-size.
+somewhat arbitrary choices meant to approximately match the observed vertical kinematics
+of stars near the solar position.
+We sample $N=2^{18}=\num{262144}$ phase-space positions to use as our simulated data
+set, but we note that the precision of our measurements (especially at high $z$) will
+depend on the sample size.
 We then assign each star a simulated element abundance value to serve as a stellar label
 $Y$: We use the relation between \abun{Mg}{Fe} and $z_{\textrm{max}}$ from the \apogee\
 data (see the right panel of Figure~\ref{fig:mgfe-zvz}) to assign each star a simulated
-value of \abun{Mg}{Fe} by drawing from a Gaussian centered on the mean value from the
-linear relation with a standard deviation of $0.05~\textrm{dex}$.
+value of $Y_{\abun{Mg}{Fe}}$ by drawing from a Gaussian centered on the mean value from
+the linear relation with a standard deviation of $0.05~\textrm{dex}$.
+That is, our simulated abundance values are drawn from
+\begin{equation}
+    Y_{\abun{Mg}{Fe}} \sim \mathcal{N}(0.064~\zmax + 0.009, 0.05)
+\end{equation}
+where $\mathcal{N}(\mu, \sigma)$ is a normal distribution with mean $\mu$ and standard
+deviation $\sigma$.
 
 Figure~\ref{fig:sho-data-model} (left panel) shows the mean simulated \abun{Mg}{Fe}
 abundance for stars in bins of vertical phase-space coordinates with the same color
-scale as in the middle panel of Figure~\ref{fig:mgfe-zvz} (i.e. the real data).
+scale as in the middle panel of Figure~\ref{fig:mgfe-zvz} (i.e. the real \apogee\ data).
 For setting axis limits and functions below, we define a maximum elliptical radius
-$r_{z, \textrm{max}} = 5 \, \frac{s_z}{\sqrt{\omega}}$ equivalent to the $5~\sigma$
+$r_{z, \textrm{max}} = 5 \, \frac{s_z}{\sqrt{\omega}}$ equivalent to the 5-$\sigma$
 values of the \df\ scale.
 In terms of the phase-space coordinates, we then use a maximum $z$ value of $\max(z) =
 r_{z, \textrm{max}} \times \sqrt{\omega}$ and similarly for $v_z$, $\max(v_z) = r_{z,
@@ -1007,14 +1054,14 @@ the best-fit model evaluated on the same grid of phase-space coordinates).
 }
 \end{figure*}
 
-We then fit the simulated mean \abun{Mg}{Fe} abundance data using the OTI framework
-described above (Section~\ref{sec:oti}).
+We then fit the simulated mean abundance data in pixels of phase-space coordinates,
+$\langle Y_{\abun{Mg}{Fe}} \rangle$, using the OTI framework described above
+(Section~\ref{sec:oti}).
 To do this, we need to decide on functional forms for both the label function, $Y(\rz)$,
 and the Fourier coefficient functions.
 For all of these functions, we use a monotonic quadratic spline function defined such
-that the function is always monotonically increasing or decreasing (which must be
-hard-set before optimization).
-\todo{Describe monotonic quadratic spline in appendix}
+that the function is always monotonically increasing or decreasing, which must be
+hard-set before optimization (see Appendix~\ref{sec:appendix-spline}).
 For the label function, we assert that the value must monotonically increase from $\rz =
 0$ to the maximum spline knot location.
 We use 10 spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$ and
@@ -1023,10 +1070,11 @@ $r_{z, \textrm{max}}$.
 For this initial case, we include only an $m=2$ term in our Fourier distortion of the
 elliptical radius (Equation~\ref{eq:rz}).
 For the Fourier coefficient function, $e_2(\rzp)$, we require that the coefficient value
-must equal zero at $\rzp = 0$, $e_2(0) = 0$, and that the coefficient value
+must equal zero at $\rzp = 0$ (i.e. $e_2(0) = 0$), and that the coefficient value
 monotonically increases with $\rzp$.
 Requiring $e_2(0) = 0$ ensures that the parameter $\freqzero$ corresponds to the
-asymptotic orbital frequency as $\rzp \rightarrow 0$.
+asymptotic orbital frequency as $\rzp \rightarrow 0$ and can therefore be used to
+estimate the midplane volume mass density (Equation~\ref{eq:freqzero}).
 Assuming that the coefficient value increases with $\rzp$ (so that the orbit shapes
 can only become more prolate with increasing $z_{\textrm{max}}$) is equivalent to
 assuming that the volume density increases with increasing height $z$.
@@ -1040,9 +1088,10 @@ Our framework is implemented with \jax\ so that our objective function is just-i
 compiled and we can use automatic differentiation to compute the gradients of the
 objective function with respect to the, in this case, 17 model parameters.
 We use a Gaussian log-likelihood for the mean \abun{Mg}{Fe} abundance data as our
-objective function: We also measure the empirical scatter of the abundance values in
-each pixel of the vertical phase space and adopt this as the uncertainty on the mean
-abundance value in each pixel.
+objective function.
+We also measure the empirical scatter of the abundance value data in each pixel of the
+vertical phase space and adopt this as the uncertainty on the mean abundance value in
+each pixel.
 We additionally use an L2 regularization on the Fourier coefficient function values
 $y^{(e_2)}$ with a standard deviation of 0.1 to try to keep these values near zero.
 We use a standard L-BFGS-B optimizer \citep{Byrd:1995} to minimize the regularized
@@ -1050,10 +1099,10 @@ negative log-likelihood, implemented in \texttt{JAXopt} \cite{jaxopt:2021}.
 For this simulated data, the optimization runs in $\sim 10~\unit{\second}$ on a single
 CPU.
 The middle panel of Figure~\ref{fig:sho-data-model} shows the best-fit model evaluated
-over the domain of our simulated data (left panel), and the right panel shows the
+over the domain of our simulated data in the left panel, and the right panel shows the
 residuals.
 
-We estimate uncertainties on the best-fit model parameters by using \jax\
+We estimate uncertainties on the best-fit model parameters using \jax\
 (auto-differentiation) to compute the Hessian of the log-likelihood (i.e. a standard
 Fisher analysis).
 The left panel of Figure~\ref{fig:sho-validation} shows the inferred vertical
@@ -1141,6 +1190,7 @@ TODO: compare Agama with empaf
 \section{Discussion} \label{sec:discussion}
 
 \subsection{Limitation that our acceleration can depend on $v_z$}
+\label{sec:discussion-vz-dependence}
 
 
 \section{Summary and Conclusions} \label{sec:conclusions}
@@ -1199,10 +1249,16 @@ participating in the {\it Gaia} Multilateral Agreement.
 \section{A Toy Milky Way Mass Model}
 \label{sec:appendix-potential}
 
-TODO.
+TODO
+
+
+\section{Monotonic Quadratic Spline}
+\label{sec:appendix-spline}
+
+TODO
 
 \section{Evaluation of the Vertical Acceleration from an OTI Model}
-\label{sec:appendix-math}
+\label{sec:appendix-az}
 
 We would like to evaluate the vertical acceleration as a function of height above the
 Galactic midplane, $a_z(z) = \frac{\partial \Phi}{\partial z}$.
