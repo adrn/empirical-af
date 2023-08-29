@@ -957,9 +957,9 @@ Equations~\ref{eq:Jz}--\ref{eq:Tz} by integrating over the ellipsoidal angle $\t
 along a contour of constant $\rz$:
 \begin{align}
     J_z &= \frac{2}{\pi} \, \int_0^{\pi/2} \dd \thzp \, v_z(\thzp)
-        \, \left|\frac{\dd z}{\dd \thzp}\right| \\
+        \, \left|\frac{\dd z}{\dd \thzp}\right| \label{eq:Jz-ell} \\
     T_z &= 4 \, \int_0^{\pi/2} \frac{\dd \thzp}{v_z(\thzp)}
-        \, \left|\frac{\dd z}{\dd \thzp}\right|
+        \, \left|\frac{\dd z}{\dd \thzp}\right| \label{eq:Tz-ell}
 \end{align}
 where the function $v_z(\thzp)$ and the Jacobian term $\left|\frac{\dd z}{\dd
 \thzp}\right|$ are evaluated along a curve of constant $\rz$ corresponding to the
@@ -967,7 +967,7 @@ phase-space coordinates $(z, v_z)^*$.
 The conjugate angle variable, $\theta_z$, is computed as the fractional time
 \begin{equation}
     \theta_z = \frac{2\pi}{T_z} \, \int_0^{\thzp^*} \frac{\dd \thzp}{v_z(\thzp)}
-        \, \left|\frac{\dd z}{\dd \thzp}\right| \quad .
+        \, \left|\frac{\dd z}{\dd \thzp}\right| \label{eq:thz-ell} \quad .
 \end{equation}
 
 \section{Applications to Simulated Data} \label{sec:applications-sim}
@@ -1106,7 +1106,8 @@ We estimate uncertainties on the best-fit model parameters using \jax\
 (auto-differentiation) to compute the Hessian of the log-likelihood (i.e. a standard
 Fisher analysis).
 The left panel of Figure~\ref{fig:sho-validation} shows the inferred vertical
-acceleration profile, $a_z(z)$, from the OTI model in Figure~\ref{fig:sho-data-model}:
+acceleration profile, $a_z(z)$ (computed with Equation~\ref{eq:az-ugly}), from the OTI
+model in Figure~\ref{fig:sho-data-model}:
 The dashed (green) line shows the true vertical acceleration relation, $a_z = -\omega^2
 \, z$, and the solid (black) line shows the best-fit OTI model, demonstrating that for
 this toy dataset we are able to recover the true acceleration profile.
@@ -1116,9 +1117,12 @@ The right panel of Figure~\ref{fig:sho-validation} shows the true vertical actio
 for all simulated particles on the vertical axis (i.e. the samples from the \df\ used to
 create the mean abundance data shown in the left panel of
 Figure~\ref{fig:sho-data-model}) and our estimates for the vertical action of each star
-particle as the black point markers.
-We estimate
-
+particle as the black point markers:
+We compute the actions, frequencies, and angles using
+Equations~\ref{eq:Jz-ell}--\ref{eq:thz-ell} evaluated at the phase-space coordinates of
+each star particle.
+The acceleration error at $z=2~\kpc$ is $\sim 1\%$ (in fractional error) and the median
+action error is $<0.5\%$ for this sample dataset.
 
 
 \begin{table}
