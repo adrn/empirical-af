@@ -102,7 +102,6 @@ def make_qiso_df(overwrite=False):
 
     def df(J):
         # quasi-isothermal DF and parameters from Sanders et al. 2015
-        # TODO: values still from Binney 2012 - switch to Sanders
         Jr, Jz, Jphi = J.T
 
         R_c = poly_Lz_to_Rc(Jphi)
@@ -151,7 +150,7 @@ def make_qiso_df(overwrite=False):
         Jphi_term = 1 + np.tanh(Jphi / L0)
 
         # Modify Jphi term to only generate around solar orbit
-        # DIABLED: doesn't make sense to have a peak at solar value...
+        # DISABLED: doesn't make sense to have a peak at solar value...
         # Jphi0 = (vc0 * R0).decompose(galactic).value
         # dJphi = Jphi0 * 0.05  # spread = 5% of solar Jphi
         # Jphi_term = np.exp(-0.5 * (Jphi - Jphi0) ** 2 / dJphi**2)
