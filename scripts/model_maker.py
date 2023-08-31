@@ -102,7 +102,7 @@ class SplineLabelModelWrapper:
         }
 
         e_bounds = {
-            m: {"vals": (jnp.full(n - 1, 0), jnp.full(n - 1, 1))}
+            m: {"vals": (jnp.full(n - 1, 0), jnp.full(n - 1, 10.0))}  # TODO: magic
             for m, n in e_n_knots.items()
         }
 
