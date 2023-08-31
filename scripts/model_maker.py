@@ -22,9 +22,18 @@ def regularization_func_base(params, e_regularize: bool, e_regularize_sigmas: di
     p = 0.0
 
     if e_regularize:
-        # L2
+        # # L2
+        # for m in params["e_params"]:
+        #     p += jnp.sum(
+        #         (params["e_params"][m]["vals"] / e_regularize_sigmas[m]) ** 2
+        #     )
+
+        # L2 on difference
         for m in params["e_params"]:
-            p += jnp.sum((params["e_params"][m]["vals"] / e_regularize_sigmas[m]) ** 2)
+            diff = (
+                params["e_params"][m]["vals"][1:] - params["e_params"][m]["vals"][:-1]
+            )
+            p += jnp.sum((diff / e_regularize_sigmas[m]) ** 2)
 
         # # L1
         # for m in params["e_params"]:
@@ -193,8 +202,11 @@ class SplineLabelModelWrapper:
         tmp, _ = oti_data.get_binned_label(
             bins,
             label_name=label_name,
+            # statistic=lambda x: np.sqrt(
+            #     label_err_floor**2 + np.nanvar(x) / (len(x) + 1)
+            # ),
             statistic=lambda x: np.sqrt(
-                label_err_floor**2 + np.nanvar(x) / (len(x) + 1)
+                (label_err_floor**2 + np.nanvar(x)) / (len(x) + 1)
             ),
             **data_kw,
         )
