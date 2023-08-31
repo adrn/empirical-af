@@ -184,6 +184,7 @@ class SplineLabelModelWrapper:
         self,
         oti_data,
         bins,
+        p0=None,
         label_name=None,
         label_err_floor=0.01,
         data_kw=None,
@@ -211,7 +212,9 @@ class SplineLabelModelWrapper:
             **data_kw,
         )
         bdata[f"{label_name}_err"] = tmp[label_name]
-        p0 = self.get_init_params(oti_data, label_name=label_name)
+
+        if p0 is None:
+            p0 = self.get_init_params(oti_data, label_name=label_name)
 
         # First check that objective evaluates to a finite value:
         mask = np.isfinite(bdata[label_name])
