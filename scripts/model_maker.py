@@ -43,6 +43,7 @@ class SplineLabelModelWrapper:
         label0_bounds: tuple,
         label_grad_sign: float,
         e_n_knots: dict,
+        e_knots_scale=None,
         e_signs=None,
         e_regularize=True,
         e_regularize_sigmas=None,
@@ -82,9 +83,15 @@ class SplineLabelModelWrapper:
 
         # ------------------------------------------------------------------------------
         # Set up the e function components:
+        if e_knots_scale is None:
+            e_knots_scale = {}
+        for m in e_n_knots:
+            e_knots_scale.setdefault(m, (lambda x: x, lambda x: x))
+
         self.e_n_knots = e_n_knots
         self.e_knots = {
-            m: jnp.linspace(0, r_e_max, knots) for m, knots in e_n_knots.items()
+            m: e_knots_scale[m][0](jnp.linspace(0, e_knots_scale[m][1](r_e_max), n))
+            for m, n in e_n_knots.items()
         }
         if e_signs is None:
             e_signs = {m: (-1.0 if (m / 2) % 2 == 0 else 1.0) for m in self.e_knots}
