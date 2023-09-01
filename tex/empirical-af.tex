@@ -998,8 +998,9 @@ potential,
     \Phi_{z}(z) = \frac{1}{2} \, \omega^2 \, z^2
 \end{equation}
 by sampling from an isothermal distribution function\footnote{We will use $f(\cdot)$ to
-represent a \df\ that integrates to a number of stars, and $p(\cdot)$ to represent a
-normalized \df\ that integrates to 1 (i.e. a probability distribution function).}
+represent a distribution function, \df, that integrates to a number of stars, and
+$p(\cdot)$ to represent a normalized \df\ that integrates to 1 (i.e. a probability
+distribution function).}
 \begin{align}
     p_z(J_z) &= \frac{1}{\, s_z} e^{-\frac{J_z}{s_z}} \quad ; \quad J_z \in [0, \infty)\\
     s_z &= \sigma_{v_z}^2 / \omega\\
@@ -1134,8 +1135,8 @@ action error is $<0.5\%$ for this sample dataset.
     $\ln(\freqzero / (\unit{\radian\per\mega\year}))$ & Asymptotic frequency at $r_z=0$ & $(-9, 0)$\\
     $z_0$ & Solar position relative to midplane & $(-0.5, 0.5)~\kpc$\\
     $v_{z,0}$ & Solar velocity relative to midplane & $(-50, 50)~\kms$\\
-    $y_0^{\ln n}$ & Log-phase-space density function value at $r_z=0$ & $(-5, 25)$\\
-    $y_{1\dots K}^{\ln n}$ & Log-phase-space density function derivative values & $(-25, 0)$\\
+    $y_0^{\ln n}$ & Label function value (\abun{Mg}{Fe}) at $r_z=0$ & $(-5, 25)$\\
+    $y_{1\dots K}^{\ln n}$ & Label function derivative values & $(-25, 0)$\\
     $y_0^{e_2}$ & $m=2$ Fourier coefficient function value at $r_z=0$ & fixed to $0$\\
     $y_{1\dots L}^{e_2}$ & $m=2$ Fourier coefficient function derivative values & $(0, 1)$\\
 \end{tabular}
@@ -1172,6 +1173,31 @@ The median (fractional) action error is $<0.5\%$ for this sample dataset.
 
 \subsection{Axisymmetric Quasi-isothermal Disk}
 \label{sec:sim-eq}
+
+As a next application of the OTI framework, we use a galaxy model to sample 3D positions
+and velocities of star particles to test our inferred quantities in a more realistic
+setting.
+We use a quasi-isothermal disk \df\ \citep{Binney:2012} with parameters derived from
+fitting Milky Way stellar data (we use the ``thin disk'' parameters from Table~3 of
+\citealt{Sanders:2015}).
+We implement this \df\ using the \agama\ package and sample \num{5d8} phase-space
+coordinates with guiding-center radii $R_G$ between $5 < R_G < 12~\kpc$.
+We compute the guiding radii using an approximation assuming the circular velocity
+curve, $v_c(R)$, is flat, $R_G = L_z / v_c(R)$, where $L_z$ is the angular momentum of
+the star particle and $R$ is its instantaneous cylindrical radius.
+From this simulated sample, we select only stars near the solar radius, $R_0=8.3~\kpc$,
+with $|R-R_0| < 1~\kpc$, and additionally select $|R-R_G| < 1~\kpc$ and $|v_R| <
+15~\kms$ as a way of limiting the radial action of the stars so that our assumption of
+$R$--$z$ separability is more valid.
+We do not use the radial action itself to select stars because we want to mimic the
+kinds of selections we could do with real data, where we do not know the true underlying
+gravitational potential (which would be needed to compute the actions).
+After these selections, we are left with $\approx \num{7d6}$ star particles.
+We again compute simulated \abun{Mg}{Fe} abundance values for these stars using the
+linear relation between \abun{Mg}{Fe} and $z_{\textrm{max}}$ from the \apogee\ data (see
+the right panel of Figure~\ref{fig:mgfe-zvz}) and a scatter of 0.05~dex (see
+Section~\ref{sec:sim-sho}).
+
 
 Set up an Agama model, show that we can recover the acceleration field.
 
