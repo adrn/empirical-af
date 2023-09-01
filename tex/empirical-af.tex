@@ -22,8 +22,8 @@
 % \end{figure}
 
 \PassOptionsToPackage{usenames,dvipsnames}{xcolor}
-\documentclass[modern]{aastex631}
-% \documentclass[twocolumn]{aastex631}
+% \documentclass[modern]{aastex631}
+\documentclass[twocolumn]{aastex631}
 
 % Load common packages
 \usepackage{microtype}  % ALWAYS!
@@ -976,7 +976,7 @@ In this section, we demonstrate the OTI framework described above using a set of
 simulated datasets of increasing complexity.
 We start by using a one-dimensional simple harmonic oscillator potential
 (Section~\ref{sec:sim-sho}), then use a more realistic multi-component galaxy model
-(Section~\ref{sec:sim-eq}), and finally use the final snapshot from an $N$-body
+(Section~\ref{sec:sim-qiso}), and finally use the final snapshot from an $N$-body
 simulation of a disk galaxy perturbed by an orbiting satellite
 (Section~\ref{sec:sim-jason}).
 
@@ -1091,8 +1091,9 @@ objective function with respect to the, in this case, 17 model parameters.
 We use a Gaussian log-likelihood for the mean \abun{Mg}{Fe} abundance data as our
 objective function.
 We also measure the empirical scatter of the abundance value data in each pixel of the
-vertical phase space and adopt this as the uncertainty on the mean abundance value in
-each pixel.
+vertical phase space and adopt this (scaled by $1/\sqrt{N}$, where $N$ is the number of
+star particles in a given pixel) as the uncertainty on the mean abundance value in each
+pixel.
 We additionally use an L2 regularization on the Fourier coefficient function values
 $y^{(e_2)}$ with a standard deviation of 0.1 to try to keep these values near zero.
 We use a standard L-BFGS-B optimizer \citep{Byrd:1995} to minimize the regularized
@@ -1102,6 +1103,7 @@ CPU.
 The middle panel of Figure~\ref{fig:sho-data-model} shows the best-fit model evaluated
 over the domain of our simulated data in the left panel, and the right panel shows the
 residuals.
+The residuals everywhere indicate that the best-fit model matches the data well.
 
 We estimate uncertainties on the best-fit model parameters using \jax\
 (auto-differentiation) to compute the Hessian of the log-likelihood (i.e. a standard
@@ -1125,35 +1127,9 @@ each star particle.
 The acceleration error at $z=2~\kpc$ is $\sim 1\%$ (in fractional error) and the median
 action error is $<0.5\%$ for this sample dataset.
 
-
-\begin{table}
-    \begin{centering}
-\begin{tabular}{c c c}
-    \multicolumn{3}{c}{\textbf{Simple Harmonic Oscillator Model Fit}} \\ [0.75ex]
-    Parameter & Description & Bounds \\ [0.5ex]
-    \hline\hline
-    $\ln(\freqzero / (\unit{\radian\per\mega\year}))$ & Asymptotic frequency at $r_z=0$ & $(-9, 0)$\\
-    $z_0$ & Solar position relative to midplane & $(-0.5, 0.5)~\kpc$\\
-    $v_{z,0}$ & Solar velocity relative to midplane & $(-50, 50)~\kms$\\
-    $y_0^{\ln n}$ & Label function value (\abun{Mg}{Fe}) at $r_z=0$ & $(-5, 25)$\\
-    $y_{1\dots K}^{\ln n}$ & Label function derivative values & $(-25, 0)$\\
-    $y_0^{e_2}$ & $m=2$ Fourier coefficient function value at $r_z=0$ & fixed to $0$\\
-    $y_{1\dots L}^{e_2}$ & $m=2$ Fourier coefficient function derivative values & $(0, 1)$\\
-\end{tabular}
-\caption{
-    A summary of the parameters and parameter bounds used for fitting the simulated
-    simple harmonic oscillator data in Section~\ref{sec:sim-sho}.
-    We use $K=10$ spline knots for the log-phase-space density spline function and $L=5$
-    spline knots for the $m=2$ Fourier coefficient spline function.
-    In total, this model has 17 free parameters.
-    \label{tbl:sho-params}
-}
-\end{centering}
-\end{table}
-
 \begin{figure*}[t!]
 \begin{center}
-\includegraphics[width=0.7\textwidth]{sho-validation.pdf}
+\includegraphics[width=0.8\textwidth]{sho-validation.pdf}
 \end{center}
 \caption{%
 Validation of the OTI model fit to the simulated simple harmonic oscillator data.
@@ -1172,7 +1148,7 @@ The median (fractional) action error is $<0.5\%$ for this sample dataset.
 \end{figure*}
 
 \subsection{Axisymmetric Quasi-isothermal Disk}
-\label{sec:sim-eq}
+\label{sec:sim-qiso}
 
 As a next application of the OTI framework, we use a galaxy model to sample 3D positions
 and velocities of star particles to test our inferred quantities in a more realistic
@@ -1181,7 +1157,8 @@ We use a quasi-isothermal disk \df\ \citep{Binney:2012} with parameters derived 
 fitting Milky Way stellar data (we use the ``thin disk'' parameters from Table~3 of
 \citealt{Sanders:2015}).
 We implement this \df\ using the \agama\ package and sample \num{5d8} phase-space
-coordinates with guiding-center radii $R_G$ between $5 < R_G < 12~\kpc$.
+coordinates with guiding-center radii $R_G$ between $5 < R_G < 12~\kpc$ embedded in our
+adopted Milky Way potential model (see Appendix~\ref{sec:appendix-potential}).
 We compute the guiding radii using an approximation assuming the circular velocity
 curve, $v_c(R)$, is flat, $R_G = L_z / v_c(R)$, where $L_z$ is the angular momentum of
 the star particle and $R$ is its instantaneous cylindrical radius.
@@ -1197,16 +1174,107 @@ We again compute simulated \abun{Mg}{Fe} abundance values for these stars using 
 linear relation between \abun{Mg}{Fe} and $z_{\textrm{max}}$ from the \apogee\ data (see
 the right panel of Figure~\ref{fig:mgfe-zvz}) and a scatter of 0.05~dex (see
 Section~\ref{sec:sim-sho}).
+The left panel of Figure~\ref{fig:qiso-data-model} shows this simulated data set in the
+vertical phase space coordinates.
+
+We again fit the simulated mean abundance data in pixels of phase-space coordinates
+using the OTI framework described above (Section~\ref{sec:oti}).
+We again use a monotonic quadratic spline function (Appendix~\ref{sec:appendix-spline})
+for both the label function and the Fourier coefficient functions.
+For the label function, we use 9 knots equally-spaced in \rz\ between $0$ and $r_{z,
+\textrm{max}}$.
+We use $m=\{2, 4, 6\}$ Fourier terms with 11, 5, and 5 spline knots, respectively.
+We space the Fourier coefficient spline knots equally in $\rz^(3/2)$ between $0$ and
+$r_{z, \textrm{max}}$: This places a higher density of knots at lower \rz\ values where
+we expect the Fourier coefficient functions to change more rapidly.
+We require that the coefficient function values at zero are zero so that
+$e_2(0)=e_4(0)=e_6(0)=0$, and we assume that the sign of the functions are $(+,-,+)$ for
+the $m=\{2, 4, 6\}$ coefficient functions, respectively.
+
+We again measure the empirical scatter of the abundance data in each pixel of the
+vertical phase space and use this (scaled by $1/\sqrt{N}$, where $N$ is the number of
+particles in each pixel) as the uncertainty on the mean abundance value in each pixel.
+We use the same regularization as in Section~\ref{sec:sim-sho} (L2 regularization on the
+coefficient function parameters with a standard deviation of 0.1) for all Fourier
+coefficient functions.
+As above, we use a L-BFGS-B optimizer to minimize the regularized negative
+log-likelihood.
+This model has 30 parameters and optimizes in $\sim 140$~seconds on a single CPU.
+The middle panel of Figure~\ref{fig:qiso-data-model} shows the best-fit model evaluated
+on the same pixel grid as the simulated data, and the right panel shows the residuals.
+The small residuals indicate that this model does well to fit the mean abundance
+variations in the vertical phase space.
+
+The left panel of Figure~\ref{fig:qiso-validation} shows the inferred vertical
+acceleration profile and uncertainties (black line and gray shaded region) along with
+the true vertical acceleration (green dashed line) evaluated at a constant $R=R_0$ in
+our adopted Milky Way potential model (see Appendix~\ref{sec:appendix-potential}).
+We estimate uncertainties on the inferred acceleration trend using the Hessian of the
+log-likelihood (i.e. the Cram\'{e}r--Rao lower bound, CRLB) combined with an estimate of
+the parameter variance from bootstrap resampling the data.
+That is, we perform 64 bootstrap resamplings of the particle data and fit the binned,
+resampled data with the same procedure as described above.
+% TODO: re-run with 64 trials
+For each bootstrap trial, we compute the inferred acceleration trend and compute the
+variance of the 64 trials as and additional component of the uncertainty.
+We add this bootstrap variance in quadrature to the error estimate using the CRLB to
+obtain a total uncertainty on the acceleration profile as measured with OTI: This is
+shown as the gray shaded region in Figure~\ref{fig:qiso-validation} (left panel).
+The acceleration error at $z=1~\kpc$ is $\sim 3\%$ (in fractional error).
+
+The right panel of Figure~\ref{fig:sho-validation} shows (as black markers) the true
+vertical action values for a random subset of $10^5$ simulated particles on the vertical
+axis and our estimates for the vertical action of each star particle using the OTI
+model.
+We again compute the actions, frequencies, and angles for the star particles using
+Equations~\ref{eq:Jz-ell}--\ref{eq:thz-ell} evaluated at the phase-space coordinates of
+each star particle.
+We find the median fractional error of the vertical action, angle, and frequency are
+$\sim 4\%$, $\sim 4\%$, and $\sim 9\%$, respectively.
 
 
-Set up an Agama model, show that we can recover the acceleration field.
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=\textwidth]{qiso-data-model.pdf}
+\end{center}
+\caption{%
+The same as Figure~\ref{fig:sho-data-model}, but for the simulated quasi-isothermal disk
+sample from Section~\ref{sec:sim-qiso}.
+% \textbf{Left panel:} Simulated kinematic data in the vertical phase space with an
+% isothermal distribution function and a linear relation between \abun{Mg}{Fe} and
+% $z_{\textrm{max}}$ (see Figure~\ref{fig:mgfe-zvz}).
+% \textbf{Middle panel:} An optimized OTI model evaluated on the same grid of phase-space
+% coordinates as the data (left panel).
+% \textbf{Right panel:} The residuals of the best-fit model (i.e. the simulated data minus
+% the best-fit model evaluated on the same grid of phase-space coordinates).
+\label{fig:qiso-data-model}
+}
+\end{figure*}
+
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{qiso-validation.pdf}
+\end{center}
+\caption{%
+Validation of the OTI model fit to the simulated quasi-isothermal disk sample. (i.e. the
+same as Figure~\ref{fig:sho-validation}, but for the simulated disk sample from
+Section~\ref{sec:sim-qiso}).
+The median (fractional) action error is $\approx 4\%$ for this sample dataset, but we do
+not need to assume a gravitational potential to compute the actions.
+\label{fig:qiso-validation}
+}
+\end{figure*}
 
 
 \subsection{N-body Simulation with a Perturbed Disk}
 \label{sec:sim-jason}
 
+TODO
+
 
 \section{Applications to Data} \label{sec:applications-data}
+
+TODO: a full application in companion paper \citep{Horta:2023}
 
 \subsection{Mapping ... spirals ... \gaia\ Data Release 3}
 \label{sec:gaiadr3}
@@ -1221,10 +1289,6 @@ Show residuals: Phase spiral-o-rama
 \label{sec:gaiadr3}
 
 TODO: compare Agama with empaf
-
-
-\subsection{GALAH or APOGEE demonstration}
-\label{sec:gaiadr3}
 
 
 \section{Discussion} \label{sec:discussion}
@@ -1457,6 +1521,62 @@ Combining these expressions, we have:
                 \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
         \right]}
 \end{align}
+
+\section{Model Function and Parameter Choices}
+\label{sec:appendix-params}
+
+TODO: Move all tables down here?
+
+\begin{table}
+    \begin{centering}
+\begin{tabular}{c c c}
+    \multicolumn{3}{c}{\textbf{Simple Harmonic Oscillator Model Fit}} \\ [0.75ex]
+    Parameter & Description & Bounds \\ [0.5ex]
+    \hline\hline
+    $\ln(\freqzero / (\unit{\radian\per\mega\year}))$ & Asymptotic frequency at $r_z=0$ & $(-9, 0)$\\
+    $z_0$ & Solar position relative to midplane & $(-0.5, 0.5)~\kpc$\\
+    $v_{z,0}$ & Solar velocity relative to midplane & $(-50, 50)~\kms$\\
+    $y_0^{\ln n}$ & Label function value (\abun{Mg}{Fe}) at $r_z=0$ & $(-5, 25)$\\
+    $y_{1\dots K}^{\ln n}$ & Label function derivative values & $(-25, 0)$\\
+    $y_0^{e_2}$ & $m=2$ Fourier coefficient function value at $r_z=0$ & fixed to $0$\\
+    $y_{1\dots L}^{e_2}$ & $m=2$ Fourier coefficient function derivative values & $(0, 1)$\\
+\end{tabular}
+\caption{
+    A summary of the parameters and parameter bounds used for fitting the simulated
+    simple harmonic oscillator data in Section~\ref{sec:sim-sho}.
+    We use $K=10$ spline knots for the log-phase-space density spline function and $L=5$
+    spline knots for the $m=2$ Fourier coefficient spline function.
+    In total, this model has 17 free parameters.
+    \label{tbl:sho-params}
+}
+\end{centering}
+\end{table}
+
+% TODO: update the table
+\begin{table}
+    \begin{centering}
+\begin{tabular}{c c c}
+    \multicolumn{3}{c}{\textbf{Quasi-isothermal Disk Model Fit}} \\ [0.75ex]
+    Parameter & Description & Bounds \\ [0.5ex]
+    \hline\hline
+    $\ln(\freqzero / (\unit{\radian\per\mega\year}))$ & Asymptotic frequency at $r_z=0$ & $(-9, 0)$\\
+    $z_0$ & Solar position relative to midplane & $(-0.5, 0.5)~\kpc$\\
+    $v_{z,0}$ & Solar velocity relative to midplane & $(-50, 50)~\kms$\\
+    $y_0^{\ln n}$ & Label function value (\abun{Mg}{Fe}) at $r_z=0$ & $(-5, 25)$\\
+    $y_{1\dots K}^{\ln n}$ & Label function derivative values & $(-25, 0)$\\
+    $y_0^{e_2}$ & $m=2$ Fourier coefficient function value at $r_z=0$ & fixed to $0$\\
+    $y_{1\dots L}^{e_2}$ & $m=2$ Fourier coefficient function derivative values & $(0, 1)$\\
+\end{tabular}
+\caption{
+    A summary of the parameters and parameter bounds used for fitting the simulated
+    simple harmonic oscillator data in Section~\ref{sec:sim-sho}.
+    We use $K=10$ spline knots for the log-phase-space density spline function and $L=5$
+    spline knots for the $m=2$ Fourier coefficient spline function.
+    In total, this model has 17 free parameters.
+    \label{tbl:sho-params}
+}
+\end{centering}
+\end{table}
 
 \bibliographystyle{aasjournal}
 \bibliography{refs}
