@@ -1,0 +1,63 @@
+\documentclass{article}
+
+% Load common packages
+\usepackage{microtype}  % ALWAYS!
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+% Some style hacks:
+% \renewcommand{\twocolumngrid}{\onecolumngrid}
+\setlength{\parindent}{1.1\baselineskip}
+\addtolength{\topmargin}{-0.2in}
+\addtolength{\textheight}{0.4in}
+\sloppy\sloppypar\raggedbottom\frenchspacing
+
+\input{preamble.tex}
+
+% Custom definitions for this paper:
+\newcommand{\freqzero}{\ensuremath{\Omega_0}}
+\newcommand{\mmax}{\ensuremath{M}}
+\newcommand{\rz}{\ensuremath{r_z}}
+% \newcommand{\rzp}{\ensuremath{r_z'}}
+\newcommand{\rzp}{\ensuremath{\tilde{r}_z}}
+\newcommand{\thz}{\ensuremath{\theta_z}}
+\newcommand{\thzp}{\ensuremath{\tilde{\theta}_z}}
+
+
+\begin{document}
+
+\section{Note}
+
+For any constant of motion $F$ such that $F(x(t), v(t)) = \textrm{const.}$, the total time derivative is:
+\begin{align}
+    \Deriv{F}{t} &= \pderiv{F}{t} +
+        \pderiv{F}{x} \, \deriv{x}{t} + \pderiv{F}{v} \, \deriv{v}{t} = 0 \\
+    0 &= \pderiv{F}{x} \, v + \pderiv{F}{v} \, a
+\end{align}
+which implies
+\begin{align}
+    a &= v \, \pderiv{F}{x} \left(\pderiv{F}{v}\right)^{-1} \quad . \label{eq:acc}
+\end{align}
+
+In an equilibrium system with a phase-mixed DF, any invariant stellar label, e.g., some
+element abundance $Y$, can only depend on the phase-space parameters $(x, v)$ through
+the action $J$ and not the angle.
+However, for any relevant label, its value is not deterministically related to the
+action but instead has some stochastic dependence, which maybe represented through the
+conditional distribution $p(Y \given J)$.
+In a finite sample, we also will never observe two or more stars on the same orbit.
+So, how can we use observations of $x, v, Y$ to constrain the shapes of orbits and
+therefore use Equation~\ref{eq:acc} to measure the acceleration?
+
+We can use summary properties of the distribution $p(Y \given J)$ that are possible to
+observe.
+One example is the mean abundance at some location in phase-space:
+\begin{equation}
+    \mean{Y} = \int \dd Y \, Y \, p(Y \given J(x, v)) \quad .
+\end{equation}
+
+
+\end{document}

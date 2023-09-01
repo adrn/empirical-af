@@ -1,0 +1,3 @@
+torusimaging @ git+https://github.com/adrn/TorusImaging
+numpy
+gala @ git+https://github.com/adrn/gala
