@@ -112,11 +112,13 @@ class SplineLabelModelWrapper:
         }
 
         if e_bounds is None:
-            e_bounds = {m: {} for m in self.e_knots}
+            e_bounds = {}
 
         for m, n in self.e_n_knots.items():
             # TODO: hard-set numbers (0, 10)
-            e_bounds[m].setdefault("vals", (jnp.full(n - 1, 0), jnp.full(n - 1, 10.0)))
+            e_bounds.setdefault(
+                m, {"vals": (jnp.full(n - 1, 0), jnp.full(n - 1, 10.0))}
+            )
 
         if e_regularize_sigmas is None:
             # Default value of L2 regularization stddev:
