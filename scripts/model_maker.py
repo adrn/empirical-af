@@ -112,7 +112,7 @@ class SplineLabelModelWrapper:
         }
 
         if e_bounds is None:
-            e_bounds = {}
+            e_bounds = {m: {} for m in self.e_knots}
 
         for m, n in self.e_n_knots.items():
             # TODO: hard-set numbers (0, 10)
