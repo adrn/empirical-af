@@ -207,7 +207,7 @@ class SplineLabelModelWrapper:
             p0 = self.get_init_params(oti_data, label_name=label_name)
 
         # First check that objective evaluates to a finite value:
-        mask = np.isfinite(bdata[label_name] & bdata[f"{label_name}_err"])
+        mask = np.isfinite(bdata[label_name]) & np.isfinite(bdata[f"{label_name}_err"])
         data = dict(
             pos=bdata["pos"].decompose(self.unit_sys).value[mask],
             vel=bdata["vel"].decompose(self.unit_sys).value[mask],
