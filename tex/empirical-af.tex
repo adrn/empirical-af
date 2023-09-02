@@ -22,8 +22,8 @@
 % \end{figure}
 
 \PassOptionsToPackage{usenames,dvipsnames}{xcolor}
-% \documentclass[modern]{aastex631}
-\documentclass[twocolumn]{aastex631}
+\documentclass[modern]{aastex631}
+% \documentclass[twocolumn]{aastex631}
 
 % Load common packages
 \usepackage{microtype}  % ALWAYS!
@@ -553,7 +553,6 @@ The mean \abun{Mg}{Fe} abundance is shown in small bins of the vertical position
 and velocity, $v_z$.
 The mean abundance is systematically different for stars with low vertical action $J_z$
 (i.e. near $(z, v_z) \sim (0, 0)$) as compared to stars with larger vertical action.
-\label{fig:mgfe-zvz}
 \textbf{Right panel:} The column-normalized density of stars in \abun{Mg}{Fe} as a
 function of an observable proxy for $\zmax$.
 We estimate a proxy for \zmax\ for the data \emph{without using a potential model} by
@@ -561,6 +560,7 @@ selecting only stars with $|v_z| < 10~\kms$ (i.e. stars that are near their vert
 apocenter).
 The over-plotted dashed (orange) line shows a linear relation between \abun{Mg}{Fe} and
 \zmax.
+\label{fig:mgfe-zvz}
 }
 \end{figure*}
 
@@ -1274,9 +1274,26 @@ TODO
 
 \section{Applications to Data} \label{sec:applications-data}
 
-TODO: a full application in companion paper \citep{Horta:2023}
+In this section, we apply the OTI framework to real data from the \apogee\ surveys and
+\gaia\ Data Release 3.
+In Section~\ref{sec:apogee}, we fit the mean \abun{Mg}{Fe} data shown in
+Figure~\ref{fig:mgfe-zvz} to infer the vertical acceleration profile at the solar
+radius.
+However, we consider this to be a limited demonstration, as a full analysis of the
+\apogee\ data is presented in a companion paper \citep{Horta:2023}.
+In Section~\ref{sec:gaiadr3}, we use the vertical kinematics alone (using phase-space
+data from \gaia) to demonstrate using the phase-space density itself as a stellar label.
+We additionally show how OTI is useful as a means to fit a flexible but symmetric model
+of the phase space to subtract and reveal the residuals, which provides a new means to
+characterize the vertical phase-space spirals around the Milky Way.
 
-\subsection{Mapping ... spirals ... \gaia\ Data Release 3}
+\subsection{Modeling vertical stellar abundance gradients with \apogee\ data}
+\label{sec:apogee}
+
+TODO
+
+
+\subsection{The local vertical phase space in \gaia\ Data Release 3}
 \label{sec:gaiadr3}
 
 TODO: Empirical actions - show frequency-theta with empirical
@@ -1284,11 +1301,7 @@ TODO: Empirical actions - show frequency-theta with empirical
 Fit the vertical acceleration in a slice around the sun, ignoring selection function.
 Show residuals: Phase spiral-o-rama
 
-
-\subsection{Empirical Actions and Frequencies}
-\label{sec:gaiadr3}
-
-TODO: compare Agama with empaf
+Also compute empirical actions and compare to Agama.
 
 
 \section{Discussion} \label{sec:discussion}
