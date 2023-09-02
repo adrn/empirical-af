@@ -6,6 +6,7 @@ import numpy as np
 import torusimaging as oti
 from astropy.constants import G
 from gala.units import galactic
+from torusimaging.data import OTIData
 
 
 def label_func_base(r, label_vals, knots):
@@ -198,16 +199,28 @@ class SplineLabelModelWrapper:
             jaxopt_kw = {}
         jaxopt_kw.setdefault("tol", 1e-12)
 
-        bdata, label_name = oti_data.get_binned_label(bins, label_name=label_name)
-        bdata[f"{label_name}_err"] = np.sqrt(
-            label_err_floor**2 + bdata[f"{label_name}_err"] ** 2
-        )
+        if isinstance(oti_data, OTIData):
+            bdata, label_name = oti_data.get_binned_label(bins, label_name=label_name)
+            bdata[f"{label_name}_err"] = np.sqrt(
+                label_err_floor**2 + bdata[f"{label_name}_err"] ** 2
+            )
+        else:
+            bdata = oti_data
 
         if p0 is None:
+            if not isinstance(oti_data, OTIData):
+                raise ValueError(
+                    "If not passing in initial parameter values, you must pass in an "
+                    "OTIData instance for `oti_data`"
+                )
             p0 = self.get_init_params(oti_data, label_name=label_name)
 
         # First check that objective evaluates to a finite value:
-        mask = np.isfinite(bdata[label_name]) & np.isfinite(bdata[f"{label_name}_err"])
+        mask = (
+            np.isfinite(bdata[label_name])
+            & np.isfinite(bdata[f"{label_name}_err"])
+            & (bdata[f"{label_name}_err"] > 0)
+        )
         data = dict(
             pos=bdata["pos"].decompose(self.unit_sys).value[mask],
             vel=bdata["vel"].decompose(self.unit_sys).value[mask],
