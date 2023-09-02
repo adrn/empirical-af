@@ -192,17 +192,16 @@ class SplineLabelModelWrapper:
         p0=None,
         label_name=None,
         label_err_floor=0.0,
-        data_kw=None,
         jaxopt_kw=None,
     ):
-        if data_kw is None:
-            data_kw = {}
         if jaxopt_kw is None:
             jaxopt_kw = {}
         jaxopt_kw.setdefault("tol", 1e-12)
 
         bdata, label_name = oti_data.get_binned_label(
-            bins, label_name=label_name, err=True, **data_kw
+            bins,
+            label_name=label_name,
+            err=True,
         )
         bdata[f"{label_name}_err"] = np.sqrt(
             label_err_floor**2 + bdata[f"{label_name}_err"] ** 2
