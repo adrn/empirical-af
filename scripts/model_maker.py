@@ -191,7 +191,7 @@ class SplineLabelModelWrapper:
         bins,
         p0=None,
         label_name=None,
-        label_err_floor=0.01,
+        label_err_floor=0.0,
         data_kw=None,
         jaxopt_kw=None,
     ):
@@ -204,12 +204,15 @@ class SplineLabelModelWrapper:
         bdata, label_name = oti_data.get_binned_label(
             bins, label_name=label_name, err=True, **data_kw
         )
+        bdata[f"{label_name}_err"] = np.sqrt(
+            label_err_floor**2 + bdata[f"{label_name}_err"] ** 2
+        )
 
         if p0 is None:
             p0 = self.get_init_params(oti_data, label_name=label_name)
 
         # First check that objective evaluates to a finite value:
-        mask = np.isfinite(bdata[label_name])
+        mask = np.isfinite(bdata[label_name] & bdata[f"{label_name}_err"])
         data = dict(
             pos=bdata["pos"].decompose(self.unit_sys).value[mask],
             vel=bdata["vel"].decompose(self.unit_sys).value[mask],
