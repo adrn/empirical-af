@@ -53,6 +53,7 @@ class SplineLabelModelWrapper:
         label_grad_sign: float,
         e_n_knots: dict,
         e_knots_scale=None,
+        e_bounds=None,
         e_signs=None,
         e_regularize=True,
         e_regularize_sigmas=None,
@@ -110,10 +111,12 @@ class SplineLabelModelWrapper:
             for m in self.e_knots
         }
 
-        e_bounds = {
-            m: {"vals": (jnp.full(n - 1, 0), jnp.full(n - 1, 10.0))}  # TODO: magic
-            for m, n in e_n_knots.items()
-        }
+        if e_bounds is None:
+            e_bounds = {}
+
+        for m, n in self.e_n_knots.items():
+            # TODO: hard-set numbers (0, 10)
+            e_bounds[m].setdefault("vals", (jnp.full(n - 1, 0), jnp.full(n - 1, 10.0)))
 
         if e_regularize_sigmas is None:
             # Default value of L2 regularization stddev:
