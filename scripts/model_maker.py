@@ -59,6 +59,7 @@ class SplineLabelModelWrapper:
         e_regularize=True,
         e_regularize_sigmas=None,
         unit_sys=galactic,
+        label_model_kwargs=None,
     ):
         self.unit_sys = unit_sys
 
@@ -133,11 +134,15 @@ class SplineLabelModelWrapper:
             e_regularize_sigmas=e_regularize_sigmas,
         )
 
+        if label_model_kwargs is None:
+            label_model_kwargs = {}
+
         self.label_model = oti.LabelOrbitModel(
             label_func=label_func,
             e_funcs=e_funcs,
             regularization_func=reg_func,
             unit_sys=self.unit_sys,
+            **label_model_kwargs,
         )
 
         self._bounds = {}
