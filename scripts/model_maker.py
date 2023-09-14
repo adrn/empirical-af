@@ -15,7 +15,7 @@ def label_func_base(r, label_vals, knots):
 
 def e_func_base(r_e, vals, sign, knots):
     return sign * oti.model_helpers.monotonic_quadratic_spline(
-        knots, jnp.concatenate((jnp.array([0.0]), vals)), r_e
+        knots, jnp.concatenate((jnp.array([0.0]), jnp.exp(vals))), r_e
     )
 
 
@@ -117,9 +117,9 @@ class SplineLabelModelWrapper:
             e_bounds = {}
 
         for m, n in self.e_n_knots.items():
-            # TODO: hard-set numbers (0, 10)
+            # TODO: hard-set numbers
             e_bounds.setdefault(
-                m, {"vals": (jnp.full(n - 1, 0), jnp.full(n - 1, 10.0))}
+                m, {"vals": (jnp.full(n - 1, -15.0), jnp.full(n - 1, 1.5))}
             )
 
         if e_regularize_sigmas is None:
@@ -172,7 +172,7 @@ class SplineLabelModelWrapper:
         )
 
         params0["e_params"] = {
-            m: {"vals": jnp.zeros(self.e_n_knots[m] - 1)} for m in self.e_knots
+            m: {"vals": jnp.full(self.e_n_knots[m] - 1, -10)} for m in self.e_knots
         }
 
         # Estimate the label value near r_e = 0 and slopes for knot values:
