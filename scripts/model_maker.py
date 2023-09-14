@@ -19,28 +19,29 @@ def e_func_base(r_e, vals, sign, knots):
     )
 
 
-def regularization_func_base(params, e_regularize: bool, e_regularize_sigmas: dict):
+def regularization_func_base(
+    params,
+    e_funcs: dict,
+    e_knots: dict,
+    e_sigmas: dict,
+    label_func,
+    label_knots,
+    label_sigma: float,
+):
     p = 0.0
 
-    if e_regularize:
-        # # L2
-        # for m in params["e_params"]:
-        #     p += jnp.sum(
-        #         (params["e_params"][m]["vals"] / e_regularize_sigmas[m]) ** 2
-        #     )
+    # L2 regularization to keep the value of the functions small:
+    for m, func in e_funcs.items():
+        p += jnp.sum((func(e_knots[m], **params["e_params"][m]) / e_sigmas[m]) ** 2)
 
-        # L2 on difference
-        for m in params["e_params"]:
-            diff = (
-                params["e_params"][m]["vals"][1:] - params["e_params"][m]["vals"][:-1]
-            )
-            p += jnp.sum((diff / e_regularize_sigmas[m]) ** 2)
+    p += jnp.sum((label_func(label_knots, **params["label_params"]) / label_sigma) ** 2)
 
-        # # L1
-        # for m in params["e_params"]:
-        #     p += jnp.sum(
-        #         jnp.abs(params["e_params"][m]["vals"] / e_regularize_sigmas[m])
-        #     )
+    # L2 regularization for smoothness:
+    # for m in params["e_params"]:
+    #     diff = (
+    #         params["e_params"][m]["vals"][1:] - params["e_params"][m]["vals"][:-1]
+    #     )
+    #     p += jnp.sum((diff / e_regularize_sigmas[m]) ** 2)
 
     return p
 
@@ -52,13 +53,14 @@ class SplineLabelModelWrapper:
         label_n_knots: int,
         label0_bounds: tuple,
         label_grad_sign: float,
+        label_regularize_sigma: float,
         e_n_knots: dict,
         e_knots_scale=None,
         e_bounds=None,
         e_signs=None,
-        e_regularize=True,
         e_regularize_sigmas=None,
         unit_sys=galactic,
+        # regularize=True,
         label_model_kwargs=None,
     ):
         self.unit_sys = unit_sys
@@ -130,8 +132,12 @@ class SplineLabelModelWrapper:
         # Setup the regularization function:
         reg_func = partial(
             regularization_func_base,
-            e_regularize=e_regularize,
-            e_regularize_sigmas=e_regularize_sigmas,
+            e_funcs=e_funcs,
+            e_knots=self.e_knots,
+            e_sigmas=e_regularize_sigmas,
+            label_func=label_func,
+            label_knots=self.label_knots,
+            label_sigma=label_regularize_sigma,
         )
 
         if label_model_kwargs is None:
