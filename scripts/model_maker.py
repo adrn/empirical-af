@@ -24,9 +24,11 @@ def regularization_func_base(
     e_funcs: dict,
     e_knots: dict,
     e_sigmas: dict,
+    e_smooth_sigmas: dict,
     label_func,
     label_knots,
     label_sigma: float,
+    label_smooth_sigma: float,
 ):
     p = 0.0
 
@@ -37,11 +39,15 @@ def regularization_func_base(
     p += jnp.sum((label_func(label_knots, **params["label_params"]) / label_sigma) ** 2)
 
     # L2 regularization for smoothness:
-    # for m in params["e_params"]:
-    #     diff = (
-    #         params["e_params"][m]["vals"][1:] - params["e_params"][m]["vals"][:-1]
-    #     )
-    #     p += jnp.sum((diff / e_regularize_sigmas[m]) ** 2)
+    for m in params["e_params"]:
+        diff = params["e_params"][m]["vals"][1:] - params["e_params"][m]["vals"][:-1]
+        p += jnp.sum((diff / e_smooth_sigmas[m]) ** 2)
+
+    diff = (
+        params["label_params"]["label_vals"][2:]
+        - params["label_params"]["label_vals"][1:-1]
+    )
+    p += jnp.sum((diff / label_smooth_sigma) ** 2)
 
     return p
 
@@ -54,11 +60,13 @@ class SplineLabelModelWrapper:
         label0_bounds: tuple,
         label_grad_sign: float,
         label_regularize_sigma: float,
+        label_smooth_sigma: float,
         e_n_knots: dict,
         e_knots_scale=None,
         e_bounds=None,
         e_signs=None,
         e_regularize_sigmas=None,
+        e_smooth_sigmas=None,
         unit_sys=galactic,
         # regularize=True,
         label_model_kwargs=None,
@@ -135,9 +143,11 @@ class SplineLabelModelWrapper:
             e_funcs=e_funcs,
             e_knots=self.e_knots,
             e_sigmas=e_regularize_sigmas,
+            e_smooth_sigmas=e_smooth_sigmas,
             label_func=label_func,
             label_knots=self.label_knots,
             label_sigma=label_regularize_sigma,
+            label_smooth_sigma=label_smooth_sigma,
         )
 
         if label_model_kwargs is None:
