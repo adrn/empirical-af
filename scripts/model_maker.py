@@ -332,6 +332,8 @@ class SplineLabelModelWrapper:
 
             lp += self.label_model.ln_label_likelihood(p, **data)
 
+            lp -= self.label_model.regularization_func(p)
+
             return lp
 
         rng_key = jax.random.PRNGKey(rng_seed)
