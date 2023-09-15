@@ -1,6 +1,7 @@
 from functools import partial
 
 import astropy.units as u
+import jax
 import jax.numpy as jnp
 import numpy as np
 import torusimaging as oti
@@ -50,6 +51,18 @@ def regularization_func_base(
     p += jnp.sum((diff / label_smooth_sigma) ** 2)
 
     return p
+
+
+def inference_loop(rng_key, kernel, initial_state, num_samples):
+    @jax.jit
+    def one_step(state, rng_key):
+        state, _ = kernel(rng_key, state)
+        return state, state
+
+    keys = jax.random.split(rng_key, num_samples)
+    _, states = jax.lax.scan(one_step, initial_state, keys)
+
+    return states
 
 
 class SplineLabelModelWrapper:
@@ -257,3 +270,85 @@ class SplineLabelModelWrapper:
         )
 
         return bdata, res
+
+    def run_mcmc(
+        self,
+        oti_data,
+        bins=None,
+        p0=None,
+        label_name=None,
+        label_err_floor=0.0,
+        rng_seed=0,
+        num_steps=1000,
+        num_warmup=1000,
+    ):
+        import blackjax
+
+        if isinstance(oti_data, OTIData):
+            bdata, label_name = oti_data.get_binned_label(bins, label_name=label_name)
+            bdata[f"{label_name}_err"] = np.sqrt(
+                label_err_floor**2 + bdata[f"{label_name}_err"] ** 2
+            )
+        else:
+            bdata = oti_data
+
+        if p0 is None:
+            if not isinstance(oti_data, OTIData):
+                raise ValueError(
+                    "If not passing in initial parameter values, you must pass in an "
+                    "OTIData instance for `oti_data`"
+                )
+            p0 = self.get_init_params(oti_data, label_name=label_name)
+
+        # First check that objective evaluates to a finite value:
+        mask = (
+            np.isfinite(bdata[label_name])
+            & np.isfinite(bdata[f"{label_name}_err"])
+            & (bdata[f"{label_name}_err"] > 0)
+        )
+        data = dict(
+            pos=bdata["pos"].decompose(self.unit_sys).value[mask],
+            vel=bdata["vel"].decompose(self.unit_sys).value[mask],
+            label=bdata[label_name][mask],
+            label_err=bdata[f"{label_name}_err"][mask],
+        )
+        test_val = self.label_model.objective(p0, **data)
+        if not np.isfinite(test_val):
+            raise RuntimeError("Objective function evaluated to non-finite value")
+
+        lb, ub = self.label_model.unpack_bounds(self._bounds)
+        lb_arrs = jax.tree_util.tree_flatten(lb)[0]
+        ub_arrs = jax.tree_util.tree_flatten(ub)[0]
+
+        def logprob(p):
+            lp = 0.0
+            pars, treedef = jax.tree_util.tree_flatten(p)
+            for i in range(len(pars)):
+                lp += jnp.where(
+                    jnp.any(pars[i] < lb_arrs[i]) | jnp.any(pars[i] > ub_arrs[i]),
+                    -jnp.inf,
+                    0.0,
+                )
+
+            lp += self.label_model.ln_label_likelihood(p, **data)
+
+            return lp
+
+        rng_key = jax.random.PRNGKey(rng_seed)
+        warmup = blackjax.window_adaptation(blackjax.nuts, logprob)
+        (state, parameters), _ = warmup.run(rng_key, p0, num_steps=num_warmup)
+
+        kernel = blackjax.nuts(logprob, **parameters).step
+        states = inference_loop(rng_key, kernel, state, num_steps)
+
+        # Get the pytree structure of a single sample based on the starting point:
+        treedef = jax.tree_util.tree_structure(p0)
+        arrs, _ = jax.tree_util.tree_flatten(states.position)
+
+        mcmc_samples = []
+        for n in range(arrs[0].shape[0]):
+            mcmc_samples.append(
+                jax.tree_util.tree_unflatten(treedef, [arr[n] for arr in arrs])
+            )
+
+        return states, mcmc_samples
