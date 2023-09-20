@@ -3,10 +3,6 @@
 % - The condition on d(r_z)/d(r_z')
 % - Widmark papers
 % - https://arxiv.org/abs/2303.18040
-
-
-% TODO:
-% - We don't actually need to bring in the CBE at all. Much simpler point about functions that are constant along an orbit.
 % - cite Justin Read review, and https://arxiv.org/pdf/2012.11477.pdf
 
 
@@ -15,8 +11,7 @@
 % % \includegraphics[width=0.9\textwidth]{visitstats.pdf}
 % {\color{red} Figure placeholder}
 % \end{center}
-% \caption{%
-% TODO
+% \caption{ Stuff.
 % \label{fig:chiplots}
 % }
 % \end{figure}
@@ -221,7 +216,6 @@ kinematics (i.e. position $\bs{x}$ and velocity $\bs{v}$) of stars throughout th
 at present day.
 That is, we do not observe the orbits of stars or even segments of their orbits, which
 would enable a more direct measurement of the acceleration field around those orbits.
-% \footnote{TODO: note about phase coherence - conceptually, streams show us orbits.}
 Instead, we have to rely on statistical mechanics to relate the snapshot of tracer
 kinematics we observe to the underlying mass distribution (CITE intro of Kuijken \&
 Gilmore, binney tremaine, modern refs like Green).
@@ -304,8 +298,6 @@ data.
 % model fits in terms of dynamics.'' The benefit of this approach is that, by releasing
 % both in any study of stellar kinematics, subsequent work can build on the
 % interpretation without having to rebuild the data analysis aspects of the method.
-
-% TODO: the power of orbital *labels* - can use action or abundance
 
 % Another major motivator for thinking about new methods is that many stellar surveys
 % deliver stellar parameters and element abundances alongside kinematic measurements.
@@ -464,7 +456,7 @@ $\Omega_z = \Omega_z(J_z)$.
 % stellar labels of a sample of stars that are spatially localized to a region of the
 % Galactic disk (e.g., near the sun).
 % That is, we take $\bs{w} = (z, v_z)$ and assume that the sample has been sub-selected to
-% a small range of cylindrical radius $R$. % TODO: or guiding radius?
+% a small range of cylindrical radius $R$. % or guiding radius?
 
 
 % We also want to incorporate other stellar label measurements for the tracer stars (e.g.,
@@ -497,10 +489,10 @@ $\Omega_z = \Omega_z(J_z)$.
 
 % % \subsection{Vertical Dynamics} \label{sec:dynreview}
 
-% % TODO: maybe a 3 panel figure? Left: z-vz phase-space density of toy data, Middle: fit
+% % maybe a 3 panel figure? Left: z-vz phase-space density of toy data, Middle: fit
 % % with f(E_z), Right: Fit with OTI?
 
-% % TODO: In discussion, duh there is no midplane, there are spirals, etc.
+% % In discussion, duh there is no midplane, there are spirals, etc.
 % The vertical phase-space of the Galactic disk is defined by the position $z$ and
 % velocity $v_z$ of tracers with respect to the Galactic midplane ($z=0$).
 % With the assumptions listed above, the CBE (Equation~\ref{eq:cbe}) for the vertical
@@ -515,8 +507,6 @@ $\Omega_z = \Omega_z(J_z)$.
 %     f_z(z, v_z) &= f_z\Big(E_z(z, v_z)\Big)\\
 %     E_z &= \frac{1}{2} v_z^2 + \Phi_z(z) \quad .
 % \end{align}
-
-% \todo{Here, instead of the text below, discuss that any function that labels orbits will satisfy the CBE. Natural choice is an integral of motion, like Ez or action (introduce action). But that then means any function of the action or energy also satisfies this, as long as it has a non-zero gradient?? Known element abundance gradients with action (PW21, others). Can use those instead, if we infer the function. }
 
 % Given measurements of the positions and velocities of a set of stars, one can therefore
 % measure the potential $\Phi_z(z)$ by parameterizing $\Phi(z)$ and $f_z(E_z)$ and fitting
@@ -635,7 +625,7 @@ large-$J_z$ orbits (i.e. those that stay far from the center of this phase space
 % The top left panel of Figure~\ref{fig:sim-contours} shows 8 orbits with different values
 % of $J_z$ (but the same values of $J_R=0$ and a $J_\phi$ similar to the solar value)
 % computed in a Milky Way-like gravitational potential (see
-% Section~\ref{sec:appendix-potential}). \todo{define potential in appendix}
+% Section~\ref{sec:appendix-potential}).
 % The orbits are colored by their vertical action, demonstrating that orbits with larger
 % vertical actions cover a larger area in vertical phase space and reach higher maximum
 % heights above the midplane $z_{\textrm{max}}$.
@@ -796,7 +786,7 @@ with other moments of this distribution.
 % Binney, Sanders and Binney) embedded in a static, axisymmetric model for the Milky
 % Way. The Milky Way potential model is described in
 % Appendix~\ref{sec:appendix-potential}, and we use the \agama\ package (CITE) to
-% generate \todo{N} samples from the \df. We then sub-select a sample of star particles
+% generate N samples from the \df. We then sub-select a sample of star particles
 % that are spatially localized near the solar radius, $|R - 8.3~\kpc| < 0.5~\kpc$, and
 % are near their guiding radius, $|R - R_G| < 0.5~\kpc$ where $R_G \equiv L_z / v_c(R)$
 % and $v_c(R)$ is the circular velocity at the radius $R$. We compute the maximum height
@@ -1060,13 +1050,13 @@ $\langle Y_{\abun{Mg}{Fe}} \rangle$, using the OTI framework described above
 (Section~\ref{sec:oti}).
 To do this, we need to decide on functional forms for both the label function, $Y(\rz)$,
 and the Fourier coefficient functions.
-For all of these functions, we use a monotonic quadratic spline function defined such
+For all of these functions, we use monotonic quadratic spline functions defined such
 that the function is always monotonically increasing or decreasing, which must be
 hard-set before optimization (see Appendix~\ref{sec:appendix-spline}).
 For the label function, we assert that the value must monotonically increase from $\rz =
 0$ to the maximum spline knot location.
-We use 10 spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$ and
-$r_{z, \textrm{max}}$.
+We use $K_Y=10$ spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$
+and $r_{z, \textrm{max}}$ with function values at the knot locations $y_k^{(Y)}$.
 
 For this initial case, we include only an $m=2$ term in our Fourier distortion of the
 elliptical radius (Equation~\ref{eq:rz}).
@@ -1079,11 +1069,13 @@ estimate the midplane volume mass density (Equation~\ref{eq:freqzero}).
 Assuming that the coefficient value increases with $\rzp$ (so that the orbit shapes
 can only become more prolate with increasing $z_{\textrm{max}}$) is equivalent to
 assuming that the volume density increases with increasing height $z$.
-We use 5 spline knot locations $x_k^{(e_2)}$ equally spaced in $\rz$ between $0$ and
-$r_{z, \textrm{max}}$, but we require the knot value at $\rzp = 0$ to be equal to zero
-$y_0^{(e_2)}=0$.
+We use $K_e=5$ spline knot locations $x_k^{(e_2)}$ with values $y_k^{(e_2)}$ equally
+spaced in $\rz$ between $0$ and $r_{z, \textrm{max}}$, but we require the knot value at
+$\rzp = 0$ to be equal to zero $y_0^{(e_2)}=0$.
 All of the parameters used in this demonstrative model fit and the adopted bounds used
 when optimizing are summarized in Table~\ref{tbl:sho-params}.
+When optimizing, we reparameterize to use $\log \freqzero$ and $\log y_k$ for any spline
+coefficients to control the sign of the parameter values.
 
 Our framework is implemented with \jax\ so that our objective function is just-in-time
 compiled and we can use automatic differentiation to compute the gradients of the
@@ -1091,11 +1083,13 @@ objective function with respect to the, in this case, 17 model parameters.
 We use a Gaussian log-likelihood for the mean \abun{Mg}{Fe} abundance data as our
 objective function.
 We also measure the empirical scatter of the abundance value data in each pixel of the
-vertical phase space and adopt this (scaled by $1/\sqrt{N}$, where $N$ is the number of
-star particles in a given pixel) as the uncertainty on the mean abundance value in each
+vertical phase space and adopt this scaled by $1/\sqrt{N}$, where $N$ is the number of
+star particles in a given pixel, as the uncertainty on the mean abundance value in each
 pixel.
 We additionally use an L2 regularization on the Fourier coefficient function values
-$y^{(e_2)}$ with a standard deviation of 0.1 to try to keep these values near zero.
+$y^{(e_2)}$ with a standard deviation of 0.1, and on the label function spline values
+$y^{(Y)}$ with a standard deviation of 1, to try to keep these values near zero when the
+data are uninformative.
 We use a standard L-BFGS-B optimizer \citep{Byrd:1995} to minimize the regularized
 negative log-likelihood, implemented in \texttt{JAXopt} \cite{jaxopt:2021}.
 For this simulated data, the optimization runs in $\sim 10~\unit{\second}$ on a single
@@ -1114,8 +1108,11 @@ model in Figure~\ref{fig:sho-data-model}:
 The dashed (green) line shows the true vertical acceleration relation, $a_z = -\omega^2
 \, z$, and the solid (black) line shows the best-fit OTI model, demonstrating that for
 this toy dataset we are able to recover the true acceleration profile.
-The gray shaded region shows the 16th to 84th percentile acceleration trends using the
-error propagation described above.
+The uncertainty on the acceleration profile is computed by differencing the 16th and
+84th percentile acceleration values at each $z$ from Monte Carlo samples of the
+Cram\'er-Rao lower bound (CRLB) computed above.
+However, for this dataset, the uncertainty is comparable to the width of the best-fit
+line and is not visible in the figure.
 The right panel of Figure~\ref{fig:sho-validation} shows the true vertical action values
 for all simulated particles on the vertical axis (i.e. the samples from the \df\ used to
 create the mean abundance data shown in the left panel of
@@ -1135,7 +1132,8 @@ action error is $<0.5\%$ for this sample dataset.
 Validation of the OTI model fit to the simulated simple harmonic oscillator data.
 \textbf{Left panel:} The inferred vertical acceleration profile, $a_z(z)$, from the OTI
 model (solid black line) compared to the true acceleration profile (dashed green line).
-The gray shaded region shows the 16th to 84th percentile acceleration trends.
+The uncertainty in the best-fit acceleration trend is comparable to the width of the
+line.
 Most of the simulated data are within $|z| \lesssim 2~\kpc$ and the inferred
 acceleration profile agrees well with the true values within this region.
 \textbf{Right panel:} A comparison of the true vertical action values (vertical axis)
@@ -1182,29 +1180,31 @@ using the OTI framework described above (Section~\ref{sec:oti}).
 We again use a monotonic quadratic spline function (Appendix~\ref{sec:appendix-spline})
 for both the label function and the Fourier coefficient functions.
 For the label function, we use 9 knots equally-spaced in \rz\ between $0$ and $r_{z,
-\textrm{max}}$.
-We use $m=\{2, 4, 6\}$ Fourier terms with 11, 5, and 5 spline knots, respectively.
-We space the Fourier coefficient spline knots equally in $\rz^(3/2)$ between $0$ and
+\textrm{max}} \approx 0.53~\unit{\kilo\parsec\per\mega\year\tothe{1/2}}$.
+We use $m=\{2, 4\}$ Fourier terms with 8 and 4 spline knots, respectively.
+We space the Fourier coefficient spline knots equally in $\rz^{3/2}$ between $0$ and
 $r_{z, \textrm{max}}$: This places a higher density of knots at lower \rz\ values where
 we expect the Fourier coefficient functions to change more rapidly.
-We require that the coefficient function values at zero are zero so that
-$e_2(0)=e_4(0)=e_6(0)=0$, and we assume that the sign of the functions are $(+,-,+)$ for
-the $m=\{2, 4, 6\}$ coefficient functions, respectively.
+We again require that the coefficient function values at zero are zero so that
+$e_2(0)=e_4(0)=0$, and we assume that the sign of the functions are $(+,-)$ for the
+$m=\{2, 4\}$ coefficient functions, respectively.
 
-We again measure the empirical scatter of the abundance data in each pixel of the
-vertical phase space and use this (scaled by $1/\sqrt{N}$, where $N$ is the number of
-particles in each pixel) as the uncertainty on the mean abundance value in each pixel.
+We measure the empirical scatter of the abundance data in each pixel of the vertical
+phase space and use this, scaled by $1/\sqrt{N}$ where $N$ is the number of particles in
+each pixel, as the uncertainty on the mean abundance value in each pixel.
 We use the same regularization as in Section~\ref{sec:sim-sho} (L2 regularization on the
-coefficient function parameters with a standard deviation of 0.1) for all Fourier
-coefficient functions.
+coefficient function parameters with a standard deviation of 0.1 and on the label
+function parameters with a standard deviation of 1) for all Fourier coefficient
+functions.
 As above, we use a L-BFGS-B optimizer to minimize the regularized negative
 log-likelihood.
-This model has 30 parameters and optimizes in $\sim 140$~seconds on a single CPU.
+This model has 22 parameters and optimizes in $\sim 100$~seconds on a single CPU.
 The middle panel of Figure~\ref{fig:qiso-data-model} shows the best-fit model evaluated
 on the same pixel grid as the simulated data, and the right panel shows the residuals.
 The small residuals indicate that this model does well to fit the mean abundance
 variations in the vertical phase space.
 
+% TODO: panels
 The left panel of Figure~\ref{fig:qiso-validation} shows the inferred vertical
 acceleration profile and uncertainties (black line and gray shaded region) along with
 the true vertical acceleration (green dashed line) evaluated at a constant $R=R_0$ in
@@ -1214,7 +1214,6 @@ log-likelihood (i.e. the Cram\'{e}r--Rao lower bound, CRLB) combined with an est
 the parameter variance from bootstrap resampling the data.
 That is, we perform 64 bootstrap resamplings of the particle data and fit the binned,
 resampled data with the same procedure as described above.
-% TODO: re-run with 64 trials
 For each bootstrap trial, we compute the inferred acceleration trend and compute the
 variance of the 64 trials as and additional component of the uncertainty.
 We add this bootstrap variance in quadrature to the error estimate using the CRLB to
@@ -1229,6 +1228,7 @@ model.
 We again compute the actions, frequencies, and angles for the star particles using
 Equations~\ref{eq:Jz-ell}--\ref{eq:thz-ell} evaluated at the phase-space coordinates of
 each star particle.
+% TODO: audit numbers
 We find the median fractional error of the vertical action, angle, and frequency are
 $\sim 4\%$, $\sim 4\%$, and $\sim 9\%$, respectively.
 

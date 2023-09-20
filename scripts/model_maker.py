@@ -83,6 +83,8 @@ class SplineLabelModelWrapper:
         unit_sys=galactic,
         # regularize=True,
         label_model_kwargs=None,
+        pos0_bounds=(-0.5, 0.5),  # 500 pc
+        vel0_bounds=(-0.1, 0.1),  # ~100 km/s
     ):
         self.unit_sys = unit_sys
 
@@ -181,8 +183,8 @@ class SplineLabelModelWrapper:
         self._bounds["ln_Omega"] = 0.5 * np.log(
             (4 * np.pi * G * dens0_bounds).decompose(self.unit_sys).value
         )
-        self._bounds["z0"] = (-0.5, 0.5)
-        self._bounds["vz0"] = (-0.05, 0.05)  # ~50 km/s
+        self._bounds["pos0"] = pos0_bounds
+        self._bounds["vel0"] = vel0_bounds
         self._bounds["e_params"] = e_bounds
         self._bounds["label_params"] = label_func_bounds
 
