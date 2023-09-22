@@ -164,6 +164,7 @@
 % % Conclusions
 % We conclude :shrugs:.
 
+\todo{Abstract needs reworking...}
 The vertical positions and velocities of stars near the Sun can be used to measure the
 local dark-matter density and surface mass density, to constrain processes of scattering
 and heating, and to study out-of-equilibrium dynamics (e.g., with the \gaia\ phase-space
@@ -306,9 +307,10 @@ dimensions and can serve as invariant tracers that provide important information
 dynamical analyses (CITE e.g., chemical tagging).
 This idea has already been used and exploited in a few different contexts.
 For example, additional stellar labels can be added in to the DF explicitly to form an
-``extended distribution function'' (eDF) $f(\bs{J}, \bs{X})$ (CITE sanders, many
-others), where here the vector $\bs{J}$ represents the kinematic information and
-$\bs{X}$ represents any additional stellar labels, like element abundances.
+``extended distribution function'' (eDF) $f(\bs{J}, \bs{Y})$
+\citep[e.g.,][]{Sanders:2015, Binney:2023}, where here the vector $\bs{J}$ represents
+the kinematic information and $\bs{Y}$ represents any additional stellar labels, like
+element abundances.
 This is a powerful approach because it allows for using the additional stellar labels to
 help in the dynamical inference of the potential, but again requires making choices
 about how to parametrize the form of the eDF and any covariances between the kinematics
@@ -318,22 +320,22 @@ function of the survey to accurately infer the DF properties, which is often not
 at a high enough precision to handle the model flexibility demanded by present data.
 
 A different approach has been to model and study the conditional distribution $f(\bs{J}
-\given \bs{X})$.
-When $\bs{X}$ represents element abundances, these are called ``mono-abundance
+\given \bs{Y})$.
+When $\bs{Y}$ represents element abundances, these are called ``mono-abundance
 populations'' (MAPs; CITE bovy).
 This approach is useful because it is conditional on the stellar labels and therefore
 does not necessarily require explicitly parameterizing the covariances between the
-kinematics and stellar labels (e.g., one can bin in the parameters $\bs{X}$ and study
+kinematics and stellar labels (e.g., one can bin in the parameters $\bs{Y}$ and study
 the kinematic DF in those bins).
 However, this still requires parameterizing the form of the DF in the kinematic
 dimensions, and using a model for the selection function of the survey (CITE).
 
 We previously introduced a third approach that involves modeling the complementary
-factorization $f(\bs{X} \given \bs{J})$, which we call ``Orbital Torus Imaging'' (OTI;
-CITE PW21).
-This approach, as defined in PW21, does not require detailed knowledge of the survey
-selection function in terms of kinematic quantities (as long as there is not strong
-joint dependence on kinematics and stellar labels).
+factorization $f(\bs{Y} \given \bs{J})$, which we call ``Orbital Torus Imaging'' (OTI;
+\citealt{PW:2021}).
+This approach does not require detailed knowledge of the survey selection function in
+terms of kinematic quantities as long as there is no strong joint dependence on
+kinematics and stellar labels.
 In principle, OTI should therefore be more robust to selection effects than the eDF or
 MAP approaches to modeling Milky Way disk kinematics.
 However, it does still require parameterizing any relationships between the kinematics
@@ -343,11 +345,6 @@ In this work, motivated by the need for flexible dynamical inference methods tha
 fewer assumptions about the form of the potential and DF, we build off of the Orbital
 Torus Imaging idea to outline an approach that only requires modeling the shapes of
 orbits in projections of phase-space.
-
-
-\section{Data} \label{sec:data}
-
-\todo{standard blurbs about APOGEE and Gaia}
 
 
 \section{Review of Vertical Dynamics in an Axisymmetric Disk} \label{sec:dynreview}
@@ -422,7 +419,7 @@ that are useful for summarizing and labeling the orbits.
 For example, the energy $E$, $z$-component of angular momentum $L_z$, and the ``third
 integral'' $I_3$ are all conserved quantities for orbits in an axisymmetric disk.
 A more useful set of integrals of motion are the orbital actions $\bs{J} = (J_R,
-J_\phi, J_z)$ (CITE Binney \& Tremaine).
+J_\phi, J_z)$ \citep{Binney:2008}.
 Actions are independent isolating integrals of motion that are special in that they are
 also the momentum coordinates of a set of canonical coordinates known as action--angle
 coordinates.
@@ -962,6 +959,9 @@ The conjugate angle variable, $\theta_z$, is computed as the fractional time
 
 \section{Applications to Simulated Data} \label{sec:applications-sim}
 
+% TODO: decide on a policy for deciding maximum z, vz (i.e. 95th percentile values or
+% something??) and use that for all examples
+
 In this section, we demonstrate the OTI framework described above using a set of
 simulated datasets of increasing complexity.
 We start by using a one-dimensional simple harmonic oscillator potential
@@ -1148,6 +1148,7 @@ The median (fractional) action error is $<0.5\%$ for this sample dataset.
 \subsection{Axisymmetric Quasi-isothermal Disk}
 \label{sec:sim-qiso}
 
+% TODO: selection in ∆R, vR, R, R_g
 As a next application of the OTI framework, we use a galaxy model to sample 3D positions
 and velocities of star particles to test our inferred quantities in a more realistic
 setting.
@@ -1219,7 +1220,7 @@ variance of the 64 trials as and additional component of the uncertainty.
 We add this bootstrap variance in quadrature to the error estimate using the CRLB to
 obtain a total uncertainty on the acceleration profile as measured with OTI: This is
 shown as the gray shaded region in Figure~\ref{fig:qiso-validation} (left panel).
-The acceleration error at $z=1~\kpc$ is $\sim 3\%$ (in fractional error).
+The acceleration precision at $z=1~\kpc$ is $\sim 3\%$ (in fractional error).
 
 The right panel of Figure~\ref{fig:sho-validation} shows (as black markers) the true
 vertical action values for a random subset of $10^5$ simulated particles on the vertical
@@ -1265,17 +1266,88 @@ not need to assume a gravitational potential to compute the actions.
 }
 \end{figure*}
 
+\subsection{Axisymmetric Quasi-isothermal Disk with Survey Selection}
+\label{sec:sim-qiso-sel}
+
+As a demonstration that OTI is
+
 
 \subsection{N-body Simulation with a Perturbed Disk}
 \label{sec:sim-jason}
 
-TODO
+As a final demonstration, we apply the OTI framework to a section of an N-body
+simulation of a stellar disk that has been perturbed by an orbiting satellite galaxy.
+\todo{Jason - can you help fill in a few sentences about the simulation here and read below to make sure I say correct things!}
+The simulation ... describe it ...
+
+We use a snapshot of the simulation after \todo{X} pericentric passages of the
+satellite, which induces significant non-axisymmetric kinematic structure in the disk.
+Figure~\ref{fig:jason-mean-z-vz} shows the mean vertical position (left panel) and
+vertical velocity (right panel) of stars across the face of the simulated disk, showing
+that the disk is rich with substructure as a result of repeat satellite perturbations.
+This application is a test of how well OTI can do (i.e. how biased the results are) in
+the presence of strong disequilibrium, which violates the assumptions laid out above.
+
+We select a small region of the disk near the solar radius, $R=8~\kpc$, by selecting all
+star particles within $|x-8~\kpc| < 1.5~\kpc$ and $|y| < 1.5~\kpc$.
+We again mimic dynamical selections we could perform on real data by selecting stars
+near their guiding-center radius $R_G$, i.e. $|R-R_G| < 1~\kpc$, and with small radial
+velocity $|v_R| < 15~\kms$.
+These dynamical selections limit the radial action of the stars so that our assumption
+of $R$--$z$ separability is less invalid, but does not require computing actions for the
+star particles before selection.
+We compute the guiding radii using the circular velocity curve of the simulated disk,
+$R_G \approx L_z / v_c(R)$, but here we use actions only to select a sample of stars on
+nearly circular orbits with which to measure the circular velocity.
+We compute the circular velocity by selecting star particles with low radial and
+vertical action (below the 15th percentile values of the radial and vertical actions,
+respectively) and compute the mean azimuthal velocity $\langle v_\phi(R) \rangle$ as a
+function of cylindrical radius $R$, then adopt $v_c(R) = \langle v_\phi(R) \rangle$.
+\todo{Jason - describe how the actions were computed}
+The actions are computed using ...
+
+We also use the orbital actions to ``paint'' element abundances onto star particles in
+this idealized $N$-body simulation without gas or star formation.
+We compute the actions at an early snapshot of the simulation, after relaxation of the
+initial conditions and before the first pericentric passage of the satellite galaxy.
+We use the vertical actions of the star particles at this early snapshot to assign a
+simulated \abun{Mg}{Fe} abundance value to each star particle following the procedure
+explained in Section~\ref{sec:sim-qiso}.
+We then track the abundance values through to the final snapshot where the actions have
+evolved due to satellite perturbations.
+
+Figure~\ref{fig:jason-data-model} (left panel) shows the mean simulated \abun{Mg}{Fe}
+abundance of star particles in the vertical phase space of the ``solar neighborhood'' of
+the simulated stellar disk.
+While the overall pattern is similar to the smooth examples (e.g.,
+Section~\ref{sec:sim-qiso}), the mean abundance values here show an appreciable ``phase
+spiral'' akin to the vertical phase-space spiral seen in kinematics alone
+\citep{Antoja:2018}.
+The middle panel of Figure~\ref{fig:jason-data-model} shows the mean \abun{Mg}{Fe} of
+the optimized OTI model for this simulated data set, and the right panel again shows the
+residuals.
+While the residuals are generally low, the simulated abundance spiral is faintly visible
+here in the residuals, which may bias our inferred dynamical quantities.
+
+Figure~\ref{fig:jason-validation} (left panel) shows the vertical acceleration profile
+inferred by OTI for this region of the simulated disk (black line and gray shaded
+region) compared to the true acceleration profile.
+The right panel of Figure~\ref{fig:jason-validation} shows a comparison of vertical
+action values computed with the best-fit OTI model (horizontal axis) and with Agama
+(vertical axis).
+The actions computed with Agama are not necessarily ``true'' values, as this system is
+not in equilibrium or symmetric, but the adopted potential model used to compute the
+actions is both axisymmetric and time-invariant. \todo{Jason: fix previous sentence if
+not true}
+At $z=1~\kpc$, we find ... TODO
+
+
 
 
 \section{Applications to Data} \label{sec:applications-data}
 
-In this section, we apply the OTI framework to real data from the \apogee\ surveys and
-\gaia\ Data Release 3.
+In this section, we apply the OTI framework to data from the \apogee\ surveys and \gaia\
+Data Release 3.
 In Section~\ref{sec:apogee}, we fit the mean \abun{Mg}{Fe} data shown in
 Figure~\ref{fig:mgfe-zvz} to infer the vertical acceleration profile at the solar
 radius.
@@ -1286,6 +1358,11 @@ data from \gaia) to demonstrate using the phase-space density itself as a stella
 We additionally show how OTI is useful as a means to fit a flexible but symmetric model
 of the phase space to subtract and reveal the residuals, which provides a new means to
 characterize the vertical phase-space spirals around the Milky Way.
+
+\subsection{Data sources} \label{sec:data}
+
+\todo{standard blurbs about APOGEE and Gaia}
+
 
 \subsection{The vertical \abun{Mg}{Fe} gradient in the solar neighborhood with \apogee}
 \label{sec:apogee}
@@ -1306,8 +1383,9 @@ Also compute empirical actions and compare to Agama.
 
 \section{Discussion} \label{sec:discussion}
 
-\subsection{Limitation that our acceleration can depend on $v_z$}
-\label{sec:discussion-vz-dependence}
+Limitation that our acceleration can depend on $v_z$.
+
+
 
 
 \section{Summary and Conclusions} \label{sec:conclusions}
