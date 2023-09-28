@@ -97,72 +97,6 @@
 
 
 \begin{abstract}\noindent
-% % Context
-% In a steady-state dynamical system, spatial gradients of the phase-space density (the
-% distribution function, \df) of any tracers are related to gradients of the underlying
-% gravitational potential (the acceleration field).
-% This is the basis of many methods used in Galactic dynamics to infer the mass or dark
-% matter distribution of the Milky Way, often with highly-symmetric, few-component,
-% parametric models of the Galaxy (e.g., an exponential disk with constant scale height).
-% However, we know that the Galaxy is not in equilibrium and its mass distribution is
-% complex:
-% Stellar kinematics show signatures of non-steady-state dynamics throughout the Galactic
-% disk and significant departures from axisymmetry.
-% % Aims
-% We aim to develop a framework for measuring the acceleration field of the Milky Way, in
-% the presence of weak disequilibrium, that makes few assumptions about the form of the
-% mass distribution.
-% % Methods
-% Here we outline a flexible method for empirically modeling the vertical phase-space
-% density (or mean statistics of stellar invariants in this phase-space, like element
-% abundances) of stars in the Galactic disk.
-% This method --- an improved version of the method of \emph{Orbital Torus Imaging} (OTI)
-% --- works by exploiting the fact that orbital trajectories in the vertical phase-space
-% of an unperturbed galaxy have predictable symmetries in projections of phase-space and
-% can be represented as a low-order Fourier expansion away from an ellipse.
-% % Results
-% We first demonstrate OTI using a toy simulation of a vertical phase-space distribution
-% of stars, then with a more realistic galactic disk population, and show that in both
-% cases OTI recovers the local vertical acceleration as a function of height above the
-% galactic midplane.
-% We then show that this method enables us to compute \emph{empirical} orbital actions,
-% angles, and frequencies for stars where the approximation of a separable 1D phase-space
-% is valid: This enables interpreting the timescales of disequilibrium features in a
-% flexible way that does not require adopting a global model of the gravitational
-% potential.
-% For example, we demonstrate that this method provides a useful tool for studying the
-% \emph{residuals} away from an equilibrium model, such as the ``\gaia\ Phase Spiral.''
-% % Conclusions
-% Some conclusions.
-
-% Context
-% Orbital dynamics is complex in six-dimensional phase-space, making it a challenge to
-% interpret the rich and structured kinematic data of stars in the Milky Way revealed in
-% recent data releases from the \gaia\ Mission.
-% In a symmetric, steady-state galaxy, or in the presence of only weak perturbations, the
-% dynamical interpretation and investigation of kinematic data is often simplified by
-% using dynamical invariants such as orbital actions.
-% However, computing many such quantities (e.g., the energy, actions, fundamental
-% frequencies, etc.) require having a model for the gravitational potential and, even so,
-% are either slow to compute or imprecise.
-% % Aims
-% To mitigate at least one of these limitations, we aim to demonstrate a method for
-% estimating fundamental galactic orbital properties for stars directly from the kinematic
-% and stellar label data (e.g., element abundances) without requiring a gravitational
-% potential model.
-% % Methods
-% This method still assumes a symmetric and steady-state distribution function, but uses
-% either the number density of stars in a slice of phase-space (e.g., vertical $z$--$v_z$
-% kinematics) or a statistic computed from other stellar invariants in this slice (e.g.,
-% element abundances) to empirically estimate orbital actions, frequencies, and angles for
-% the stars.
-% % Results
-% We demonstrate the method using a toy equilibrium model where orbital properties are
-% known, and then show applications of this method even in the presence of disequilibrium.
-% As a last demonstration, we use data from the \gaia\ Mission to estimate the total mass
-% density at the Galactic midplane as a function of radius near the sun.
-% % Conclusions
-% We conclude :shrugs:.
 
 \todo{Abstract needs reworking...}
 The vertical positions and velocities of stars near the Sun can be used to measure the
@@ -220,26 +154,6 @@ would enable a more direct measurement of the acceleration field around those or
 Instead, we have to rely on statistical mechanics to relate the snapshot of tracer
 kinematics we observe to the underlying mass distribution \citep{Kuijken:1991a, Binney:2008, Green:2022, TODO}.
 
-% The fundamental objects of a statistical approach to Galactic dynamics are the tracer
-% distribution function (DF), $f(\bs{x}, \bs{v}, t)$, which describes the probability of
-% observing a star at position $\bs{x}$ and velocity $\bs{v}$ at time $t$, and the total
-% gravitational potential, $\Phi(\bs{x}, t)$, which is related to the mass density
-% distribution we seek $\rho(\bs{x}, t)$ through Poisson's equation $\nabla^2 \Phi =
-% 4\pi G \, \rho$. Many dynamical inference methods have been built to connect these two
-% objects (the DF and the potential) in order to measure properties of the mass
-% distribution of the Milky Way and other galaxies (CITE). These methods can be broadly
-% categorized into two classes: those that work with gradients of the DF to measure
-% gradients of the potential (CITE), or those that model the form of the DF itself
-% (CITE). In either case, the majority of applications of these methods have assumed
-% that the Galaxy is in equilibrium and the DF is in steady state so that the explicit
-% time dependence of the DF and potential can be ignored. Most applications also assume
-% that the DF and potential are separable in some coordinates (for example, cylindrical
-% radius $R$ and height $z$, for disk modeling), and that the DF and/or potential can be
-% expressed by a set of smooth, parametric model terms for which the parameters can be
-% inferred from the data. These methods and assumptions have enabled a wide array of
-% measurements of the structure and mass distribution of the Milky Way's disk, central
-% region, stellar halo, and dark matter content over the last century (CITE).
-
 Contemporary stellar surveys have opened up a new dimension of Galactic dynamical
 inferences by providing an abundance of high-quality stellar label and kinematic data
 for millions to billions of stars throughout our Galaxy.
@@ -256,51 +170,6 @@ This wealth of stellar survey data presently available brings an opportunity to 
 precise measurements of the detailed structure of dark matter throughout the Milky Way
 and learn about its formation history by combining stellar label and kinematic data.
 
-% However, the current data volume and precision presents a challenge to current and
-% past dynamical inference methods that make use of stellar kinematics. Many of these
-% methods rely on assumptions that are violated at very high signal-to-noise ratio ---
-% that is, the principle ``challenge'' of utilizing modern stellar kinematic data is
-% that large surveys have revealed the complexity of the Milky Way at high significance.
-% For example, the observed DF of stars in the Milky Way disk is highly sub-structured
-% on small and large-scales in phase-space. This includes local features like the \gaia\
-% ``phase spiral'' in the vertical kinematics of stars (CITE), or the historically-named
-% ``moving groups'' in the in-plane kinematics or integrals of motions (CITE Trick,
-% Hunt, etc.). But this also includes large-scale features like ``ridges'' in the
-% vertical velocity as a function of Galactic radius (CITE), an overall warp and flaring
-% of the disk (CITE), and significant bulk motion of stars in their in-plane velocities
-% (CITE Katz, Eilers), to name a few. These features of the DF suggest that the
-% underlying mass distribution or gravitational potential is significantly time
-% dependent. With historical data volumes and precision, these things could be ignored
-% and averaged over because the signatures were subtle. However, with the quality and
-% volume of data at present, ignoring these features (which appear in most phase-space
-% dimensions as deviations from steady-state at the 10--50\% level; CITE) will produce
-% very precise but biased measurements about the Milky Way and its dark matter.
-
-% To study signatures of disequilibrium and non-steady-state features in the DF, there
-% has been significant effort in using equilibrium models as a means to subtract a
-% smooth model from the data and thereby reveal the underlying substructure and
-% deviations from equilibrium (CITE). This has enabled tracing features like the \gaia\
-% phase spiral throughout the Milky Way disk (CITE) and in stellar invariants like
-% element abundances (CITE Neige). However, to \emph{model} or fit these non-equilibrium
-% features, there is no universal framework for doing this. One approach to dealing with
-% the observed complexity of the stellar kinematics in the Milky Way is to build
-% explicit parametric model components of the DF and potential to account for all time
-% dependence of both. In principle, with flexible enough parametrizations, this should
-% work fine to produce unbiased measurements of the potential and therefore the dark
-% matter and mass distribution of the Galaxy. However, this requires making decisions
-% about how to parametrize the time dependence, which could be arbitrarily complex.
-
-% With the present data volumes and precisions, which lead to incredibly precise
-% parameter constraints, these decisions can easily lead to biased model fits. This
-% motivates developing flexible dynamical inference methods that make fewer explicit
-% assumptions about the potential and DF. Conceptually, we imagine developing new
-% methods that can separate the tasks of ``fitting the data'' and ``interpreting the
-% model fits in terms of dynamics.'' The benefit of this approach is that, by releasing
-% both in any study of stellar kinematics, subsequent work can build on the
-% interpretation without having to rebuild the data analysis aspects of the method.
-
-% Another major motivator for thinking about new methods is that many stellar surveys
-% deliver stellar parameters and element abundances alongside kinematic measurements.
 Near-invariant stellar labels are complementary to measurements of phase-space
 dimensions and can serve as invariant tracers that provide important information in
 dynamical analyses (CITE e.g., chemical tagging).
@@ -394,7 +263,7 @@ leaving only the vertical terms
 \begin{equation}
     \pderiv{a_z}{z}\biggr\rvert_R = 4\pi \, G \, \rho_z(z \,;\, R)
 \end{equation}
-where the expressions are assumed to be valid at some fixed radius $R$.
+where the expressions are assumed to be valid at a given radius $R$.
 % Based on historical measurements of the vertical mass density distribution of the Milky Way disk, commonly-adopted forms for $\rho_z(z)$ are a single exponential, a double exponential, or a $\textrm{sech}(z)^2$ profile (CITE).
 Very near the galactic midplane, the mass density distribution is approximately
 constant,
@@ -1672,3 +1541,138 @@ TODO: Move all tables down here?
 \bibliography{refs}
 
 \end{document}
+
+% % Context
+% In a steady-state dynamical system, spatial gradients of the phase-space density (the
+% distribution function, \df) of any tracers are related to gradients of the underlying
+% gravitational potential (the acceleration field).
+% This is the basis of many methods used in Galactic dynamics to infer the mass or dark
+% matter distribution of the Milky Way, often with highly-symmetric, few-component,
+% parametric models of the Galaxy (e.g., an exponential disk with constant scale height).
+% However, we know that the Galaxy is not in equilibrium and its mass distribution is
+% complex:
+% Stellar kinematics show signatures of non-steady-state dynamics throughout the Galactic
+% disk and significant departures from axisymmetry.
+% % Aims
+% We aim to develop a framework for measuring the acceleration field of the Milky Way, in
+% the presence of weak disequilibrium, that makes few assumptions about the form of the
+% mass distribution.
+% % Methods
+% Here we outline a flexible method for empirically modeling the vertical phase-space
+% density (or mean statistics of stellar invariants in this phase-space, like element
+% abundances) of stars in the Galactic disk.
+% This method --- an improved version of the method of \emph{Orbital Torus Imaging} (OTI)
+% --- works by exploiting the fact that orbital trajectories in the vertical phase-space
+% of an unperturbed galaxy have predictable symmetries in projections of phase-space and
+% can be represented as a low-order Fourier expansion away from an ellipse.
+% % Results
+% We first demonstrate OTI using a toy simulation of a vertical phase-space distribution
+% of stars, then with a more realistic galactic disk population, and show that in both
+% cases OTI recovers the local vertical acceleration as a function of height above the
+% galactic midplane.
+% We then show that this method enables us to compute \emph{empirical} orbital actions,
+% angles, and frequencies for stars where the approximation of a separable 1D phase-space
+% is valid: This enables interpreting the timescales of disequilibrium features in a
+% flexible way that does not require adopting a global model of the gravitational
+% potential.
+% For example, we demonstrate that this method provides a useful tool for studying the
+% \emph{residuals} away from an equilibrium model, such as the ``\gaia\ Phase Spiral.''
+% % Conclusions
+% Some conclusions.
+
+% Context
+% Orbital dynamics is complex in six-dimensional phase-space, making it a challenge to
+% interpret the rich and structured kinematic data of stars in the Milky Way revealed in
+% recent data releases from the \gaia\ Mission.
+% In a symmetric, steady-state galaxy, or in the presence of only weak perturbations, the
+% dynamical interpretation and investigation of kinematic data is often simplified by
+% using dynamical invariants such as orbital actions.
+% However, computing many such quantities (e.g., the energy, actions, fundamental
+% frequencies, etc.) require having a model for the gravitational potential and, even so,
+% are either slow to compute or imprecise.
+% % Aims
+% To mitigate at least one of these limitations, we aim to demonstrate a method for
+% estimating fundamental galactic orbital properties for stars directly from the kinematic
+% and stellar label data (e.g., element abundances) without requiring a gravitational
+% potential model.
+% % Methods
+% This method still assumes a symmetric and steady-state distribution function, but uses
+% either the number density of stars in a slice of phase-space (e.g., vertical $z$--$v_z$
+% kinematics) or a statistic computed from other stellar invariants in this slice (e.g.,
+% element abundances) to empirically estimate orbital actions, frequencies, and angles for
+% the stars.
+% % Results
+% We demonstrate the method using a toy equilibrium model where orbital properties are
+% known, and then show applications of this method even in the presence of disequilibrium.
+% As a last demonstration, we use data from the \gaia\ Mission to estimate the total mass
+% density at the Galactic midplane as a function of radius near the sun.
+% % Conclusions
+% We conclude :shrugs:.
+
+
+% The fundamental objects of a statistical approach to Galactic dynamics are the tracer
+% distribution function (DF), $f(\bs{x}, \bs{v}, t)$, which describes the probability of
+% observing a star at position $\bs{x}$ and velocity $\bs{v}$ at time $t$, and the total
+% gravitational potential, $\Phi(\bs{x}, t)$, which is related to the mass density
+% distribution we seek $\rho(\bs{x}, t)$ through Poisson's equation $\nabla^2 \Phi =
+% 4\pi G \, \rho$. Many dynamical inference methods have been built to connect these two
+% objects (the DF and the potential) in order to measure properties of the mass
+% distribution of the Milky Way and other galaxies (CITE). These methods can be broadly
+% categorized into two classes: those that work with gradients of the DF to measure
+% gradients of the potential (CITE), or those that model the form of the DF itself
+% (CITE). In either case, the majority of applications of these methods have assumed
+% that the Galaxy is in equilibrium and the DF is in steady state so that the explicit
+% time dependence of the DF and potential can be ignored. Most applications also assume
+% that the DF and potential are separable in some coordinates (for example, cylindrical
+% radius $R$ and height $z$, for disk modeling), and that the DF and/or potential can be
+% expressed by a set of smooth, parametric model terms for which the parameters can be
+% inferred from the data. These methods and assumptions have enabled a wide array of
+% measurements of the structure and mass distribution of the Milky Way's disk, central
+% region, stellar halo, and dark matter content over the last century (CITE).
+
+
+% However, the current data volume and precision presents a challenge to current and
+% past dynamical inference methods that make use of stellar kinematics. Many of these
+% methods rely on assumptions that are violated at very high signal-to-noise ratio ---
+% that is, the principle ``challenge'' of utilizing modern stellar kinematic data is
+% that large surveys have revealed the complexity of the Milky Way at high significance.
+% For example, the observed DF of stars in the Milky Way disk is highly sub-structured
+% on small and large-scales in phase-space. This includes local features like the \gaia\
+% ``phase spiral'' in the vertical kinematics of stars (CITE), or the historically-named
+% ``moving groups'' in the in-plane kinematics or integrals of motions (CITE Trick,
+% Hunt, etc.). But this also includes large-scale features like ``ridges'' in the
+% vertical velocity as a function of Galactic radius (CITE), an overall warp and flaring
+% of the disk (CITE), and significant bulk motion of stars in their in-plane velocities
+% (CITE Katz, Eilers), to name a few. These features of the DF suggest that the
+% underlying mass distribution or gravitational potential is significantly time
+% dependent. With historical data volumes and precision, these things could be ignored
+% and averaged over because the signatures were subtle. However, with the quality and
+% volume of data at present, ignoring these features (which appear in most phase-space
+% dimensions as deviations from steady-state at the 10--50\% level; CITE) will produce
+% very precise but biased measurements about the Milky Way and its dark matter.
+
+% To study signatures of disequilibrium and non-steady-state features in the DF, there
+% has been significant effort in using equilibrium models as a means to subtract a
+% smooth model from the data and thereby reveal the underlying substructure and
+% deviations from equilibrium (CITE). This has enabled tracing features like the \gaia\
+% phase spiral throughout the Milky Way disk (CITE) and in stellar invariants like
+% element abundances (CITE Neige). However, to \emph{model} or fit these non-equilibrium
+% features, there is no universal framework for doing this. One approach to dealing with
+% the observed complexity of the stellar kinematics in the Milky Way is to build
+% explicit parametric model components of the DF and potential to account for all time
+% dependence of both. In principle, with flexible enough parametrizations, this should
+% work fine to produce unbiased measurements of the potential and therefore the dark
+% matter and mass distribution of the Galaxy. However, this requires making decisions
+% about how to parametrize the time dependence, which could be arbitrarily complex.
+
+% With the present data volumes and precisions, which lead to incredibly precise
+% parameter constraints, these decisions can easily lead to biased model fits. This
+% motivates developing flexible dynamical inference methods that make fewer explicit
+% assumptions about the potential and DF. Conceptually, we imagine developing new
+% methods that can separate the tasks of ``fitting the data'' and ``interpreting the
+% model fits in terms of dynamics.'' The benefit of this approach is that, by releasing
+% both in any study of stellar kinematics, subsequent work can build on the
+% interpretation without having to rebuild the data analysis aspects of the method.
+
+% Another major motivator for thinking about new methods is that many stellar surveys
+% deliver stellar parameters and element abundances alongside kinematic measurements.
