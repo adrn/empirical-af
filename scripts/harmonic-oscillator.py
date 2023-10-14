@@ -53,12 +53,12 @@ def make_data(N: int):
 
 def main(overwrite=False):
     pdata_file = cache_path / f"{short_name}-pdata.hdf5"
-    bdata_file = cache_path / f"{short_name}-bdata.hdf5"
+    bdata_file = cache_path / f"{short_name}-bdata.npz"
 
     if not pdata_file.exists() or overwrite:
         print("Generating simulated particle data...")
         pdata = make_data(N=2**20)
-        pdata.write(pdata_file, overwrite=True)
+        pdata.write(pdata_file, overwrite=True, serialize_meta=True)
         print(f"Particle data generated and cached to file {pdata_file!s}")
     else:
         pdata = at.QTable.read(pdata_file)
@@ -83,9 +83,10 @@ def main(overwrite=False):
             units=galactic,
         )
         print(f"Binned data generated and cached to file {bdata_file!s}")
+        np.savez(bdata_file, **bdata)
 
     else:
-        bdata = at.QTable.read(bdata_file)
+        bdata = np.load(bdata_file)
         print(f"Binned data loaded from cache file {bdata_file!s}")
 
     model, bounds, init_params = oti.TorusImaging1DSpline.auto_init(
@@ -97,11 +98,11 @@ def main(overwrite=False):
         e_l2_sigmas={2: 0.1},
         e_smooth_sigmas={2: 0.2},
     )
-    with open(cache_path / f"{short_name}-model.pkl", "w") as f:
+    with open(cache_path / f"{short_name}-model.pkl", "wb") as f:
         pickle.dump(model, f)
 
-    with open(cache_path / f"{short_name}-params-init.pkl", "w") as f:
-        pickle.dump(model, init_params)
+    with open(cache_path / f"{short_name}-params-init.pkl", "wb") as f:
+        pickle.dump(init_params, f)
 
     # print(init_params)
     # print(bounds)
