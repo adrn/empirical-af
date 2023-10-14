@@ -56,12 +56,16 @@ def main(overwrite=False):
     bdata_file = cache_path / f"{short_name}-bdata.fits"
 
     if not pdata_file.exists() or overwrite:
+        print("Generating simulated particle data...")
         pdata = make_data(N=2**20)
         pdata.write(pdata_file, overwrite=True)
+        print(f"Particle data generated and cached to file {pdata_file!s}")
     else:
         pdata = at.QTable.read(pdata_file)
+        print(f"Particle data loaded from cache file {pdata_file!s}")
 
     if not bdata_file.exists() or overwrite:
+        print("Generating binned data...")
         max_z = np.round(3 * np.nanpercentile(pdata["z"].to(u.kpc), 90), 1)
         max_vz = np.round(3 * np.nanpercentile(pdata["vz"].to(u.km / u.s), 90), 0)
 
@@ -78,9 +82,11 @@ def main(overwrite=False):
             bins=zvz_bins,
             units=galactic,
         )
+        print(f"Binned data generated and cached to file {bdata_file!s}")
 
     else:
         bdata = at.QTable.read(bdata_file)
+        print(f"Binned data loaded from cache file {bdata_file!s}")
 
     model, bounds, init_params = oti.TorusImaging1DSpline.auto_init(
         bdata,
@@ -131,3 +137,12 @@ def main(overwrite=False):
     states, mcmc_samples = model.mcmc_run_label(
         bdata, p0=res.params, bounds=bounds, num_warmup=500, num_steps=200
     )
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--overwrite", action="store_true")
+    args = parser.parse_args()
+    main(overwrite=args.overwrite)
