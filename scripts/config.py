@@ -7,8 +7,9 @@ import gala.potential as gp
 from gala.units import galactic
 
 this_path = pathlib.Path(__file__).absolute().parent
-tex_path = this_path.parent
-data_path = tex_path / "data"
+base_path = this_path.parent
+data_path = base_path / "data"
+cache_path = base_path / ".cache"
 
 agama.setUnits(mass=u.Msun, length=u.kpc, time=u.Myr)
 
