@@ -34,11 +34,8 @@ def make_table(xv):
     return tbl
 
 
-def make_toy_df(overwrite=False):
-    this_path = pathlib.Path(__file__).absolute().parent
-    data_path = this_path.parent / "data"
-    filename = data_path / "df-toy.fits"
-
+def make_toy_df(filename, overwrite=False):
+    filename = pathlib.Path(filename)
     if not overwrite and filename.exists():
         print(f"{filename!s} already exists - use --overwrite to re-make.")
         return
@@ -64,14 +61,13 @@ def make_toy_df(overwrite=False):
     xv = gm.sample(N)[0]
 
     tbl = make_table(xv)
-    tbl.write(filename, overwrite=True)
+    tbl.write(filename, overwrite=True, serialize_meta=True)
+
+    return tbl
 
 
-def make_qiso_df(overwrite=False):
-    this_path = pathlib.Path(__file__).absolute().parent
-    data_path = this_path.parent / "data"
-    filename = data_path / "df-qiso.fits"
-
+def make_qiso_df(filename, overwrite=False):
+    filename = pathlib.Path(filename)
     if not overwrite and filename.exists():
         print(f"{filename!s} already exists - use --overwrite to re-make.")
         return
@@ -171,20 +167,17 @@ def make_qiso_df(overwrite=False):
     mask = (np.abs(tbl["R"] - R0) < 1.0 * u.kpc) & (
         np.abs(tbl["R"] - tbl["Rg"]) < 1.0 * u.kpc
     )
-    tbl[mask].write(filename, overwrite=True)
+    tbl = tbl[mask]
 
+    with u.set_enabled_equivalencies(u.dimensionless_angles()):
+        zmax = np.sqrt(2 * tbl["J"][:, 2] / tbl["Omega"][:, 2]).to_value(
+            galactic["length"]
+        )
 
-if __name__ == "__main__":
-    import argparse
+    sim_mgfe_std = 0.05
+    rng = np.random.default_rng(seed=42)
+    tbl["mgfe"] = rng.normal(0.064 * zmax + 0.009, sim_mgfe_std)
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-n", "--name", default=None)
-    parser.add_argument("-o", "--overwrite", action="store_true", default=False)
-    args = parser.parse_args()
+    tbl.write(filename, overwrite=True, serialize_meta=True)
 
-    if args.name is not None:
-        globals()[f"make_{args.name}_df"](args.overwrite)
-
-    else:
-        make_toy_df(args.overwrite)
-        make_qiso_df(args.overwrite)
+    return tbl
