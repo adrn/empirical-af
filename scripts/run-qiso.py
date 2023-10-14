@@ -14,11 +14,11 @@ jax.config.update("jax_enable_x64", True)
 short_name = "qiso"
 
 
-def main(overwrite=False):
+def main(overwrite_data=False):
     pdata_file = cache_path / f"{short_name}-pdata.hdf5"
     bdata_file = cache_path / f"{short_name}-bdata.npz"
 
-    if not pdata_file.exists() or overwrite:
+    if not pdata_file.exists() or overwrite_data:
         print("Generating simulated particle data...")
         pdata = make_qiso_df(pdata_file, overwrite=True)
         print(f"Particle data generated and cached to file {pdata_file!s}")
@@ -26,7 +26,7 @@ def main(overwrite=False):
         pdata = at.QTable.read(pdata_file)
         print(f"Particle data loaded from cache file {pdata_file!s}")
 
-    if not bdata_file.exists() or overwrite:
+    if not bdata_file.exists() or overwrite_data:
         print("Generating binned data...")
         max_z = np.round(3 * np.nanpercentile(pdata["z"].to(u.kpc), 90), 1)
         max_vz = np.round(3 * np.nanpercentile(pdata["v_z"].to(u.km / u.s), 90), 0)
@@ -111,6 +111,6 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--overwrite", action="store_true")
+    parser.add_argument("--overwrite-data", action="store_true", default=False)
     args = parser.parse_args()
-    main(overwrite=args.overwrite)
+    main(overwrite_data=args.overwrite_data)
