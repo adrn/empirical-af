@@ -131,8 +131,8 @@ def main(overwrite=False):
         print(f"Optimize failed: {res.state!r}")
         sys.exit(1)
 
-    with open(cache_path / f"{short_name}-params-opt.pkl", "w") as f:
-        pickle.dump(model, res.params)
+    with open(cache_path / f"{short_name}-params-opt.pkl", "wb") as f:
+        pickle.dump(res.params, f)
 
     print("Running MCMC...")
     states, mcmc_samples = model.mcmc_run_label(
