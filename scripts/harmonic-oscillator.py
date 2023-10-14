@@ -127,6 +127,7 @@ def main(overwrite=False):
     res = model.optimize(init_params, objective="gaussian", bounds=bounds, **data_kw)
     if res.state.success:
         print(f"Optimize completed successfully in {res.state.iter_num} steps")
+        print(res.params)
     else:
         print(f"Optimize failed: {res.state!r}")
         sys.exit(1)
@@ -136,8 +137,10 @@ def main(overwrite=False):
 
     print("Running MCMC...")
     states, mcmc_samples = model.mcmc_run_label(
-        bdata, p0=res.params, bounds=bounds, num_warmup=500, num_steps=200
+        bdata, p0=res.params, bounds=bounds, num_warmup=1000, num_steps=1000
     )
+    with open(cache_path / f"{short_name}-mcmc-results.pkl", "wb") as f:
+        pickle.dump((states, mcmc_samples), f)
 
 
 if __name__ == "__main__":
