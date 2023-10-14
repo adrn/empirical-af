@@ -107,8 +107,6 @@ def main(overwrite_data=False):
     with open(cache_path / f"{short_name}-params-opt.pkl", "wb") as f:
         pickle.dump(res.params, f)
 
-    return
-
     print("Running MCMC...")
     states, mcmc_samples = model.mcmc_run_label(
         bdata, p0=res.params, bounds=bounds, num_warmup=1000, num_steps=1000
