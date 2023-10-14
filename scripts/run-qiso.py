@@ -54,11 +54,11 @@ def main(overwrite=False):
     model, bounds, init_params = oti.TorusImaging1DSpline.auto_init(
         bdata,
         label_knots=8,
-        e_knots={2: 8},
+        e_knots={2: 8, 4: 4},
         label_l2_sigma=1.0,
         label_smooth_sigma=0.5,
-        e_l2_sigmas={2: 0.1},
-        e_smooth_sigmas={2: 0.2},
+        e_l2_sigmas={2: 0.1, 4: 0.1},
+        e_smooth_sigmas={2: 0.2, 4: 0.2},
     )
     with open(cache_path / f"{short_name}-model.pkl", "wb") as f:
         pickle.dump(model, f)
@@ -96,6 +96,8 @@ def main(overwrite=False):
 
     with open(cache_path / f"{short_name}-params-opt.pkl", "wb") as f:
         pickle.dump(res.params, f)
+
+    return
 
     print("Running MCMC...")
     states, mcmc_samples = model.mcmc_run_label(
