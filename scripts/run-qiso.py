@@ -60,6 +60,14 @@ def main(overwrite_data=False):
         e_l2_sigmas={2: 0.1, 4: 0.1},
         e_smooth_sigmas={2: 0.2, 4: 0.2},
     )
+
+    init_params["e_params"][2]["vals"] = np.full_like(
+        init_params["e_params"][2]["vals"], -0.5
+    )
+    init_params["e_params"][4]["vals"] = np.full_like(
+        init_params["e_params"][4]["vals"], np.log(0.05 / model._label_knots.max())
+    )
+
     with open(cache_path / f"{short_name}-model.pkl", "wb") as f:
         pickle.dump(model, f)
 
