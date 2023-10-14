@@ -52,8 +52,8 @@ def make_data(N: int):
 
 
 def main(overwrite=False):
-    pdata_file = cache_path / f"{short_name}-pdata.fits"
-    bdata_file = cache_path / f"{short_name}-bdata.fits"
+    pdata_file = cache_path / f"{short_name}-pdata.hdf5"
+    bdata_file = cache_path / f"{short_name}-bdata.hdf5"
 
     if not pdata_file.exists() or overwrite:
         print("Generating simulated particle data...")
@@ -143,6 +143,6 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("-o", "--overwrite", action="store_true")
     args = parser.parse_args()
     main(overwrite=args.overwrite)
