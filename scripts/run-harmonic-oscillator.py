@@ -49,6 +49,12 @@ def main(overwrite=False):
 
     else:
         bdata = np.load(bdata_file)
+
+        # TODO: fix this!
+        if not hasattr(bdata["pos"], "unit"):
+            bdata["pos"] = bdata["pos"] * u.kpc
+            bdata["vel"] = bdata["vel"] * u.kpc / u.Myr
+
         print(f"Binned data loaded from cache file {bdata_file!s}")
 
     model, bounds, init_params = oti.TorusImaging1DSpline.auto_init(
