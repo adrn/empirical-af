@@ -29,7 +29,7 @@ def main(overwrite=False):
     if not bdata_file.exists() or overwrite:
         print("Generating binned data...")
         max_z = np.round(3 * np.nanpercentile(pdata["z"].to(u.kpc), 90), 1)
-        max_vz = np.round(3 * np.nanpercentile(pdata["vz"].to(u.km / u.s), 90), 0)
+        max_vz = np.round(3 * np.nanpercentile(pdata["v_z"].to(u.km / u.s), 90), 0)
 
         zvz_bins = {
             "pos": np.linspace(-max_z, max_z, 151),
@@ -38,7 +38,7 @@ def main(overwrite=False):
 
         bdata = oti.get_binned_label(
             pdata["z"],
-            pdata["vz"],
+            pdata["v_z"],
             label=pdata["mgfe"],
             label_err=pdata["mgfe_err"],
             bins=zvz_bins,
