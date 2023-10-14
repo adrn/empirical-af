@@ -213,8 +213,12 @@ def make_qiso_df(filename, overwrite=False):
 
     tbl = make_df_table(xv)
 
-    mask = (np.abs(tbl["R"] - R0) < 1.0 * u.kpc) & (
-        np.abs(tbl["R"] - tbl["Rg"]) < 1.0 * u.kpc
+    # Filter to be near "solar neighborhood":
+    mask = (
+        (np.abs(tbl["R"] - tbl["Rg"]) < 1 * u.kpc)
+        & (np.abs(tbl["R"] - R0) < 1 * u.kpc)
+        & (np.abs(tbl["Rg"] - R0) < 1 * u.kpc)
+        & (np.abs(tbl["v_R"]) < 15 * u.km / u.s)
     )
     tbl = tbl[mask]
 
