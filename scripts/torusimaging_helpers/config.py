@@ -7,7 +7,7 @@ import gala.potential as gp
 from gala.units import galactic
 
 this_path = pathlib.Path(__file__).absolute().parent
-base_path = this_path.parent
+base_path = this_path.parent.parent
 data_path = base_path / "data"
 cache_path = base_path / ".cache"
 
