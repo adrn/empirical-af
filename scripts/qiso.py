@@ -8,10 +8,10 @@ import numpy as np
 import torusimaging as oti
 from gala.units import galactic
 from torusimaging_helpers.config import cache_path
-from torusimaging_helpers.make_sim_data import make_sho_data
+from torusimaging_helpers.make_sim_data import make_qiso_df
 
 jax.config.update("jax_enable_x64", True)
-short_name = "sho"
+short_name = "qiso"
 
 
 def main(overwrite=False):
@@ -20,7 +20,7 @@ def main(overwrite=False):
 
     if not pdata_file.exists() or overwrite:
         print("Generating simulated particle data...")
-        pdata = make_sho_data(pdata_file, N=2**20)
+        pdata = make_qiso_df(pdata_file, overwrite=True)
         print(f"Particle data generated and cached to file {pdata_file!s}")
     else:
         pdata = at.QTable.read(pdata_file)
