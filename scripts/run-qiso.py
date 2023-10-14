@@ -59,6 +59,8 @@ def main(overwrite_data=False):
         label_smooth_sigma=0.5,
         e_l2_sigmas={2: 0.1, 4: 0.1},
         e_smooth_sigmas={2: 0.2, 4: 0.2},
+        label_knots_spacing_power=0.75,
+        e_knots_spacing_power=0.75,
     )
 
     init_params["e_params"][2]["vals"] = np.full_like(
