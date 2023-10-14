@@ -48,7 +48,7 @@ def main(overwrite_data=False):
         np.savez(bdata_file, **bdata)
 
     else:
-        bdata = np.load(bdata_file)
+        bdata = dict(np.load(bdata_file))
 
         # TODO: fix this!
         if not hasattr(bdata["pos"], "unit"):
