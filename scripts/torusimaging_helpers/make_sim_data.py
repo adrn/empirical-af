@@ -272,7 +272,7 @@ def make_jason_sim_data(filename, overwrite=False):
         & (np.abs(tbl["xyz"][:, 0] - -R0) < 1.5)
         & (np.abs(tbl["xyz"][:, 1]) < 1.5)
     )
-    pdata = tbl[mask]
+    pdata = at.QTable(tbl[mask])
 
     with u.set_enabled_equivalencies(u.dimensionless_angles()):
         zmax = np.sqrt(2 * pdata["init_J"][:, 2] / pdata["init_Omega"][:, 2]) * u.kpc
