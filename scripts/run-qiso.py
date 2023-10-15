@@ -144,7 +144,7 @@ def main_sel():
 
         rng = np.random.default_rng(42)
         idx = rng.choice(
-            np.arange(len(pdata), size=len(pdata) // 5, replace=False, p=prob)
+            np.arange(len(pdata)), size=len(pdata) // 5, replace=False, p=prob
         )
 
         bdata = oti.get_binned_label(
