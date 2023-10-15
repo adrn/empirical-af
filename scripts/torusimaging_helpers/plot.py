@@ -166,3 +166,92 @@ def plot_data_model_residual(
         ax.set_ylim(-zlim.to_value(u.kpc), zlim.to_value(u.kpc))
 
     return fig, axes
+
+
+@u.quantity_input
+def plot_az_Jz(
+    acc_MAP, acc_samples, z_grid: u.Quantity[u.kpc], aaf, true_acc, true_Jz, axes=None
+):
+    if axes is None:
+        fig, axes = plt.subplots(1, 2, figsize=(12, 6.0), layout="constrained")
+    else:
+        fig = axes[0].figure
+
+    J_unit = u.km / u.s * u.kpc
+    a_unit = u.km / u.s / u.Myr
+
+    z_grid = z_grid.to_value(u.kpc)
+    acc_samples = acc_samples.to_value(a_unit)
+
+    ax = axes[0]
+    ax.plot(
+        z_grid,
+        acc_MAP.to_value(a_unit),
+        color="k",
+        marker="",
+        label="OTI inferred $a_z$",
+        zorder=10,
+    )
+    ax.fill_between(
+        z_grid,
+        np.nanpercentile(acc_samples, 16, axis=0),
+        np.nanpercentile(acc_samples, 84, axis=0),
+        color="#cccccc",
+        lw=0,
+        label=r"uncertainty",
+        zorder=2,
+    )
+    ax.plot(
+        z_grid,
+        true_acc,
+        ls="--",
+        color="tab:green",
+        marker="",
+        label=r"true $a_z=-\omega^2\,z$",
+        zorder=15,
+    )
+    ax.set_xlim(z_grid.min(), z_grid.max())
+    ax.axhline(0, zorder=-10, color="tab:blue", alpha=0.4, ls=":")
+    ax.legend(loc="lower left", fontsize=16)
+
+    ax.set_xlabel(f"vertical position, $z$ [{u.kpc:latex}]")
+    ax.set_ylabel(
+        f"vertical acceleration, $a_z$\n"
+        f"[{u.km/u.s:latex_inline} {u.Myr**-1:latex_inline}]"
+    )
+    ax.set_title("acceleration profile")
+
+    # -----------------------------------------------------------------------
+    ax = axes[1]
+    Jz_max = true_Jz.max().to_value(J_unit)
+    ax.plot(
+        aaf["J"].to_value(J_unit),
+        true_Jz.to_value(J_unit),
+        marker="o",
+        ls="none",
+        alpha=0.25,
+        mew=0,
+        ms=2.0,
+        label="particle $J_z$ values",
+        rasterized=True,
+    )
+    ax.axline(
+        [0, 0],
+        [Jz_max] * 2,
+        ls="--",
+        color="tab:green",
+        marker="",
+        label="one-to-one line",
+    )
+    ax.set_xlabel(f"inferred $J_z$ [{J_unit:latex_inline}]")
+    ax.set_ylabel(f"true $J_z$ [{J_unit:latex_inline}]")
+    ax.set_xticks(np.arange(0, 2 * Jz_max, 50))
+    ax.set_yticks(np.arange(0, 2 * Jz_max, 50))
+
+    ax.set_xlim(0, Jz_max)
+    ax.set_ylim(0, Jz_max)
+    ax.set_title("vertical action $J_z$")
+
+    ax.legend(loc="lower right", fontsize=16)
+
+    return fig, axes
