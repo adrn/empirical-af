@@ -278,8 +278,8 @@ def make_jason_sim_data(filename, overwrite=False):
         zmax = np.sqrt(2 * pdata["init_J"][:, 2] / pdata["init_Omega"][:, 2]) * u.kpc
 
     rng = np.random.default_rng(123)
-    pdata["z"] = pdata["xyz"][:, 2]
-    pdata["v_z"] = (pdata["vxyz"][:, 2] * u.km / u.s).decompose(galactic).value
+    pdata["z"] = pdata["xyz"][:, 2] * u.kpc
+    pdata["v_z"] = pdata["vxyz"][:, 2] * u.km / u.s
     pdata["mgfe"], pdata["mgfe_err"] = make_mgfe(zmax, rng=rng)
 
     pdata.write(filename, overwrite=True, serialize_meta=True)
