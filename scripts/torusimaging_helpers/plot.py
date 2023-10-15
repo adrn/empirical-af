@@ -203,7 +203,7 @@ def plot_az_Jz(
     )
     ax.plot(
         z_grid,
-        true_acc,
+        true_acc.to_value(a_unit),
         ls="--",
         color="tab:green",
         marker="",
