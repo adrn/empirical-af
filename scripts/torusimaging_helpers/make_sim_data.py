@@ -5,7 +5,9 @@ import astropy.table as at
 import astropy.units as u
 import gala.potential as gp
 import numpy as np
+from astropy.io import fits
 from gala.units import galactic
+from scipy.stats import binned_statistic
 
 from .config import R0, agama_pot, gala_pot, vc0
 
@@ -231,3 +233,55 @@ def make_qiso_df(filename, overwrite=False):
     tbl.write(filename, overwrite=True, serialize_meta=True)
 
     return tbl
+
+
+def make_jason_sim_data(filename, overwrite=False):
+    filename = pathlib.Path(filename)
+    if not overwrite and filename.exists():
+        print(f"{filename!s} already exists - use --overwrite to re-make.")
+        return
+
+    cache_path = filename.parent
+
+    # See: scripts/jason-sims/aligner.py
+    tbl = at.Table(fits.getdata(cache_path.parent / "data/Jason-r2-B2-disk.fits"))
+    for col in tbl.colnames:
+        if tbl["J"].dtype.char in ["f", "d"]:
+            tbl[col] = tbl[col].astype("f8")
+
+    # Select low vertical and radial action particles to get rotation curve:
+    J_mask = (tbl["J"][:, 0] < np.nanpercentile(tbl["J"][:, 0], 15)) & (
+        tbl["J"][:, 2] < np.nanpercentile(tbl["J"][:, 2], 15)
+    )
+    vc_stat = binned_statistic(
+        tbl["R"][J_mask], tbl["v_phi"][J_mask], bins=np.linspace(0, 20, 32)
+    )
+    xc = 0.5 * (vc_stat.bin_edges[:-1] + vc_stat.bin_edges[1:])
+    vc_poly = np.polynomial.Polynomial.fit(xc, vc_stat.statistic, deg=3)
+
+    vc = vc_poly(tbl["R"])
+    tbl["Rg"] = tbl["J"][:, 1] / vc
+
+    R0 = 7.5
+    vc_poly(R0) * R0
+
+    mask = (
+        (np.abs(tbl["R"] - tbl["Rg"]) < 1.5)
+        # & (np.abs(tbl["R"] - R0) < 1)
+        & (np.abs(tbl["v_R"]) < 20)
+        & (np.abs(tbl["xyz"][:, 0] - -R0) < 1.5)
+        & (np.abs(tbl["xyz"][:, 1]) < 1.5)
+    )
+    pdata = tbl[mask]
+
+    with u.set_enabled_equivalencies(u.dimensionless_angles()):
+        zmax = np.sqrt(2 * pdata["init_J"][:, 2] / pdata["init_Omega"][:, 2])
+
+    rng = np.random.default_rng(123)
+    pdata["z"] = pdata["xyz"][:, 2]
+    pdata["v_z"] = (pdata["vxyz"][:, 2] * u.km / u.s).decompose(galactic).value
+    pdata["mgfe"], pdata["mgfe_err"] = make_mgfe(zmax, rng=rng)
+
+    pdata.write(filename, overwrite=True, serialize_meta=True)
+
+    return pdata
