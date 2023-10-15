@@ -121,10 +121,126 @@ def main(overwrite_data=False):
         pickle.dump((states, mcmc_samples), f)
 
 
+def main_sel():
+    short_name = "qiso-sel"
+    pdata_file = cache_path / "qiso-pdata.hdf5"
+    bdata_file = cache_path / f"{short_name}-bdata.npz"
+
+    pdata = at.QTable.read(pdata_file)
+    print(f"Particle data loaded from cache file {pdata_file!s}")
+
+    if not bdata_file.exists():
+        print("Generating binned data...")
+        max_z = np.round(3 * np.nanpercentile(pdata["z"].to(u.kpc), 90), 1)
+        max_vz = np.round(3 * np.nanpercentile(pdata["v_z"].to(u.km / u.s), 90), 0)
+
+        zvz_bins = {
+            "pos": np.linspace(-max_z, max_z, 151),
+            "vel": np.linspace(-max_vz, max_vz, 151),
+        }
+
+        prob = np.abs(pdata["z"] / (2 * u.kpc)) ** 2
+        prob /= prob.sum()
+
+        rng = np.random.default_rng(42)
+        idx = rng.choice(
+            np.arange(len(pdata), size=len(pdata) // 5, replace=False, p=prob)
+        )
+
+        bdata = oti.get_binned_label(
+            pdata["z"][idx],
+            pdata["v_z"][idx],
+            label=pdata["mgfe"][idx],
+            label_err=pdata["mgfe_err"][idx],
+            bins=zvz_bins,
+            units=galactic,
+        )
+        print(f"Binned data generated and cached to file {bdata_file!s}")
+        np.savez(bdata_file, **bdata)
+
+    else:
+        bdata = dict(np.load(bdata_file))
+
+        # TODO: fix this!
+        if not hasattr(bdata["pos"], "unit"):
+            bdata["pos"] = bdata["pos"] * u.kpc
+            bdata["vel"] = bdata["vel"] * u.kpc / u.Myr
+
+        print(f"Binned data loaded from cache file {bdata_file!s}")
+
+    model, bounds, init_params = oti.TorusImaging1DSpline.auto_init(
+        bdata,
+        label_knots=8,
+        e_knots={2: 8, 4: 4},
+        label_l2_sigma=1.0,
+        label_smooth_sigma=0.5,
+        e_l2_sigmas={2: 0.1, 4: 0.1},
+        e_smooth_sigmas={2: 0.2, 4: 0.2},
+        label_knots_spacing_power=0.75,
+        e_knots_spacing_power=0.75,
+    )
+
+    init_params["e_params"][2]["vals"] = np.full_like(
+        init_params["e_params"][2]["vals"], -0.5
+    )
+    init_params["e_params"][4]["vals"] = np.full_like(
+        init_params["e_params"][4]["vals"], np.log(0.05 / model._label_knots.max())
+    )
+
+    with open(cache_path / f"{short_name}-model.pkl", "wb") as f:
+        pickle.dump(model, f)
+
+    with open(cache_path / f"{short_name}-params-init.pkl", "wb") as f:
+        pickle.dump(init_params, f)
+
+    # print(init_params)
+    # print(bounds)
+
+    data_kw = dict(
+        pos=bdata["pos"],
+        vel=bdata["vel"],
+        label=bdata["label"],
+        label_err=bdata["label_err"],
+    )
+    mask = (
+        np.isfinite(bdata["label"])
+        & np.isfinite(bdata["label_err"])
+        & (bdata["label_err"] > 0)
+    )
+    data_kw = {k: v[mask] for k, v in data_kw.items()}
+
+    test_val = model.objective_gaussian(init_params, **data_kw)
+    print(f"Test evaluation of objective function: {test_val}")
+
+    print("Running optimize...")
+    res = model.optimize(init_params, objective="gaussian", bounds=bounds, **data_kw)
+    if res.state.success:
+        print(f"Optimize completed successfully in {res.state.iter_num} steps")
+        print(res.params)
+    else:
+        print(f"Optimize failed: {res.state!r}")
+        sys.exit(1)
+
+    with open(cache_path / f"{short_name}-params-opt.pkl", "wb") as f:
+        pickle.dump(res.params, f)
+
+    print("Running MCMC...")
+    states, mcmc_samples = model.mcmc_run_label(
+        bdata, p0=res.params, bounds=bounds, num_warmup=1000, num_steps=1000
+    )
+    with open(cache_path / f"{short_name}-mcmc-results.pkl", "wb") as f:
+        pickle.dump((states, mcmc_samples), f)
+
+
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--overwrite-data", action="store_true", default=False)
+    parser.add_argument("--sel", action="store_true", default=False)
     args = parser.parse_args()
-    main(overwrite_data=args.overwrite_data)
+
+    if args.sel:
+        main_sel()
+    else:
+        main(overwrite_data=args.overwrite_data)
