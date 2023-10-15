@@ -275,7 +275,7 @@ def make_jason_sim_data(filename, overwrite=False):
     pdata = tbl[mask]
 
     with u.set_enabled_equivalencies(u.dimensionless_angles()):
-        zmax = np.sqrt(2 * pdata["init_J"][:, 2] / pdata["init_Omega"][:, 2])
+        zmax = np.sqrt(2 * pdata["init_J"][:, 2] / pdata["init_Omega"][:, 2]) * u.kpc
 
     rng = np.random.default_rng(123)
     pdata["z"] = pdata["xyz"][:, 2]
