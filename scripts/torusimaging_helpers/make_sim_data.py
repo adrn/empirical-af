@@ -14,12 +14,14 @@ from .config import R0, agama_pot, gala_pot, vc0
 agama.setUnits(mass=u.Msun, length=u.kpc, time=u.Myr)
 
 
-def make_mgfe(zmax: u.Quantity[u.kpc], rng=None):
+def make_mgfe(zmax: u.Quantity[u.kpc], slope=0.064, zeropt=0.009, std=0.05, rng=None):
+    """
+    Default parameters from APOGEE in fiducial model
+    """
     if rng is None:
         rng = np.random.default_rng()
-    sim_mgfe_std = 0.05
-    mgfe = 0.064 * zmax.to_value(u.kpc) + 0.009
-    mgfe = rng.normal(mgfe, sim_mgfe_std)
+    mgfe = slope * zmax.to_value(u.kpc) + zeropt
+    mgfe = rng.normal(mgfe, std)
     mgfe_err = np.exp(rng.normal(-4.0, 0.5, size=len(zmax)))
     mgfe = rng.normal(mgfe, mgfe_err)
     return mgfe, mgfe_err
@@ -262,15 +264,21 @@ def make_jason_sim_data(filename, overwrite=False):
     vc = vc_poly(tbl["R"])
     tbl["Rg"] = tbl["J"][:, 1] / vc
 
-    R0 = 7.5
-    print(vc_poly(R0) * R0)  # 228.36 * 7.5 ~= 1712
+    # See: Jason-sim-find-good-volume.ipynb
+    x0 = -6.0
+    y0 = 0
+    R0 = np.sqrt(x0**2 + y0**2)
+    print(R0)
+
+    xy_size = 2.0
+    print(vc_poly(R0))
 
     mask = (
-        (np.abs(tbl["R"] - tbl["Rg"]) < 1.5)
+        (np.abs(tbl["R"] - tbl["Rg"]) < xy_size / 2)
         # & (np.abs(tbl["R"] - R0) < 1)
         & (np.abs(tbl["v_R"]) < 20)
-        & (np.abs(tbl["xyz"][:, 0] - -R0) < 1.5)
-        & (np.abs(tbl["xyz"][:, 1]) < 1.5)
+        & (np.abs(tbl["xyz"][:, 0] - x0) < xy_size / 2)
+        & (np.abs(tbl["xyz"][:, 1] - y0) < xy_size / 2)
     )
     pdata = at.QTable(tbl[mask])
 
@@ -280,7 +288,7 @@ def make_jason_sim_data(filename, overwrite=False):
     rng = np.random.default_rng(123)
     pdata["z"] = pdata["xyz"][:, 2] * u.kpc
     pdata["v_z"] = pdata["vxyz"][:, 2] * u.km / u.s
-    pdata["mgfe"], pdata["mgfe_err"] = make_mgfe(zmax, rng=rng)
+    pdata["mgfe"], pdata["mgfe_err"] = make_mgfe(zmax, rng=rng, slope=0.12, std=0.01)
 
     pdata.write(filename, overwrite=True, serialize_meta=True)
 
