@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_bdata(bdata):
+def plot_bdata(bdata, label_vlim=None):
     fig, axes = plt.subplots(
         1, 3, figsize=(15, 5), constrained_layout=True, sharex=True, sharey=True
     )
@@ -18,8 +18,14 @@ def plot_bdata(bdata):
     )
     fig.colorbar(cs, ax=axes[0])
 
+    if label_vlim is None:
+        label_vlim = (None, None)
     cs = axes[1].pcolormesh(
-        bdata["vel"].to_value(u.km / u.s), bdata["pos"].to_value(u.kpc), bdata["label"]
+        bdata["vel"].to_value(u.km / u.s),
+        bdata["pos"].to_value(u.kpc),
+        bdata["label"],
+        vmin=label_vlim[0],
+        vmax=label_vlim[1],
     )
     fig.colorbar(cs, ax=axes[1])
 
