@@ -81,7 +81,14 @@ def plot_spline_functions(model, params):
 
 
 def plot_data_model_residual(
-    model, bdata, params, zlim, vzlim=None, aspect=True, residual_lim=0.05
+    model,
+    bdata,
+    params,
+    zlim,
+    vzlim=None,
+    aspect=True,
+    residual_lim=0.05,
+    subplots_kwargs=None,
 ):
     title_fontsize = 20
     title_pad = 10
@@ -98,9 +105,13 @@ def plot_data_model_residual(
         vzlim = zlim * Omega
     vzlim = vzlim.to_value(u.km / u.s, u.dimensionless_angles())
 
-    fig, axes = plt.subplots(
-        1, 3, figsize=(16, 5.1), sharex=True, sharey=True, layout="constrained"
-    )
+    if subplots_kwargs is None:
+        subplots_kwargs = dict()
+    subplots_kwargs.setdefault("figsize", (16, 5.3))
+    subplots_kwargs.setdefault("sharex", True)
+    subplots_kwargs.setdefault("sharey", True)
+    subplots_kwargs.setdefault("layout", "constrained")
+    fig, axes = plt.subplots(1, 3, **subplots_kwargs)
 
     cs = axes[0].pcolormesh(
         bdata["vel"].to_value(u.km / u.s),
