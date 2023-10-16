@@ -221,7 +221,7 @@ def plot_az_Jz(
         ls="--",
         color="tab:green",
         marker="",
-        label=r"true $a_z=-\omega^2\,z$",
+        label=r"true $a_z(z)$",
         zorder=15,
     )
     ax.set_xlim(z_grid.min(), z_grid.max())
