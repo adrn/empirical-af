@@ -89,6 +89,7 @@ def plot_data_model_residual(
     aspect=True,
     residual_lim=0.05,
     subplots_kwargs=None,
+    subtitle_name="",
 ):
     title_fontsize = 20
     title_pad = 10
@@ -156,7 +157,7 @@ def plot_data_model_residual(
     axes[0].set_title("Simulated Data", fontsize=title_fontsize, pad=title_pad)
     axes[1].set_title("Optimized OTI Model", fontsize=title_fontsize, pad=title_pad)
     axes[2].set_title("Residuals", fontsize=title_fontsize, pad=title_pad)
-    fig.suptitle("Demonstration with Simulated Data: Harmonic Oscillator", fontsize=24)
+    fig.suptitle(f"Demonstration with Simulated Data: {subtitle_name}", fontsize=24)
 
     # Labels
     axes[0].set_ylabel(f"$z$ [{u.kpc:latex_inline}]")
