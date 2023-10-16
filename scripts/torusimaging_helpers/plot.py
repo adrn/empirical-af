@@ -89,7 +89,8 @@ def plot_data_model_residual(
     aspect=True,
     residual_lim=0.05,
     subplots_kwargs=None,
-    subtitle_name="",
+    suptitle1="Demonstration with Simulated Data:",
+    suptitle2="",
 ):
     title_fontsize = 20
     title_pad = 10
@@ -157,7 +158,7 @@ def plot_data_model_residual(
     axes[0].set_title("Simulated Data", fontsize=title_fontsize, pad=title_pad)
     axes[1].set_title("Optimized OTI Model", fontsize=title_fontsize, pad=title_pad)
     axes[2].set_title("Residuals", fontsize=title_fontsize, pad=title_pad)
-    fig.suptitle(f"Demonstration with Simulated Data: {subtitle_name}", fontsize=24)
+    fig.suptitle(f"{suptitle1} {suptitle2}", fontsize=24)
 
     # Labels
     axes[0].set_ylabel(f"$z$ [{u.kpc:latex_inline}]")
@@ -170,10 +171,10 @@ def plot_data_model_residual(
     axes[1].set_yticks(np.arange(-3, 3 + 1e-3, 1))
     axes[1].set_yticks(np.arange(-3, 3 + 1e-3, 0.5), minor=True)
 
+    aspect = Omega.to_value(u.km / u.s / u.kpc, u.dimensionless_angles())
     for ax in axes:
         if aspect:
-            # ax.set_aspect(2 * np.pi / Omega.value)
-            ax.set_aspect(1 / Omega.value)
+            ax.set_aspect(aspect)
         ax.set_xlim(-vzlim, vzlim)
         ax.set_ylim(-zlim.to_value(u.kpc), zlim.to_value(u.kpc))
 
