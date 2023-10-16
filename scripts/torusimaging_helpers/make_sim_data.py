@@ -263,7 +263,7 @@ def make_jason_sim_data(filename, overwrite=False):
     tbl["Rg"] = tbl["J"][:, 1] / vc
 
     R0 = 7.5
-    vc_poly(R0) * R0
+    print(vc_poly(R0) * R0)  # 228.36 * 7.5 ~= 1712
 
     mask = (
         (np.abs(tbl["R"] - tbl["Rg"]) < 1.5)
