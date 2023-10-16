@@ -293,10 +293,12 @@ def plot_orbit_shapes(model, params, true_orbit_zvzs, zlim, vzlim, ax=None):
             u.km / u.s
         )
         if i == 0:
-            kw = dict(label="OTI inferred")
+            kw1 = dict(label="OTI inferred")
+            kw2 = dict(label="true orbit")
         else:
-            kw = {}
-        ax.plot(oti_vv, oti_pp, marker="", ls="-", color="k", zorder=4, **kw)
+            kw1 = {}
+            kw2 = {}
+        ax.plot(oti_vv, oti_pp, marker="", ls="-", color="k", zorder=4, **kw1)
 
         ax.plot(
             (true_vz * u.kpc / u.Myr).to_value(u.km / u.s),
@@ -305,7 +307,7 @@ def plot_orbit_shapes(model, params, true_orbit_zvzs, zlim, vzlim, ax=None):
             color="tab:green",
             ls="--",
             zorder=10,
-            **kw,
+            **kw2,
         )
 
     # Labels
