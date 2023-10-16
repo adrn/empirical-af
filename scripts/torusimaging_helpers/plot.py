@@ -1,4 +1,5 @@
 import astropy.units as u
+import jax
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -268,3 +269,57 @@ def plot_az_Jz(
     ax.legend(loc="lower right", fontsize=16)
 
     return fig, axes
+
+
+def plot_orbit_shapes(model, params, true_orbit_zvzs, zlim, vzlim, ax=None):
+    if ax is None:
+        fig, ax = plt.subplots()
+    else:
+        fig = ax.figure
+
+    th_e_grid = np.linspace(0, 2 * np.pi, 1024)
+
+    get_pos_vec = jax.vmap(model._get_pos, in_axes=[None, 0, None, None])
+    get_vel_vec = jax.vmap(model._get_vel, in_axes=[None, 0, None, None])
+
+    for i, (true_z, true_vz) in enumerate(true_orbit_zvzs):
+        rr = model._get_r(
+            *model._get_elliptical_coords(0.0, true_vz[0], params),
+            params["e_params"],
+        )
+
+        oti_pp = get_pos_vec(rr, th_e_grid, params, None)
+        oti_vv = (get_vel_vec(rr, th_e_grid, params, None) * u.kpc / u.Myr).to_value(
+            u.km / u.s
+        )
+        if i == 0:
+            kw = dict(label="OTI inferred")
+        else:
+            kw = {}
+        ax.plot(oti_vv, oti_pp, marker="", ls="-", color="k", zorder=4, **kw)
+
+        ax.plot(
+            (true_vz * u.kpc / u.Myr).to_value(u.km / u.s),
+            true_z,
+            marker="",
+            color="tab:green",
+            ls="--",
+            zorder=10,
+            **kw,
+        )
+
+    # Labels
+    ax.set_ylabel(f"vertical position, $z$ [{u.kpc:latex_inline}]")
+    ax.set_xlabel(f"vertical velocity, $v_z$ [{u.km/u.s:latex_inline}]")
+
+    # Ticks
+    ax.set_xticks(np.arange(-200, 200 + 1, 100))
+    ax.set_xticks(np.arange(-200, 200 + 1, 50), minor=True)
+    ax.set_yticks(np.arange(-3, 3 + 1e-3, 1))
+    ax.set_yticks(np.arange(-3, 3 + 1e-3, 0.5), minor=True)
+    ax.set_xlim(vzlim)
+    ax.set_ylim(zlim)
+    ax.set_title("orbit shapes")
+    ax.legend(loc="lower left", fontsize=16).set_zorder(10)
+
+    return fig, ax
