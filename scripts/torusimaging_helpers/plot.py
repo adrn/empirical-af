@@ -178,10 +178,12 @@ def plot_data_model_residual(
     axes[1].set_yticks(np.arange(-3, 3 + 1e-3, 1))
     axes[1].set_yticks(np.arange(-3, 3 + 1e-3, 0.5), minor=True)
 
-    aspect = Omega.to_value(u.km / u.s / u.kpc, u.dimensionless_angles())
+    if aspect:
+        aspect_val = Omega.to_value(u.km / u.s / u.kpc, u.dimensionless_angles())
+
     for ax in axes:
         if aspect:
-            ax.set_aspect(aspect)
+            ax.set_aspect(aspect_val)
         ax.set_xlim(-vzlim, vzlim)
         ax.set_ylim(-zlim.to_value(u.kpc), zlim.to_value(u.kpc))
 
