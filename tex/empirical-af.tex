@@ -997,22 +997,22 @@ chains using the Hamiltonian Monte Carlo ``No U-turn Sampler'' (NUTS) implemente
 We run the chains for 1000 initial steps to allow the NUTS sampler to tune the
 hyperparameters of the sampling procedure (e.g., the mass matrix), and then run for an
 additional 1000 steps.
-The middle panel of Figure~\ref{fig:sho-validation} shows the maximum a posteriori (MAP)
-vertical acceleration profile, $a_z(z)$ (computed with Equation~\ref{eq:az-ugly}) as the
-under-plotted black line, and the over-plotted, dashed (green) line shows the true
+The left panel of Figure~\ref{fig:sho-validation} shows the maximum a posteriori (MAP)
+vertical acceleration profile, $a_z(z)$ (computed with Equation~\ref{eq:az-ugly}), as
+the under-plotted black line, and the over-plotted, dashed (green) line shows the true
 vertical acceleration relation, $a_z = -\omega^2 \, z$.
-This demonstrates that for this toy dataset we are able to recover the true acceleration
-profile using OTI.
-In the same (middle) panel, we also plot a shaded (gray) polygon to represent the
-acceleration profile span for the 16th--84th percentile values of the MCMC samples.
+This demonstrates that, for this toy dataset, we are able to recover the true
+acceleration profile using OTI.
+In the same panel, we also plot a shaded (gray) polygon to represent the acceleration
+profile span for the 16th--84th percentile values of the MCMC samples.
 However, in this case, the uncertainty region is comparable to the thickness of the
 black line.
 
-The left panel of Figure~\ref{fig:sho-validation} shows eight orbits with equally-spaced
-(but arbitrary) values of the vertical velocity at $z=0$: The under-plotted solid
-(black) lines show the orbital trajectories inferred using the MAP parameter values with
-our OTI model, and the over-plotted dashed (green) lines show the true orbital
-trajectories for this toy model, demonstrating agreement.
+The middle panel of Figure~\ref{fig:sho-validation} shows eight orbits with
+equally-spaced (but arbitrary) values of the vertical velocity at $z=0$: The
+under-plotted solid (black) lines show the orbital trajectories inferred using the MAP
+parameter values with our OTI model, and the over-plotted dashed (green) lines show the
+true orbital trajectories for this toy model, demonstrating agreement.
 The right panel of Figure~\ref{fig:sho-validation} shows the true vertical action values
 for all simulated particles on the vertical axis (i.e. the samples from the \df\ used to
 create the mean abundance data shown in the left panel of
@@ -1031,15 +1031,18 @@ action error is $<0.5\%$ for this toy dataset.
 \caption{%
 \todo{suptitle same as previous figure?}
 Validation of the OTI model fit to the simulated simple harmonic oscillator data.
-\textbf{Left panel:} The inferred vertical acceleration profile, $a_z(z)$, from the OTI
-model (solid black line) compared to the true acceleration profile (dashed green line).
-The uncertainty in the best-fit acceleration trend is comparable to the width of the
-line.
+\textbf{Left panel:} The inferred (maximum a posteriori; MAP) vertical acceleration
+profile, $a_z(z)$, from the OTI model (solid black line) compared to the true
+acceleration profile (dashed green line).
+The uncertainty in the acceleration trend is comparable to the width of the line.
 Most of the simulated data are within $|z| \lesssim 2~\kpc$ and the inferred
 acceleration profile agrees well with the true values within this region.
+\textbf{Middle panel:} Eight orbits with equally-spaced values of the vertical velocity
+computed in the true potential model (simple harmonic oscillator; shown as dashed, green
+lines) and with the OTI model using the MAP parameter values (solid, black lines).
 \textbf{Right panel:} A comparison of the true vertical action values (vertical axis)
-and our estimates using the fitted OTI model (horizontal axis).
-Our action estimates are fully empirical in that we do not need to assume the form for a
+and our estimates using the MAP OTI model (horizontal axis).
+Our action estimates are empirical in that we do not need to assume the form for a
 gravitational potential.
 The median (fractional) action error is $<0.5\%$ for this sample dataset.
 \label{fig:sho-validation}
@@ -1052,9 +1055,9 @@ The median (fractional) action error is $<0.5\%$ for this sample dataset.
 As a next application of the OTI framework, we use a more realistic galaxy model to
 sample 3D positions and velocities of star particles to test our inferred quantities in
 a more realistic setting.
-We use a quasi-isothermal disk \df\ \citep{Binney:2012} with parameters derived from
-fitting Milky Way stellar data (we use the ``thin disk'' parameters from Table~3 of
-\citealt{Sanders:2015}).
+We use a quasi-isothermal disk distribution function \citep[\df;][]{Binney:2012} with
+parameters derived from fitting Milky Way stellar data (we use the ``thin disk''
+parameters from Table~3 of \citealt{Sanders:2015}).
 We implement this \df\ using the \agama\ package and sample \num{5d8} phase-space
 coordinates with guiding-center radii $R_G$ between $5 < R_G < 12~\kpc$ embedded in our
 adopted Milky Way potential model (see Appendix~\ref{sec:appendix-potential}).
