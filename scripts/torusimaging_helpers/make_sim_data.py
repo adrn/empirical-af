@@ -265,7 +265,7 @@ def make_jason_sim_data(filename, overwrite=False):
     tbl["Rg"] = tbl["J"][:, 1] / vc
 
     # See: Jason-sim-find-good-volume.ipynb
-    x0 = -6.0
+    x0 = -9.0
     y0 = 0
     R0 = np.sqrt(x0**2 + y0**2)
     print(R0)
