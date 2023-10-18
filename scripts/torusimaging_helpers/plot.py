@@ -94,7 +94,7 @@ def plot_data_model_residual(
     zlim,
     vzlim=None,
     aspect=True,
-    residual_lim=0.05,
+    residual_sigma_lim=3.0,
     subplots_kwargs=None,
     suptitle1="Demonstration with Simulated Data:",
     suptitle2="",
@@ -151,14 +151,14 @@ def plot_data_model_residual(
     cs = axes[2].pcolormesh(
         bdata["vel"].to_value(u.km / u.s),
         bdata["pos"].to_value(u.kpc),
-        bdata["label"] - model_mgfe,
+        (bdata["label"] - model_mgfe) / bdata["label_err"] / np.sqrt(2),
         cmap="RdBu_r",
-        vmin=-residual_lim,
-        vmax=residual_lim,
+        vmin=-residual_sigma_lim,
+        vmax=residual_sigma_lim,
         rasterized=True,
     )
     cb = fig.colorbar(cs, ax=axes[2])  # , orientation="horizontal")
-    cb.set_label("data $-$ model", fontsize=cb_labelsize)
+    cb.set_label("(data $-$ model) / error", fontsize=cb_labelsize)
     cb.ax.yaxis.set_tick_params(labelsize=14)
 
     # Titles
