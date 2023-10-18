@@ -4,6 +4,7 @@
 % - Widmark papers
 % - https://arxiv.org/abs/2303.18040
 % - cite Justin Read review, and https://arxiv.org/pdf/2012.11477.pdf
+% - https://arxiv.org/abs/2310.10225
 
 
 % \begin{figure}[!t]
@@ -882,6 +883,10 @@ That is, our simulated abundance values are drawn from
 \end{equation}
 where $\mathcal{N}(\mu, \sigma)$ is a normal distribution with mean $\mu$ and standard
 deviation $\sigma$.
+We then additionally simulate measurement errors on the abundance values by drawing an
+abundance uncertainty, $\sigma_Y$, for each star particle such that $\log \sigma_Y \sim
+\mathcal{U}(-4, 0.5)$, where $\log$ is the natural logarithm and $\mathcal{U}(a, b)$ is
+the uniform distribution over the domain $[a, b)$.
 
 Figure~\ref{fig:sho-data-model} (left panel) shows the mean simulated \abun{Mg}{Fe}
 abundance for stars in bins of vertical phase-space coordinates with the same color
@@ -950,10 +955,24 @@ compiled and we can use automatic differentiation to compute the gradients of th
 objective function with respect to the, in this case, 17 model parameters.
 We use a Gaussian log-likelihood for the mean \abun{Mg}{Fe} abundance data as our
 objective function.
-We also measure the empirical scatter of the abundance value data in each pixel of the
-vertical phase space and adopt this scaled by $1/\sqrt{N}$, where $N$ is the number of
-star particles in a given pixel, as the uncertainty on the mean abundance value in each
-pixel.
+For the uncertainty on the mean abundance in each pixel, we consider both the error on
+the mean (given heteroskedastic measurement errors on the abundances of each star
+particle, $\sigma_{Y,i}$),
+\begin{equation}
+    \sigma_{\mu_Y} = \sqrt{\frac{1}{\sum_i \frac{1}{\sigma^2_{Y,i}}}}
+\end{equation}
+and the intrinsic scatter of abundances in each pixel.
+We assume for this case that we do not know the true intrinsic scatter that we simulated
+with in order to emulate working with real data, so we compute the error-deconvolved
+intrinsic scatter, $s_y$, of abundance values in the ten pixels with the most number of
+star particles.
+We take the uncertainty of the mean abundance $\mu_{Y,j}$ in each pixel $j$ to be
+\begin{equation}
+    \sigma_{\mu_{Y,j}} = \sqrt{\sigma_{\mu_Y, j}^2 + s_Y^2 / N_j}
+\end{equation}
+where $N_j$ is the number of star particles in pixel $j$ and $\sigma_{\mu_Y, j}$ is the
+error on the mean in the same pixel.
+
 We additionally use an L2 regularization on the Fourier coefficient function values
 $y^{(e_2)}$ with a standard deviation of 0.1, and on the label function spline values
 $y^{(Y)}$ with a standard deviation of 1, to try to keep these values near zero when the
@@ -967,36 +986,46 @@ over the domain of our simulated data in the left panel, and the right panel sho
 residuals.
 The residuals everywhere indicate that the best-fit model matches the data well.
 
-We estimate uncertainties on the best-fit model parameters using \jax\
-(auto-differentiation) to compute the Hessian of the log-likelihood (i.e. a standard
-Fisher analysis).
-The left panel of Figure~\ref{fig:sho-validation} shows the inferred vertical
-acceleration profile, $a_z(z)$ (computed with Equation~\ref{eq:az-ugly}), from the OTI
-model in Figure~\ref{fig:sho-data-model}:
-The dashed (green) line shows the true vertical acceleration relation, $a_z = -\omega^2
-\, z$, and the solid (black) line shows the best-fit OTI model, demonstrating that for
-this toy dataset we are able to recover the true acceleration profile.
-The uncertainty on the acceleration profile is computed by differencing the 16th and
-84th percentile acceleration values at each $z$ from Monte Carlo samples of the
-Cram\'er-Rao lower bound (CRLB) computed above.
-However, for this dataset, the uncertainty is comparable to the width of the best-fit
-line and is not visible in the figure.
+\todo{audit language here}
+We use the optimized parameter values to initialize two Markov Chain Monte Carlo (MCMC)
+chains using the Hamiltonian Monte Carlo ``No U-turn Sampler'' (NUTS) implemented in the
+\texttt{blackjax} \citep{blackjax} Python package.
+We run the chains for 1000 initial samples to allow the NUTS sampler to tune the
+hyperparameters of the sampling algorithm (i.e., the mass matrix), and then run for an
+additional 1000 steps.
+The middle panel of Figure~\ref{fig:sho-validation} shows the maximum a posteriori (MAP)
+vertical acceleration profile, $a_z(z)$ (computed with Equation~\ref{eq:az-ugly}) as the
+under-plotted black line, and the over-plotted, dashed (green) line shows the true
+vertical acceleration relation, $a_z = -\omega^2 \, z$.
+This demonstrates that for this toy dataset we are able to recover the true acceleration
+profile using OTI.
+In the same (middle) panel, we also plot a shaded (gray) polygon to represent the
+acceleration profile span for the 16th--84th percentile values of the MCMC samples.
+However, in this case, the uncertainty region is comparable to the thickness of the
+black line.
+
+The left panel of Figure~\ref{fig:sho-validation} shows eight orbits with equally-spaced
+(but arbitrary) values of the vertical velocity at $z=0$: The under-plotted solid
+(black) lines show the orbital trajectories inferred using the MAP parameter values with
+our OTI model, and the over-plotted dashed (green) lines show the true orbital
+trajectories for this toy model, demonstrating agreement.
 The right panel of Figure~\ref{fig:sho-validation} shows the true vertical action values
 for all simulated particles on the vertical axis (i.e. the samples from the \df\ used to
 create the mean abundance data shown in the left panel of
 Figure~\ref{fig:sho-data-model}) and our estimates for the vertical action of each star
-particle as the black point markers:
+particle as the black point markers, computed using the MAP parameter values.
 We compute the actions, frequencies, and angles using
 Equations~\ref{eq:Jz-ell}--\ref{eq:thz-ell} evaluated at the phase-space coordinates of
 each star particle.
-The acceleration error at $z=2~\kpc$ is $\sim 1\%$ (in fractional error) and the median
-action error is $<0.5\%$ for this sample dataset.
+The acceleration error at $z=1~\kpc$ is $< 1\%$ (in fractional error) and the median
+action error is $<0.5\%$ for this toy dataset.
 
 \begin{figure*}[t!]
 \begin{center}
-\includegraphics[width=0.8\textwidth]{sho-validation.pdf}
+\includegraphics[width=\textwidth]{sho-validation.pdf}
 \end{center}
 \caption{%
+\todo{suptitle same as previous figure?}
 Validation of the OTI model fit to the simulated simple harmonic oscillator data.
 \textbf{Left panel:} The inferred vertical acceleration profile, $a_z(z)$, from the OTI
 model (solid black line) compared to the true acceleration profile (dashed green line).
@@ -1016,10 +1045,9 @@ The median (fractional) action error is $<0.5\%$ for this sample dataset.
 \subsection{Axisymmetric Quasi-isothermal Disk}
 \label{sec:sim-qiso}
 
-% TODO: selection in ∆R, vR, R, R_g
-As a next application of the OTI framework, we use a galaxy model to sample 3D positions
-and velocities of star particles to test our inferred quantities in a more realistic
-setting.
+As a next application of the OTI framework, we use a more realistic galaxy model to
+sample 3D positions and velocities of star particles to test our inferred quantities in
+a more realistic setting.
 We use a quasi-isothermal disk \df\ \citep{Binney:2012} with parameters derived from
 fitting Milky Way stellar data (we use the ``thin disk'' parameters from Table~3 of
 \citealt{Sanders:2015}).
@@ -1040,27 +1068,27 @@ After these selections, we are left with $\approx \num{7d6}$ star particles.
 We again compute simulated \abun{Mg}{Fe} abundance values for these stars using the
 linear relation between \abun{Mg}{Fe} and $z_{\textrm{max}}$ from the \apogee\ data (see
 the right panel of Figure~\ref{fig:mgfe-zvz}) and a scatter of 0.05~dex (see
-Section~\ref{sec:sim-sho}).
+Section~\ref{sec:sim-sho}), with simulated uncertainties following
+Section~\ref{sec:sim-sho}.
 The left panel of Figure~\ref{fig:qiso-data-model} shows this simulated data set in the
 vertical phase space coordinates.
 
-We again fit the simulated mean abundance data in pixels of phase-space coordinates
-using the OTI framework described above (Section~\ref{sec:oti}).
+We fit the simulated mean abundance data in pixels of phase-space coordinates using the
+OTI framework described above (Section~\ref{sec:oti}) and following the same procedure
+as in Section~\ref{sec:sim-sho}.
 We again use a monotonic quadratic spline function (Appendix~\ref{sec:appendix-spline})
 for both the label function and the Fourier coefficient functions.
-For the label function, we use 9 knots equally-spaced in \rz\ between $0$ and $r_{z,
-\textrm{max}} \approx 0.53~\unit{\kilo\parsec\per\mega\year\tothe{1/2}}$.
-We use $m=\{2, 4\}$ Fourier terms with 8 and 4 spline knots, respectively.
+For the label function, we use 8 knots equally spaced in \rz\ between $0$ and $r_{z,
+\textrm{max}} \approx 0.53~\unit{\kilo\parsec\per\mega\year\tothe{1/2}}$.\todo{update}
+Here, however, we use $m=\{2, 4\}$ Fourier terms with 8 and 4 spline knots,
+respectively.
 We space the Fourier coefficient spline knots equally in $\rz^{3/2}$ between $0$ and
 $r_{z, \textrm{max}}$: This places a higher density of knots at lower \rz\ values where
 we expect the Fourier coefficient functions to change more rapidly.
-We again require that the coefficient function values at zero are zero so that
-$e_2(0)=e_4(0)=0$, and we assume that the sign of the functions are $(+,-)$ for the
-$m=\{2, 4\}$ coefficient functions, respectively.
+We again require that the coefficient function values are zero at $\rzp = 0$ so that
+$e_2(0)=e_4(0)=0$, and we assume that the overall sign of the functions are $(+,-)$ for
+the $m=\{2, 4\}$ coefficient functions, respectively.
 
-We measure the empirical scatter of the abundance data in each pixel of the vertical
-phase space and use this, scaled by $1/\sqrt{N}$ where $N$ is the number of particles in
-each pixel, as the uncertainty on the mean abundance value in each pixel.
 We use the same regularization as in Section~\ref{sec:sim-sho} (L2 regularization on the
 coefficient function parameters with a standard deviation of 0.1 and on the label
 function parameters with a standard deviation of 1) for all Fourier coefficient
@@ -1073,24 +1101,33 @@ on the same pixel grid as the simulated data, and the right panel shows the resi
 The small residuals indicate that this model does well to fit the mean abundance
 variations in the vertical phase space.
 
-% TODO: panels
-The left panel of Figure~\ref{fig:qiso-validation} shows the inferred vertical
-acceleration profile and uncertainties (black line and gray shaded region) along with
-the true vertical acceleration (green dashed line) evaluated at a constant $R=R_0$ in
-our adopted Milky Way potential model (see Appendix~\ref{sec:appendix-potential}).
-We estimate uncertainties on the inferred acceleration trend using the Hessian of the
-log-likelihood (i.e. the Cram\'{e}r--Rao lower bound, CRLB) combined with an estimate of
-the parameter variance from bootstrap resampling the data.
-That is, we perform 64 bootstrap resamplings of the particle data and fit the binned,
-resampled data with the same procedure as described above.
-For each bootstrap trial, we compute the inferred acceleration trend and compute the
-variance of the 64 trials as and additional component of the uncertainty.
-We add this bootstrap variance in quadrature to the error estimate using the CRLB to
-obtain a total uncertainty on the acceleration profile as measured with OTI: This is
-shown as the gray shaded region in Figure~\ref{fig:qiso-validation} (left panel).
-The acceleration precision at $z=1~\kpc$ is $\sim 3\%$ (in fractional error).
+We again use the optimized parameter values to initialize an MCMC sampling of the
+parameters following the same procedure as in Section~\ref{sec:sim-sho}.
+The middle panel of Figure~\ref{fig:qiso-validation} shows the inferred vertical
+acceleration profile (black line; computed with the MAP parameter values) and
+uncertainties (gray shaded region; computed using the 16th--84th percentile parameter
+values using the MCMC samples) along with the true vertical acceleration (green dashed
+line) evaluated at a constant $R=R_0$ in our adopted Milky Way potential model (see
+Appendix~\ref{sec:appendix-potential}).
+\todo{audit values}
+The acceleration precision at $z=1~\kpc$ is $\sim 1\%$ (in fractional error) with a
+$\sim 1\%$ bias.
 
-The right panel of Figure~\ref{fig:sho-validation} shows (as black markers) the true
+The left panel of Figure~\ref{fig:qiso-validation} shows eight orbits with
+equally-spaced (but arbitrary) values of the vertical velocity at $z=0$: The
+under-plotted solid (black) lines show the orbital trajectories inferred using the MAP
+parameter values with our OTI model, and the over-plotted dashed (green) lines show the
+true orbital trajectories.
+The true orbital trajectories are computed in the 3D galaxy model using the grid of
+$v_z$ values at $z=0$ with $x=R_0$, $v_x=0$, and $y=0$.
+To set $v_y$, we take the true actions computed for the particles in our selected region
+and fit a 3rd-order polynomial to the mean relationship between $J_\phi$ and $J_z$ in
+this region (which arises primarily because of the finite selection on $R$).
+We ...
+
+for this toy model, demonstrating agreement.
+
+The right panel of Figure~\ref{fig:qiso-validation} shows (as black markers) the true
 vertical action values for a random subset of $10^5$ simulated particles on the vertical
 axis and our estimates for the vertical action of each star particle using the OTI
 model.
@@ -1099,7 +1136,7 @@ Equations~\ref{eq:Jz-ell}--\ref{eq:thz-ell} evaluated at the phase-space coordin
 each star particle.
 % TODO: audit numbers
 We find the median fractional error of the vertical action, angle, and frequency are
-$\sim 4\%$, $\sim 4\%$, and $\sim 9\%$, respectively.
+$\sim 5\%$, $\sim 5\%$, and $\sim 9\%$, respectively.
 
 
 \begin{figure*}[t!]
@@ -1122,7 +1159,7 @@ sample from Section~\ref{sec:sim-qiso}.
 
 \begin{figure*}[t!]
 \begin{center}
-\includegraphics[width=0.8\textwidth]{qiso-validation.pdf}
+\includegraphics[width=\textwidth]{qiso-validation.pdf}
 \end{center}
 \caption{%
 Validation of the OTI model fit to the simulated quasi-isothermal disk sample. (i.e. the
