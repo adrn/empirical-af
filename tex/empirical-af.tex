@@ -79,6 +79,9 @@
 \author{Daniel~Horta~Darrington}
 \affiliation{\affcca}
 
+\author{Micah~Oeur}
+% \affiliation{\affcca}
+
 \author{Kathryn Johnston}
 % \affiliation{\affcolumbia}
 
@@ -834,10 +837,20 @@ The conjugate angle variable, $\theta_z$, is computed as the fractional time
 In this section, we demonstrate the OTI framework described above using a set of
 simulated datasets of increasing complexity.
 We start by using a one-dimensional simple harmonic oscillator potential
-(Section~\ref{sec:sim-sho}), then use a more realistic multi-component galaxy model
-(Section~\ref{sec:sim-qiso}), and finally use the final snapshot from an $N$-body
-simulation of a disk galaxy perturbed by an orbiting satellite
+(Section~\ref{sec:sim-sho}), then use a more realistic multi-component (3D) galaxy model
+(Section~\ref{sec:sim-qiso}--\ref{sec:sim-qiso-sel}), and finally use the final snapshot
+from an $N$-body simulation of a disk galaxy perturbed by an orbiting satellite
 (Section~\ref{sec:sim-jason}).
+As input to OTI, we bin the data into pixels of vertical position $z$ and velocity $v_z$
+and compute the mean abundance value in each pixel, but we do not simulate uncertainties
+on the phase-space coordinates.
+We set the maximum bin edge in each coordinate as three times the 90th percentile value
+of the distributions of $z$ and $v_z$ for each simulated sample, and use 151 bins for
+each coordinate.
+These choices are arbitrary, but we have verified that the results are not sensitive to
+reasonable changes of these values.
+In the following subsections, we demonstrate that OTI can recover the true vertical
+acceleration profiles and other dynamical quantities for these simulated data sets.
 
 % For our implementation used in this article, we adopt the following:
 % \begin{align}
@@ -887,33 +900,25 @@ We then additionally simulate measurement errors on the abundance values by draw
 abundance uncertainty, $\sigma_Y$, for each star particle such that $\log \sigma_Y \sim
 \mathcal{U}(-4, 0.5)$, where $\log$ is the natural logarithm and $\mathcal{U}(a, b)$ is
 the uniform distribution over the domain $[a, b)$.
-
 Figure~\ref{fig:sho-data-model} (left panel) shows the mean simulated \abun{Mg}{Fe}
 abundance for stars in bins of vertical phase-space coordinates with the same color
 scale as in the middle panel of Figure~\ref{fig:mgfe-zvz} (i.e. the real \apogee\ data).
-For setting axis limits and functions below, we define a maximum elliptical radius
-$r_{z, \textrm{max}} = 5 \, \frac{s_z}{\sqrt{\omega}}$ equivalent to the 5-$\sigma$
-values of the \df\ scale.
-In terms of the phase-space coordinates, we then use a maximum $z$ value of $\max(z) =
-r_{z, \textrm{max}} \times \sqrt{\omega}$ and similarly for $v_z$, $\max(v_z) = r_{z,
-\textrm{max}} / \sqrt{\omega}$.
-For the choices above, this corresponds to $\max(z) \approx 3~\kpc$ and $\max(v_z)
-\approx 250~\kms$.
 
 \begin{figure*}[t!]
 \begin{center}
 \includegraphics[width=\textwidth]{sho-data-model.pdf}
 \end{center}
 \caption{%
-A demonstration of a best-fit OTI model using simulated data in a simple harmonic
+A demonstration of an optimized OTI model using simulated data in a simple harmonic
 oscillator potential.
 \textbf{Left panel:} Simulated kinematic data in the vertical phase space with an
 isothermal distribution function and a linear relation between \abun{Mg}{Fe} and
 $z_{\textrm{max}}$ (see Figure~\ref{fig:mgfe-zvz}).
-\textbf{Middle panel:} An optimized OTI model evaluated on the same grid of phase-space
+\textbf{Middle panel:} The optimized OTI model evaluated on the same grid of phase-space
 coordinates as the data (left panel).
-\textbf{Right panel:} The residuals of the best-fit model (i.e. the simulated data minus
-the best-fit model evaluated on the same grid of phase-space coordinates).
+\textbf{Right panel:} The residuals of the optimized model (i.e. the simulated data
+minus the optimized model, evaluated on the same grid of phase-space coordinates).
+The small residuals (except on the edges, where the number of stars per pixel is small) show that the model accurately represents the mean abundance trends in this phase space.
 \label{fig:sho-data-model}
 }
 \end{figure*}
@@ -931,8 +936,8 @@ For the label function, we assert that the value must monotonically increase fro
 We use $K_Y=10$ spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$
 and $r_{z, \textrm{max}}$ with function values at the knot locations $y_k^{(Y)}$.
 
-For this initial case, we include only an $m=2$ term in our Fourier distortion of the
-elliptical radius (Equation~\ref{eq:rz}).
+For this initial test case, we include only an $m=2$ term in our Fourier distortion of
+the elliptical radius (Equation~\ref{eq:rz}).
 For the Fourier coefficient function, $e_2(\rzp)$, we require that the coefficient value
 must equal zero at $\rzp = 0$ (i.e. $e_2(0) = 0$), and that the coefficient value
 monotonically increases with $\rzp$.
@@ -941,7 +946,7 @@ asymptotic orbital frequency as $\rzp \rightarrow 0$ and can therefore be used t
 estimate the midplane volume mass density (Equation~\ref{eq:freqzero}).
 Assuming that the coefficient value increases with $\rzp$ (so that the orbit shapes
 can only become more prolate with increasing $z_{\textrm{max}}$) is equivalent to
-assuming that the volume density increases with increasing height $z$.
+assuming that the surface density increases with increasing height $z$.
 We use $K_e=5$ spline knot locations $x_k^{(e_2)}$ with values $y_k^{(e_2)}$ equally
 spaced in $\rz$ between $0$ and $r_{z, \textrm{max}}$, but we require the knot value at
 $\rzp = 0$ to be equal to zero $y_0^{(e_2)}=0$.
@@ -986,12 +991,11 @@ over the domain of our simulated data in the left panel, and the right panel sho
 residuals.
 The residuals everywhere indicate that the best-fit model matches the data well.
 
-\todo{audit language here}
 We use the optimized parameter values to initialize two Markov Chain Monte Carlo (MCMC)
 chains using the Hamiltonian Monte Carlo ``No U-turn Sampler'' (NUTS) implemented in the
 \texttt{blackjax} \citep{blackjax} Python package.
-We run the chains for 1000 initial samples to allow the NUTS sampler to tune the
-hyperparameters of the sampling algorithm (i.e., the mass matrix), and then run for an
+We run the chains for 1000 initial steps to allow the NUTS sampler to tune the
+hyperparameters of the sampling procedure (e.g., the mass matrix), and then run for an
 additional 1000 steps.
 The middle panel of Figure~\ref{fig:sho-validation} shows the maximum a posteriori (MAP)
 vertical acceleration profile, $a_z(z)$ (computed with Equation~\ref{eq:az-ugly}) as the
