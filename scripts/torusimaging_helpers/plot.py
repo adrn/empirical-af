@@ -116,13 +116,26 @@ def plot_data_model_residual(
 
     if subplots_kwargs is None:
         subplots_kwargs = dict()
-    subplots_kwargs.setdefault("figsize", (16, 5.3))
+    subplots_kwargs.setdefault("figsize", (16, 4.2))
     subplots_kwargs.setdefault("sharex", True)
     subplots_kwargs.setdefault("sharey", True)
     subplots_kwargs.setdefault("layout", "constrained")
-    fig, axes = plt.subplots(1, 3, **subplots_kwargs)
+    fig, axes = plt.subplots(1, 4, **subplots_kwargs)
 
     cs = axes[0].pcolormesh(
+        bdata["vel"].to_value(u.km / u.s),
+        bdata["pos"].to_value(u.kpc),
+        bdata["counts"],
+        cmap="Blues",
+        rasterized=True,
+        norm=mpl.colors.LogNorm(vmin=0.5),
+    )
+    cb = fig.colorbar(cs, ax=axes[0])
+    cb.set_label("number of stars", fontsize=cb_labelsize)
+    # cb.ax.set_yticks(np.arange(mgfe_cbar_xlim[0], mgfe_cbar_xlim[1] + 1e-3, 0.05))
+    cb.ax.yaxis.set_tick_params(labelsize=14)
+
+    cs = axes[1].pcolormesh(
         bdata["vel"].to_value(u.km / u.s),
         bdata["pos"].to_value(u.kpc),
         bdata["label"],
@@ -131,14 +144,14 @@ def plot_data_model_residual(
         vmin=mgfe_cbar_vlim[0],
         vmax=mgfe_cbar_vlim[1],
     )
-    cb = fig.colorbar(cs, ax=axes[0:2])
+    cb = fig.colorbar(cs, ax=axes[1:3])
     cb.set_label("mean [Mg/Fe]", fontsize=cb_labelsize)
     cb.ax.set_ylim(mgfe_cbar_xlim)
     cb.ax.set_yticks(np.arange(mgfe_cbar_xlim[0], mgfe_cbar_xlim[1] + 1e-3, 0.05))
     cb.ax.yaxis.set_tick_params(labelsize=14)
 
     model_mgfe = np.array(model._get_label(bdata["pos"], bdata["vel"], params))
-    cs = axes[1].pcolormesh(
+    cs = axes[2].pcolormesh(
         bdata["vel"].to_value(u.km / u.s),
         bdata["pos"].to_value(u.kpc),
         model_mgfe,
@@ -148,7 +161,7 @@ def plot_data_model_residual(
         vmax=mgfe_cbar_vlim[1],
     )
 
-    cs = axes[2].pcolormesh(
+    cs = axes[3].pcolormesh(
         bdata["vel"].to_value(u.km / u.s),
         bdata["pos"].to_value(u.kpc),
         (bdata["label"] - model_mgfe) / bdata["label_err"] / np.sqrt(2),
@@ -157,14 +170,15 @@ def plot_data_model_residual(
         vmax=residual_sigma_lim,
         rasterized=True,
     )
-    cb = fig.colorbar(cs, ax=axes[2])  # , orientation="horizontal")
+    cb = fig.colorbar(cs, ax=axes[3])  # , orientation="horizontal")
     cb.set_label("(data $-$ model) / error", fontsize=cb_labelsize)
     cb.ax.yaxis.set_tick_params(labelsize=14)
 
     # Titles
-    axes[0].set_title("Simulated Data", fontsize=title_fontsize, pad=title_pad)
-    axes[1].set_title("Optimized OTI Model", fontsize=title_fontsize, pad=title_pad)
-    axes[2].set_title("Residuals", fontsize=title_fontsize, pad=title_pad)
+    axes[0].set_title("Number Density", fontsize=title_fontsize, pad=title_pad)
+    axes[1].set_title("Label Data", fontsize=title_fontsize, pad=title_pad)
+    axes[2].set_title("OTI Model", fontsize=title_fontsize, pad=title_pad)
+    axes[3].set_title("Residuals", fontsize=title_fontsize, pad=title_pad)
     fig.suptitle(f"{suptitle1} {suptitle2}", fontsize=24)
 
     # Labels
@@ -173,8 +187,12 @@ def plot_data_model_residual(
         ax.set_xlabel(f"$v_z$ [{u.km/u.s:latex_inline}]")
 
     # Ticks
-    axes[0].set_xticks(np.arange(-300, 300 + 1, 100))
-    axes[0].set_xticks(np.arange(-300, 300 + 1, 50), minor=True)
+    if vzlim >= 100:
+        axes[0].set_xticks(np.arange(-300, 300 + 1, 100))
+        axes[0].set_xticks(np.arange(-300, 300 + 1, 50), minor=True)
+    else:
+        axes[0].set_xticks(np.arange(-300, 300 + 1, 50))
+
     axes[1].set_yticks(np.arange(-3, 3 + 1e-3, 1))
     axes[1].set_yticks(np.arange(-3, 3 + 1e-3, 0.5), minor=True)
 
