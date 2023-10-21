@@ -65,6 +65,8 @@ def main(overwrite_data=False):
         label_smooth_sigma=0.5,
         e_l2_sigmas={2: 0.1, 4: 0.1},
         e_smooth_sigmas={2: 0.2, 4: 0.2},
+        dacc_dpos_scale=1e-4,
+        dacc_strength=1e2,
         label_knots_spacing_power=0.75,
         e_knots_spacing_power=0.75,
     )
@@ -139,6 +141,7 @@ def main_sel():
             "vel": np.linspace(-max_vz, max_vz, 151),
         }
 
+        # TODO: do something slightly less aggressive here?
         prob = np.abs(pdata["z"] / (2 * u.kpc)) ** 2
         prob /= prob.sum()
 

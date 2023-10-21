@@ -65,6 +65,8 @@ def main(overwrite=False):
         label_smooth_sigma=0.5,
         e_l2_sigmas={2: 0.1},
         e_smooth_sigmas={2: 0.2},
+        dacc_dpos_scale=1e-4,
+        dacc_strength=1e2,
     )
     with open(cache_path / f"{short_name}-model.pkl", "wb") as f:
         pickle.dump(model, f)
