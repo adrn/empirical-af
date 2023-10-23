@@ -60,15 +60,15 @@ def main(overwrite_data=False):
     model, bounds, init_params = oti.TorusImaging1DSpline.auto_init(
         bdata,
         label_knots=8,
-        e_knots={2: 8, 4: 4},
+        e_knots={2: 12, 4: 4},
         label_l2_sigma=1.0,
         label_smooth_sigma=0.5,
-        e_l2_sigmas={2: 0.1, 4: 0.1},
-        e_smooth_sigmas={2: 0.2, 4: 0.2},
+        e_l2_sigmas={2: 0.5, 4: 0.5},
+        e_smooth_sigmas={2: 0.1, 4: 0.1},
         dacc_dpos_scale=1e-4,
-        dacc_strength=1e2,
+        dacc_strength=0,
         label_knots_spacing_power=0.75,
-        e_knots_spacing_power=0.75,
+        e_knots_spacing_power=0.5,
     )
 
     init_params["e_params"][2]["vals"] = np.full_like(
