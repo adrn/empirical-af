@@ -227,7 +227,6 @@ orbits in projections of phase-space.
 
 \section{Review of Vertical Dynamics in an Axisymmetric Disk} \label{sec:dynreview}
 
-% TODO: vertical kinematics - Green:2022, Bahcall:1984, Holmberg:2000
 Our goal, like many past efforts, is to define a framework for measuring the mass
 distribution underlying a tracer population given a snapshot of kinematic data for the
 tracers.
@@ -275,7 +274,7 @@ leaving only the vertical terms
     \pderiv{a_z}{z}\biggr\rvert_R = 4\pi \, G \, \rho_z(z \,;\, R)
 \end{equation}
 where the expressions are assumed to be valid at a given radius $R$.
-% Based on historical measurements of the vertical mass density distribution of the Milky Way disk, commonly-adopted forms for $\rho_z(z)$ are a single exponential, a double exponential, or a $\textrm{sech}(z)^2$ profile (CITE).
+% Based on historical measurements of the vertical mass density distribution of the Milky Way disk, commonly-adopted forms for $\rho_z(z)$ are a single exponential, a double exponential, or a $\textrm{sech}(z)^2$ profile.
 Very near the galactic midplane, the mass density distribution is approximately
 constant,
 \begin{equation}
@@ -307,7 +306,9 @@ coordinates that increase linearly with time with a rate set by the orbital freq
 $\bs{\Omega}$.
 
 For this work, we will consider only the vertical phase-space of the Galaxy under the
-assumption that the radial and vertical motion are separable.
+assumption that the radial and vertical motion are separable \citep[see also,
+e.g.,][]{Oort:1932, Bahcall:1984,Kuijken:1989b, Kuijken:1991, Holmberg:2000, Li:2021,
+Green:2023}.
 Orbits in the vertical phase-space are then fully summarized by the vertical action
 $J_z$, and the phase of a star along its orbit is set by the vertical angle $\theta_z$.
 The vertical action is defined as the area that an orbit sweeps out in the vertical
@@ -347,7 +348,7 @@ $\Omega_z = \Omega_z(J_z)$.
 % \end{equation}
 % which relates position $\bs{x}$ and velocity $\bs{v}$ derivatives of the distribution
 % function (DF) $f$ to spatial derivatives of the gravitational potential $\Phi$ (i.e.
-% acceleration; CITE).
+% acceleration).
 
 
 
@@ -355,7 +356,7 @@ $\Omega_z = \Omega_z(J_z)$.
 % % phase-space dimensions were unobserved (as is still the case for most external
 % % galaxies).
 % % In this regime, many approaches instead work with statistical moments of the CBE, which
-% % form the ``Jeans equations'' (Oort? CITE many others).
+% % form the ``Jeans equations''.
 % % Within the Milky Way, Jeans modeling approaches that only use low-order moments do not
 % % fully exploit the wealth of information we now have available to us.
 % % However, measuring high-order moments is challenging and increasingly susceptible to
@@ -386,8 +387,7 @@ $\Omega_z = \Omega_z(J_z)$.
 
 % Given measurements of the positions and velocities of a set of stars, one can therefore
 % measure the potential $\Phi_z(z)$ by parameterizing $\Phi(z)$ and $f_z(E_z)$ and fitting
-% the data to find the optimal parameters of the assumed functions (CITE KG, Li Widrow,
-% others).
+% the data to find the optimal parameters of the assumed functions.
 % To do this, we have to decide on functional forms for both $\Phi(z)$ and $f_z(E_z)$: We
 % should use functions that are flexible enough to describe the data, but $\Phi(z)$ has
 % the additional constraint that its second derivative must be finite and positive
@@ -441,11 +441,11 @@ Fortunately, for increasingly large samples of stars in the Milky Way, we have a
 measurements of intrinsically-invariant stellar labels, such as surface element
 abundance ratios or stellar ages.
 These stellar labels can be used instead to trace out the orbit structure of the Galaxy.
-This forms the basis of the method of Orbital Torus Imaging (OTI; CITE PW21), which we
-describe below.
-Here we build on past work (CITE PW21) by developing a new framework and implementation
-of OTI that leverages modern auto-differentiation tools (e.g., \jax; \citealt{jax:2018})
-to generalize and accelerate the model construction and fitting.
+This forms the basis of the method of Orbital Torus Imaging (OTI; \citealt{PW:2021}),
+which we describe below.
+Here we build on past work by developing a new framework and implementation of OTI that
+leverages modern auto-differentiation tools (e.g., \jax; \citealt{jax:2018}) to
+generalize and accelerate the model construction and fitting.
 
 
 \subsection{Using stellar labels to map orbits}
@@ -481,9 +481,10 @@ We represent these quantities with the vector $\bs{Y}$, which we refer to as the
 In the Milky Way, these quantities are observed to correlate with the orbital
 properties of stellar populations.
 For example, there is a long known correlation between stellar age and velocity
-dispersion (CITE), the kinematic properties of mono-abundance stellar populations depend
-on the value of the abundance (CITE), and there are known gradients in stellar element
-abundances and Galactic position (CITE).
+dispersion \citep{Spitzer:1951, Sharma:2021}, the kinematic properties of mono-abundance
+stellar populations depend on the value of the abundance \citep{Bovy:2016, Yu:2021,
+Lian:2022}, and there are known gradients in element abundances and Galactic position
+\citep[e.g.,][]{Shaver:1983, Maciel:1999, Eilers:2022, Lian:2023}.
 Figure~\ref{fig:mgfe-zvz} shows an example of such a correlation in the vertical
 kinematics of stars in the Milky Way.
 The left panel of Figure~\ref{fig:mgfe-zvz} shows seven orbits in the vertical phase
@@ -492,7 +493,8 @@ space (with $J_R=0$ and $J_\phi \approx 1900~\kms~\kpc$), with equally-spaced va
 (see Section~\ref{sec:appendix-potential}).
 The vertical action scales approximately with $J_z \propto \zmax^2$.
 The middle panel shows the mean \abun{Mg}{Fe} abundance (as measured by the \apogee\
-surveys, \dr{17}; CITE) for stars in different locations of the vertical phase space.
+surveys, \dr{17}; \citealt{APOGEE:2017, APOGEE:DR17}) for stars in different locations
+of the vertical phase space.
 This demonstrates that stars with low-$J_z$ orbits (i.e. those that stay near the center
 of this phase space) have systematically different element abundances than stars with
 large-$J_z$ orbits (i.e. those that stay far from the center of this phase space).
@@ -588,8 +590,8 @@ constant-frequency ellipses, but now shown in the elliptical radius, \rzp\
 Two subtleties complicate this idea.
 For one, the labels are not deterministic functions of the actions.
 For example, processes that cause dynamical heating of stars, which may introduce a
-correlation between the vertical action, stellar age, and metallicity (CITE), are
-inherently stochastic.
+correlations between the vertical action, stellar age, and metallicity are inherently
+stochastic \citep{TODO}.
 This means that, in general, for any value of the vertical action $J_z$, there will be
 a distribution of possible stellar label values.
 A second complication is that we only have a finite sample of stars, so we will
@@ -655,21 +657,6 @@ with other moments of this distribution.
 
 \subsection{A Flexible Model of Stellar Label Moments in Phase Space}
 \label{sec:oti-fourier}
-
-% Using simulated data, Figure~\ref{fig:XX} demonstrates that the contours actually
-% correspond very closely to orbits themselves. We generate simulated stellar positions
-% and velocities by sampling from a quasi-isothermal distribution function (\df; CITE
-% Binney, Sanders and Binney) embedded in a static, axisymmetric model for the Milky
-% Way. The Milky Way potential model is described in
-% Appendix~\ref{sec:appendix-potential}, and we use the \agama\ package (CITE) to
-% generate N samples from the \df. We then sub-select a sample of star particles
-% that are spatially localized near the solar radius, $|R - 8.3~\kpc| < 0.5~\kpc$, and
-% are near their guiding radius, $|R - R_G| < 0.5~\kpc$ where $R_G \equiv L_z / v_c(R)$
-% and $v_c(R)$ is the circular velocity at the radius $R$. We compute the maximum height
-% above the midplane reached by each star particle, \zmax, and use the linear relation
-% between \zmax\ and \abun{Mg}{Fe} seen in the \apogee\ data (see the right panel of
-% Figure~\ref{fig:mgfe-zvz}) to compute simulated \abun{Mg}{Fe} abundances for the star
-% particles. The leftmost panel of Figure~\ref{fig:XX} ...
 
 In this section, we develop a method to fit the shapes of contours of constant stellar
 label moments in the vertical phase space of the Milky Way disk.
