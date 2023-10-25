@@ -82,14 +82,14 @@
 \author{Micah~Oeur}
 % \affiliation{\affcca}
 
-\author{Kathryn Johnston}
-% \affiliation{\affcolumbia}
-
 % TODO: orcid, affs
 \author{David~W.~Hogg}
 % \affiliation{\affcca}
 % \affiliation{\affnyu}
 % \affiliation{\affmpia}
+
+\author{Kathryn Johnston}
+% \affiliation{\affcolumbia}
 
 % \author{Lawrence Widrow}
 
@@ -402,6 +402,7 @@ $\Omega_z = \Omega_z(J_z)$.
 \includegraphics[width=1\textwidth]{mgfe-zvz.pdf}
 \end{center}
 \caption{%
+\todo{Title to emphasize that this is real APOGEE+Gaia data}
 A demonstration that stellar labels correlate with stellar orbits in the vertical phase
 space of the Milky Way disk.
 \textbf{Left panel:} Seven orbits computed in a Milky Way mass model (see
@@ -696,8 +697,11 @@ For contours with sufficiently large $z_{\textrm{max}}$ values (i.e. orbits that
 many scale heights above the disk), the influence of the dark matter halo's potential
 distorts the orbit shapes, and the contours of the DF are no longer well-approximated by
 ellipses (e.g., the orbits with $\zmax \gtrsim 1~\kpc$ in Figure~\ref{fig:mgfe-zvz}).
-The halo potential causes the orbits to deform from ellipses to more ``diamond-like''
-shapes.
+The potential of the dark matter halo causes the orbits to deform from ellipses to more
+``diamond-like'' shapes that are ``pinched'' near the midplane ($z=0$).
+This shape arises because the orbits feel a nearly uniform density at their vertical
+apocenter (i.e. near $v_z = 0$), but then feel a rapidly changing potential as they
+cross the midplane (i.e. near $z=0$) with large vertical velocities.
 
 To represent more general contour shapes (i.e. beyond ellipses), we use a low-order
 Fourier expansion in the ellipsoidal angle \thzp\ to distort the ellipsoidal radius
@@ -754,15 +758,15 @@ Appendix~\ref{sec:appendix-az}), we find that
 \begin{equation}
     a_z(z) = - \freqzero^2 \, z \,
     \frac{\left[
-        1 + \sum_{j=1}^{\mmax/2} (-1)^{j} \,
+        1 + \sum_{m}^{{2, \dots, \mmax}} (-1)^{m/2} \,
             \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
     \right]_{\rzp = \sqrt{\freqzero}\,z}}{\left[
-        1 + \sum_{j=1}^{\mmax/2} (-1)^{j} \,
+        1 + \sum_{m}^{{2, \dots, \mmax}} (-1)^{m/2} \,
             \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
     \right]_{\rzp = \sqrt{\freqzero}\,z}} \label{eq:az-ugly}
 \end{equation}
-where $m=2\,j$ and $\mmax$ is the maximum (even) order of the Fourier expansion of the
-distorted radius, and the expression is evaluated at $\rzp = \sqrt{\freqzero}\,z$.
+where $\mmax$ is the maximum (even) order of the Fourier expansion of the distorted
+radius, and the expression is evaluated at $\rzp = \sqrt{\freqzero}\,z$.
 Note that when $e_m = 0$ for all $m$ (i.e. when there is no distortion of the
 ellipsoidal radius), this reduces to the expected expression for the simple harmonic
 oscillator.
@@ -824,9 +828,6 @@ The conjugate angle variable, $\theta_z$, is computed as the fractional time
 
 \section{Applications to Simulated Data} \label{sec:applications-sim}
 
-% TODO: decide on a policy for deciding maximum z, vz (i.e. 95th percentile values or
-% something??) and use that for all examples
-
 In this section, we demonstrate the OTI framework described above using a set of
 simulated datasets of increasing complexity.
 We start by using a one-dimensional simple harmonic oscillator potential
@@ -834,25 +835,24 @@ We start by using a one-dimensional simple harmonic oscillator potential
 (Section~\ref{sec:sim-qiso}--\ref{sec:sim-qiso-sel}), and finally use the final snapshot
 from an $N$-body simulation of a disk galaxy perturbed by an orbiting satellite
 (Section~\ref{sec:sim-jason}).
+
 As input to OTI, we bin the data into pixels of vertical position $z$ and velocity $v_z$
 and compute the mean abundance value in each pixel, but we do not simulate uncertainties
 on the phase-space coordinates.
-We set the maximum bin edge in each coordinate as three times the 90th percentile value
-of the distributions of $z$ and $v_z$ for each simulated sample, and use 151 bins for
-each coordinate.
+This is not a requirement of OTI: We could also use the individual particle positions
+and simultaneously handle the uncertainties on the phase-space coordinates.
+However, we have found that near the solar neighborhood with modern \gaia\ data, the
+uncertainty on the vertical position and velocity is typically comparable to our adopted
+pixel size, so we bin the data to speed up the evaluation of the likelihood.
+\todo{AUDIT numbers below}
+In all cases below, we set the maximum bin edge in each coordinate as three times the
+90th percentile value of the distributions of $z$ and $v_z$ for each simulated sample,
+and use 151 bins for each coordinate.
 These choices are arbitrary, but we have verified that the results are not sensitive to
 reasonable changes of these values.
 In the following subsections, we demonstrate that OTI can recover the true vertical
 acceleration profiles and other dynamical quantities for these simulated data sets.
 
-% For our implementation used in this article, we adopt the following:
-% \begin{align}
-%     m &= \left\{2, 4\right\} \\
-%     e_2(r_z') &\geq 0 \,\,\forall r_z'\\
-%     e_4(r_z') &\leq 0 \,\,\forall r_z'
-% \end{align}
-% and we use linear splines to represent the functions $n(r_z)$, $e_2(r_z')$, and
-% $e_4(r_z')$.
 
 \subsection{Simple Harmonic Oscillator}
 \label{sec:sim-sho}
@@ -864,8 +864,8 @@ potential,
 \end{equation}
 by sampling from an isothermal distribution function\footnote{We will use $f(\cdot)$ to
 represent a distribution function, \df, that integrates to a number of stars, and
-$p(\cdot)$ to represent a normalized \df\ that integrates to 1 (i.e. a probability
-distribution function).}
+$p(\cdot)$ to represent any normalized probability distribution function (i.e. a \df\
+that integrates to 1).}
 \begin{align}
     p_z(J_z) &= \frac{1}{\, s_z} e^{-\frac{J_z}{s_z}} \quad ; \quad J_z \in [0, \infty)\\
     s_z &= \sigma_{v_z}^2 / \omega\\
@@ -874,7 +874,7 @@ distribution function).}
 \end{align}
 We adopt $\omega = 0.08~\unit{\radian\per\mega\year}$ and $\sigma_{v_z} = 50~\kms$ as
 somewhat arbitrary choices meant to approximately match the observed vertical kinematics
-of stars near the solar position.
+of stars near the solar position in the Galactic disk.
 We sample $N=2^{18}=\num{262144}$ phase-space positions to use as our simulated data
 set, but we note that the precision of our measurements (especially at high $z$) will
 depend on the sample size.
@@ -911,7 +911,8 @@ $z_{\textrm{max}}$ (see Figure~\ref{fig:mgfe-zvz}).
 coordinates as the data (left panel).
 \textbf{Right panel:} The residuals of the optimized model (i.e. the simulated data
 minus the optimized model, evaluated on the same grid of phase-space coordinates).
-The small residuals (except on the edges, where the number of stars per pixel is small) show that the model accurately represents the mean abundance trends in this phase space.
+The small residuals (except on the edges, where the number of stars per pixel is small)
+show that the model accurately represents the mean abundance trends in this phase space.
 \label{fig:sho-data-model}
 }
 \end{figure*}
@@ -919,18 +920,34 @@ The small residuals (except on the edges, where the number of stars per pixel is
 We then fit the simulated mean abundance data in pixels of phase-space coordinates,
 $\langle Y_{\abun{Mg}{Fe}} \rangle$, using the OTI framework described above
 (Section~\ref{sec:oti}).
-To do this, we need to decide on functional forms for both the label function, $Y(\rz)$,
-and the Fourier coefficient functions.
-For all of these functions, we use monotonic quadratic spline functions defined such
-that the function is always monotonically increasing or decreasing, which must be
-hard-set before optimization (see Appendix~\ref{sec:appendix-spline}).
-For the label function, we assert that the value must monotonically increase from $\rz =
-0$ to the maximum spline knot location.
-We use $K_Y=10$ spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$
-and $r_{z, \textrm{max}}$ with function values at the knot locations $y_k^{(Y)}$.
-
 For this initial test case, we include only an $m=2$ term in our Fourier distortion of
 the elliptical radius (Equation~\ref{eq:rz}).
+Our input data are the mean label values in each pixel $j$ computed as
+\begin{equation}
+    \langle Y_{\abun{Mg}{Fe}} \rangle_j =
+        \frac{\sum_n^{N_j} \frac{Y_n}{\sigma_{Y,n}^2}}{\sum_n^{N_j} \frac{1}{\sigma_{Y,n}^2}} \label{eq:mean-abun}
+\end{equation}
+where $Y_n$ and $\sigma_{Y, n}$ are the individual stellar abundance measurements and
+their uncertainties for the $N_j$ stars (indexed by $n$) within a given pixel $j$.
+To represent this data, we need to decide on functional forms for both the label
+function, $Y(\rz)$, which will serve as our model prediction for the mean abundance in
+each pixel, and for the Fourier coefficient functions, $e_m(\rzp)$, which here is just
+$e_2(\rzp)$.
+For both of these functions, $Y(\rz)$ and $e_2(\rzp)$, we use monotonic quadratic spline
+functions defined such that the function is always monotonically increasing or
+decreasing, which must be set before optimization (see
+Appendix~\ref{sec:appendix-spline}).
+
+For the label function, $Y(\rz)$, we assert that the value must monotonically increase
+from $\rz = 0$ to the maximum spline knot location by noting that the element abundance
+gradient has a positive slope from small values of the phase-space coordinates $(z,
+v_z)\sim (0,0)$ to larger values (see the left panel of
+Figure~\ref{fig:sho-data-model}).
+We use $K_Y=10$ spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$
+and $r_{z, \textrm{max}}$ with function values at the knot locations $y_k^{(Y)}$.
+This choice is arbitrary: We could here do a form of cross-validation to set the number
+of spline knots, but we set the number for simplicity.
+
 For the Fourier coefficient function, $e_2(\rzp)$, we require that the coefficient value
 must equal zero at $\rzp = 0$ (i.e. $e_2(0) = 0$), and that the coefficient value
 monotonically increases with $\rzp$.
@@ -940,22 +957,31 @@ estimate the midplane volume mass density (Equation~\ref{eq:freqzero}).
 Assuming that the coefficient value increases with $\rzp$ (so that the orbit shapes
 can only become more prolate with increasing $z_{\textrm{max}}$) is equivalent to
 assuming that the surface density increases with increasing height $z$.
-We use $K_e=5$ spline knot locations $x_k^{(e_2)}$ with values $y_k^{(e_2)}$ equally
-spaced in $\rz$ between $0$ and $r_{z, \textrm{max}}$, but we require the knot value at
-$\rzp = 0$ to be equal to zero $y_0^{(e_2)}=0$.
+We use $K_{e_2}=8$ spline knot locations $x_k^{(e_2)}$ with values $y_k^{(e_2)}$ equally
+spaced in $\rz^2$ between $0$ and $r_{z, \textrm{max}}$, but we require the knot value
+at $\rzp = 0$ to be equal to zero $y_0^{(e_2)}=0$.
 All of the parameters used in this demonstrative model fit and the adopted bounds used
 when optimizing are summarized in Table~\ref{tbl:sho-params}.
 When optimizing, we reparameterize to use $\log \freqzero$ and $\log y_k$ for any spline
-coefficients to control the sign of the parameter values.
+coefficients as a trick to control the sign of the parameter values.
 
 Our framework is implemented with \jax\ so that our objective function is just-in-time
 compiled and we can use automatic differentiation to compute the gradients of the
 objective function with respect to the, in this case, 17 model parameters.
-We use a Gaussian log-likelihood for the mean \abun{Mg}{Fe} abundance data as our
-objective function.
-For the uncertainty on the mean abundance in each pixel, we consider both the error on
-the mean (given heteroskedastic measurement errors on the abundances of each star
-particle, $\sigma_{Y,i}$),
+We use a Gaussian log-likelihood for the mean \abun{Mg}{Fe} abundance data in each pixel
+of phase space.
+That is, the log likelihood of the data, $\ln \mathcal{L}$, is computed as
+\begin{equation}
+    \ln \mathcal{L} = \sum_j \ln
+        \mathcal{N}(\langle Y_{\abun{Mg}{Fe}} \rangle_j \given Y_j, \sigma_{Y, j})
+\end{equation}
+where the sum is done over the $j$ pixels, $\langle Y_{\abun{Mg}{Fe}} \rangle_j$ is the
+mean abundance value in pixel $j$ (computed as described above;
+Equation~\ref{eq:mean-abun}), $Y_j$ is the model predicted mean abundance value in pixel
+$j$, and $\sigma_{Y, j}$ is the uncertainty on the mean abundance.
+For the uncertainty on the mean abundance in each pixel $\sigma_{Y, j}$, we consider
+both the error on the mean (given heteroskedastic measurement errors on the abundances
+of each star particle, $\sigma_{Y,i}$),
 \begin{equation}
     \sigma_{\mu_Y} = \sqrt{\frac{1}{\sum_i \frac{1}{\sigma^2_{Y,i}}}}
 \end{equation}
@@ -971,6 +997,7 @@ We take the uncertainty of the mean abundance $\mu_{Y,j}$ in each pixel $j$ to b
 where $N_j$ is the number of star particles in pixel $j$ and $\sigma_{\mu_Y, j}$ is the
 error on the mean in the same pixel.
 
+\todo{AUDIT: what regularization do we do in the final run? But describe it as a Gaussian prior}
 We additionally use an L2 regularization on the Fourier coefficient function values
 $y^{(e_2)}$ with a standard deviation of 0.1, and on the label function spline values
 $y^{(Y)}$ with a standard deviation of 1, to try to keep these values near zero when the
