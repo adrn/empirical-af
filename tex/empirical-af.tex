@@ -943,7 +943,7 @@ from $\rz = 0$ to the maximum spline knot location by noting that the element ab
 gradient has a positive slope from small values of the phase-space coordinates $(z,
 v_z)\sim (0,0)$ to larger values (see the left panel of
 Figure~\ref{fig:sho-data-model}).
-We use $K_Y=10$ spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$
+We use $K_Y=8$ spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$
 and $r_{z, \textrm{max}}$ with function values at the knot locations $y_k^{(Y)}$.
 This choice is arbitrary: We could here do a form of cross-validation to set the number
 of spline knots, but we set the number for simplicity.
@@ -997,22 +997,26 @@ We take the uncertainty of the mean abundance $\mu_{Y,j}$ in each pixel $j$ to b
 where $N_j$ is the number of star particles in pixel $j$ and $\sigma_{\mu_Y, j}$ is the
 error on the mean in the same pixel.
 
-\todo{AUDIT: what regularization do we do in the final run? But describe it as a Gaussian prior}
-We additionally use an L2 regularization on the Fourier coefficient function values
-$y^{(e_2)}$ with a standard deviation of 0.1, and on the label function spline values
-$y^{(Y)}$ with a standard deviation of 1, to try to keep these values near zero when the
-data are uninformative.
+As a way to enforce smoothness of the spline functions, we use a Gaussian prior on the
+spline function derivatives evaluated at the knot locations with a standard deviation of
+0.5 for the label function derivatives, and 0.2 for the Fourier coefficient function
+derivatives.
+We then optimize the model parameters using the sum of the log likelihood and the log
+prior to find the maximum a posteriori (MAP) model parameters, then use this to
+initialize a Markov Chain Monte Carlo (MCMC) sampling of the parameters, to assess
+uncertainty on the model parameters.
+
 We use a standard L-BFGS-B optimizer \citep{Byrd:1995} to minimize the regularized
-negative log-likelihood, implemented in \texttt{JAXopt} \cite{jaxopt:2021}.
-For this simulated data, the optimization runs in $\sim 10~\unit{\second}$ on a single
-CPU.
-The middle panel of Figure~\ref{fig:sho-data-model} shows the best-fit model evaluated
-over the domain of our simulated data in the left panel, and the right panel shows the
+negative log-probability as implemented in \texttt{JAXopt} \cite{jaxopt:2021}.
+For this simulated data set, the optimization runs in $\sim 10~\unit{\second}$ on a
+single CPU.
+The middle panel of Figure~\ref{fig:sho-data-model} shows the MAP model evaluated over
+the domain of our simulated data in the left panel, and the right panel shows the
 residuals.
 The residuals everywhere indicate that the best-fit model matches the data well.
 
-We use the optimized parameter values to initialize two Markov Chain Monte Carlo (MCMC)
-chains using the Hamiltonian Monte Carlo ``No U-turn Sampler'' (NUTS) implemented in the
+We use the optimized parameter values to initialize two MCMC chains using the
+Hamiltonian Monte Carlo ``No U-turn Sampler'' (NUTS) implemented in the
 \texttt{blackjax} \citep{blackjax} Python package.
 We run the chains for 1000 initial steps to allow the NUTS sampler to tune the
 hyperparameters of the sampling procedure (e.g., the mass matrix), and then run for an
@@ -1044,6 +1048,20 @@ each star particle.
 The acceleration error at $z=1~\kpc$ is $< 1\%$ (in fractional error) and the median
 action error is $<0.5\%$ for this toy dataset.
 
+For this demonstration, we do not have to define a global model for the gravitational
+potential or the \df.
+We are able to recover the vertical acceleration profile using a flexible model of the
+shapes of orbits as traced by the stellar labels.
+The advantage of using very flexible spline functions for the label function and Fourier
+distortion functions is that our model is able to fit the input data well while making
+fewer strong assumptions.
+However, the disadvantage is that the model is not constrained to be physical and can
+therefore end up with, e.g., a Fourier distortion function form that violates
+physicality in the sense that the implied density could be negative or change
+discontinuously.
+In the next section, we show how this performs for a more realistic (but still
+equilibrium) galaxy model.
+
 \begin{figure*}[t!]
 \begin{center}
 \includegraphics[width=\textwidth]{sho-validation.pdf}
@@ -1074,13 +1092,14 @@ The median (fractional) action error is $<0.5\%$ for this sample dataset.
 
 As a next application of the OTI framework, we use a more realistic galaxy model to
 sample 3D positions and velocities of star particles to test our inferred quantities in
-a more realistic setting.
+a more physical setting.
 We use a quasi-isothermal disk distribution function \citep[\df;][]{Binney:2012} with
 parameters derived from fitting Milky Way stellar data (we use the ``thin disk''
 parameters from Table~3 of \citealt{Sanders:2015}).
-We implement this \df\ using the \agama\ package and sample \num{5d8} phase-space
-coordinates with guiding-center radii $R_G$ between $5 < R_G < 12~\kpc$ embedded in our
-adopted Milky Way potential model (see Appendix~\ref{sec:appendix-potential}).
+We implement this \df\ using the \agama\ package \citep{Vasiliev:2019} and sample
+\num{5d8} phase-space coordinates with guiding-center radii $R_G$ between $5 < R_G <
+12~\kpc$ embedded in our adopted Milky Way potential model (see
+Appendix~\ref{sec:appendix-potential}).
 We compute the guiding radii using an approximation assuming the circular velocity
 curve, $v_c(R)$, is flat, $R_G = L_z / v_c(R)$, where $L_z$ is the angular momentum of
 the star particle and $R$ is its instantaneous cylindrical radius.
