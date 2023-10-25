@@ -63,10 +63,9 @@ def main(overwrite_data=False):
         e_knots={2: 12, 4: 4},
         label_l2_sigma=1.0,
         label_smooth_sigma=0.5,
-        e_l2_sigmas={2: 0.5, 4: 0.5},
-        e_smooth_sigmas={2: 0.1, 4: 0.1},
-        dacc_dpos_scale=1e-4,
-        dacc_strength=0,
+        e_l2_sigmas={2: 1.0, 4: 1.0},
+        e_smooth_sigmas={2: 0.5, 4: 0.5},
+        dacc_strength=0.0,
         label_knots_spacing_power=0.75,
         e_knots_spacing_power=0.5,
     )
