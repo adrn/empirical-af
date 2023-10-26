@@ -28,8 +28,8 @@ def main(overwrite_data=False):
 
     if not bdata_file.exists() or overwrite_data:
         print("Generating binned data...")
-        max_z = np.round(3 * np.nanpercentile(pdata["z"].to(u.kpc), 90), 1)
-        max_vz = np.round(3 * np.nanpercentile(pdata["v_z"].to(u.km / u.s), 90), 0)
+        max_z = np.round(2 * np.nanpercentile(pdata["z"].to(u.kpc), 99), 1)
+        max_vz = np.round(2 * np.nanpercentile(pdata["v_z"].to(u.km / u.s), 99), 0)
 
         zvz_bins = {
             "pos": np.linspace(-max_z, max_z, 151),
@@ -132,21 +132,20 @@ def main_sel():
 
     if not bdata_file.exists():
         print("Generating binned data...")
-        max_z = np.round(3 * np.nanpercentile(pdata["z"].to(u.kpc), 90), 1)
-        max_vz = np.round(3 * np.nanpercentile(pdata["v_z"].to(u.km / u.s), 90), 0)
+        max_z = np.round(2 * np.nanpercentile(pdata["z"].to(u.kpc), 99), 1)
+        max_vz = np.round(2 * np.nanpercentile(pdata["v_z"].to(u.km / u.s), 99), 0)
 
         zvz_bins = {
             "pos": np.linspace(-max_z, max_z, 151),
             "vel": np.linspace(-max_vz, max_vz, 151),
         }
 
-        # TODO: do something slightly less aggressive here?
-        prob = np.abs(pdata["z"] / (2 * u.kpc)) ** 2
+        prob = ((np.abs(pdata["z"]) + 0.15 * u.kpc) / (2 * u.kpc)) ** 2
         prob /= prob.sum()
 
         rng = np.random.default_rng(42)
         idx = rng.choice(
-            np.arange(len(pdata)), size=len(pdata) // 5, replace=False, p=prob
+            np.arange(len(pdata)), size=len(prob) // 2, replace=False, p=prob
         )
 
         bdata = oti.get_binned_label(
@@ -173,13 +172,14 @@ def main_sel():
     model, bounds, init_params = oti.TorusImaging1DSpline.auto_init(
         bdata,
         label_knots=8,
-        e_knots={2: 8, 4: 4},
+        e_knots={2: 12, 4: 4},
         label_l2_sigma=1.0,
         label_smooth_sigma=0.5,
-        e_l2_sigmas={2: 0.1, 4: 0.1},
-        e_smooth_sigmas={2: 0.2, 4: 0.2},
+        e_l2_sigmas={2: 1.0, 4: 1.0},
+        e_smooth_sigmas={2: 0.1, 4: 0.1},
+        dacc_strength=100.0,
         label_knots_spacing_power=0.75,
-        e_knots_spacing_power=0.75,
+        e_knots_spacing_power=0.5,
     )
 
     init_params["e_params"][2]["vals"] = np.full_like(

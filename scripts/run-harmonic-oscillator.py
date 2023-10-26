@@ -28,8 +28,8 @@ def main(overwrite=False):
 
     if not bdata_file.exists() or overwrite:
         print("Generating binned data...")
-        max_z = np.round(3 * np.nanpercentile(pdata["z"].to(u.kpc), 90), 1)
-        max_vz = np.round(3 * np.nanpercentile(pdata["vz"].to(u.km / u.s), 90), 0)
+        max_z = np.round(2 * np.nanpercentile(pdata["z"].to(u.kpc), 99), 1)
+        max_vz = np.round(2 * np.nanpercentile(pdata["v_z"].to(u.km / u.s), 99), 0)
 
         zvz_bins = {
             "pos": np.linspace(-max_z, max_z, 151),
