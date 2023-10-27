@@ -857,6 +857,8 @@ acceleration profiles and other dynamical quantities for these simulated data se
 \subsection{Simple Harmonic Oscillator}
 \label{sec:sim-sho}
 
+\todo{Added number density to figures, so need to update captions and descriptions of figures}
+
 As an initial application, we simulate phase-space data in a harmonic oscillator
 potential,
 \begin{equation}
@@ -1091,14 +1093,14 @@ The median (fractional) action error is $<0.5\%$ for this sample dataset.
 \label{sec:sim-qiso}
 
 As a next application of the OTI framework, we use a more realistic galaxy model to
-sample 3D positions and velocities of star particles to test our inferred quantities in
-a more physical setting.
+sample 3D positions and velocities of star particles and show that OTI can still recover
+the vertical dynamics.
 We use a quasi-isothermal disk distribution function \citep[\df;][]{Binney:2012} with
 parameters derived from fitting Milky Way stellar data (we use the ``thin disk''
 parameters from Table~3 of \citealt{Sanders:2015}).
 We implement this \df\ using the \agama\ package \citep{Vasiliev:2019} and sample
 \num{5d8} phase-space coordinates with guiding-center radii $R_G$ between $5 < R_G <
-12~\kpc$ embedded in our adopted Milky Way potential model (see
+12~\kpc$ embedded in our adopted simple Milky Way potential model (see
 Appendix~\ref{sec:appendix-potential}).
 We compute the guiding radii using an approximation assuming the circular velocity
 curve, $v_c(R)$, is flat, $R_G = L_z / v_c(R)$, where $L_z$ is the angular momentum of
@@ -1114,37 +1116,37 @@ After these selections, we are left with $\approx \num{7d6}$ star particles.
 We again compute simulated \abun{Mg}{Fe} abundance values for these stars using the
 linear relation between \abun{Mg}{Fe} and $z_{\textrm{max}}$ from the \apogee\ data (see
 the right panel of Figure~\ref{fig:mgfe-zvz}) and a scatter of 0.05~dex (see
-Section~\ref{sec:sim-sho}), with simulated uncertainties following
-Section~\ref{sec:sim-sho}.
-The left panel of Figure~\ref{fig:qiso-data-model} shows this simulated data set in the
+Section~\ref{sec:sim-sho}), with simulated uncertainties again following the
+prescription outlined previously (Section~\ref{sec:sim-sho}).
+The left panels of Figure~\ref{fig:qiso-data-model} shows this simulated data set in the
 vertical phase space coordinates.
 
-We fit the simulated mean abundance data in pixels of phase-space coordinates using the
-OTI framework described above (Section~\ref{sec:oti}) and following the same procedure
-as in Section~\ref{sec:sim-sho}.
+We model the simulated mean abundance data in pixels of phase-space coordinates using
+the OTI framework described above (Section~\ref{sec:oti}) and following the same
+procedure for optimizing and then MCMC sampling the model as in
+Section~\ref{sec:sim-sho}.
 We again use monotonic quadratic spline functions (Appendix~\ref{sec:appendix-spline})
 for both the label function and the Fourier coefficient functions.
 For the label function, we use 8 knots equally spaced in \rz\ between $0$ and $r_{z,
 \textrm{max}} \approx 0.53~\unit{\kilo\parsec\per\mega\year\tothe{1/2}}$.\todo{update}
-However, here we use $m=\{2, 4\}$ Fourier terms with 8 and 4 spline knots, respectively.
-We space the Fourier coefficient spline knots equally in $\rz^{3/2}$ between $0$ and
+However, here we use $m=\{2, 4\}$ Fourier terms with 12 and 4 spline knots,
+respectively.
+We space the Fourier coefficient spline knots equally in $\rz^2$ between $0$ and
 $r_{z, \textrm{max}}$: This places a higher density of knots at lower \rz\ values where
 we expect the Fourier coefficient functions to change more rapidly.
 We again require that the coefficient function values are zero at $\rzp = 0$ so that
 $e_2(0)=e_4(0)=0$, and we assume that the overall sign of the functions are $(+,-)$ for
 the $m=\{2, 4\}$ coefficient functions, respectively.
 
-We use the same regularization as in Section~\ref{sec:sim-sho} (L2 regularization on the
-coefficient function parameters with a standard deviation of 0.1 and on the label
-function parameters with a standard deviation of 1) for all Fourier coefficient
-functions.
+We use the same priors as in Section~\ref{sec:sim-sho} to lightly enforce smoothness of
+the derivatives of the spline functions.
 As above, we initially use a L-BFGS-B optimizer to minimize the regularized negative
-log-likelihood.
+log-probability.
 This model has 22 parameters and optimizes in $\sim 30$~seconds on a single CPU.
-The middle panel of Figure~\ref{fig:qiso-data-model} shows the best-fit model evaluated
-on the same pixel grid as the simulated data, and the right panel shows the residuals
-between the optimized model and the data, normalized by the uncertainty on the mean
-abundance in each pixel.
+The middle right panel of Figure~\ref{fig:qiso-data-model} shows the best-fit model
+evaluated on the same pixel grid as the simulated data, and the rightmost panel shows
+the residuals between the optimized model and the data, normalized by the uncertainty on
+the mean abundance in each pixel.
 The small residuals indicate that this model does well to fit the mean abundance
 variations in the vertical phase space.
 
@@ -1157,7 +1159,7 @@ values using the MCMC samples) along with the true vertical acceleration (green 
 line) evaluated at a constant $R=R_0$ in our adopted Milky Way potential model (see
 Appendix~\ref{sec:appendix-potential}).
 The acceleration precision at $z=1~\kpc$ is $\sim 1\%$ (in fractional error) with a
-$\sim 1\%$ bias.
+$\sim 1\%$ bias. \todo{Check values here.}
 
 The middle panel of Figure~\ref{fig:qiso-validation} shows eight orbits with
 equally-spaced (but arbitrary) values of the vertical velocity at $z=0$: The
@@ -1188,6 +1190,7 @@ model.
 We find the median fractional error of the vertical action, angle, and frequency are
 $\sim 5\%$, $\sim 5\%$, and $\sim 9\%$, respectively. \todo{Compute all numbers again,
 and do for 100,000 not 20,000}
+\todo{Also quote for midplane density}
 
 
 \begin{figure*}[t!]
@@ -1232,7 +1235,30 @@ targeting and design, instrument limitations (e.g., magnitude limits), and/or re
 astronomical effects like bright stars, crowding, or dust extinction.
 All of these effects predominantly depend on position and brightness of the sources
 considered and not strongly on derived parameters like element abundances.
-One of the benefits of OTI is that positional
+One of the benefits of OTI is that positional selection effects do not bias our
+inferences so long as there are no strong correlations between the effective selection
+functions in position and the stellar labels considered.
+Here we demonstrate this by repeating the experiment in Section~\ref{sec:sim-qiso}, but
+now applying a $z$-dependent selection function such that the probability a source with
+a given $z$ value appears in our dataset $S(z)$ scales with
+\begin{equation}
+    S(z) \propto \left(\frac{|z| + 150~\unit{pc}}{2~\kpc}\right)^2 \quad .
+\end{equation}
+
+Figure~\ref{fig:qiso-sel-data-model} again shows the input data, where the left two
+panels show the number counts of stars per pixel of vertical phase-space coordinates and
+the mean (simulated) \mgfe\ abundance per pixel.
+The missing and lower density of stars near the midplane (relative to
+Figure~\ref{fig:qiso-data-model}) is the effect of our simulated selection function.
+The middle right panel again shows the OTI model evaluated at the MAP parameters, and
+the rightmost panel shows the residuals between the data and the MAP model.
+Even with the strong selection function, the OTI model leverages the strong (assumed)
+symmetries in the phase-space to infer the orbit shapes even when data are missing.
+Here, we find the precision of the inferred acceleration profile is lower, so that ...
+\todo{quote acceleration numbers at same height} as compared to XX for the data with no
+selection effects (Section~\ref{sec:sim-qiso}).
+\todo{Also quote for midplane density}
+
 
 \begin{figure*}[t!]
 \begin{center}
@@ -1263,6 +1289,7 @@ that the disk is rich with substructure as a result of repeat satellite perturba
 This application is a test of how well OTI can do (i.e. how biased the results are) in
 the presence of strong disequilibrium, which violates the assumptions laid out above.
 
+\todo{switch to doing multiple radii, and show density profile, acceleration in 2D plane like Danny's plots?}
 We select a small region of the disk near the solar radius, $R=8~\kpc$, by selecting all
 star particles within $|x-8~\kpc| < 1.5~\kpc$ and $|y| < 1.5~\kpc$.
 We again mimic dynamical selections we could perform on real data by selecting stars
@@ -1360,6 +1387,15 @@ Also compute empirical actions and compare to Agama.
 
 Limitation that our acceleration can depend on $v_z$.
 
+
+\subsection{What stellar labels are useful for OTI?}
+
+For element abundances, this is more-or-less true for surveys like \apogee, where the
+primary survey target selection is done based on color and magnitude, which only weakly
+depend on surface abundances \citep{ZasowskiXX, SantanaXX, BeatonXX}.
+However, this also implies that, e.g., stellar surface gravity, $\logg$, would
+\emph{not} be a useful stellar label for use in OTI because it is strongly covariant
+with luminosity or absolute magnitude.
 
 
 
