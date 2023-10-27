@@ -1205,13 +1205,17 @@ optimized OTI model (middle panel), and the residuals (right panel).
 \subsection{N-body Simulation with a Perturbed Disk}
 \label{sec:sim-jason}
 
-As a final demonstration, we apply the OTI framework to a section of an N-body
-simulation of a stellar disk that has been perturbed by an orbiting satellite galaxy.
+As a final demonstration, we apply the OTI framework to a section of an N-body simulation of a stellar disk that has been perturbed by an orbiting satellite galaxy. 
+
+For this, we use the $N$-body simulation M1 of the \texttt{SMUDGE}\ simulation suite \cite{Hunt:2021} now available on \texttt{SciServer}\footnote{https://sciserver.org/datasets/smudge/} \citep{sciserver}. M1 simulates the merger of a $\sim8\times10^{10}$ M$_{\odot}$ dwarf galaxy consisting of two Hernquist spheres \citep{Hernquist:1990} into a $\sim6\times10^{11}$ $M_{\odot}$ disc galaxy host. The host galaxy consists of a $8.8\times10^8$ particle live NFW halo \citep{Navarro:1997}, a $2.2\times10^7$ particle Hernquist bulge and a $2.2\times10^8$ particle exponential disc with a high Toomre parameter $\mathcal{Q}=2.2$ \citep{Toomre:1964}, following model MWb from \cite{Widrow:2005}. For full details of the initial condition and simulation setup see \cite{Hunt:2021}.
+
+The merger simulation is evolved for $\sim8.3$ Gyr using the GPU based $N$-body tree code, \texttt{Bonsai}\ \citep{Bedorf:2012,Bedorf:2014}. Following \cite{Hunt:2021} we choose snapshot 702 (occurring at $t=6.874$) as the `present day' snapshot used in this work, as this is the snapshot where satellite is closest to the location of the Sagittarius dwarf galaxy in the Milky Way. However, we stress that model M1 is not meant to reproduce the Milky Way - Sagittarius interaction \citep[instead see][]{Bennett:2022} but instead be a laboratory for exploring satellite induced perturbation in an otherwise stable disc.
+
 \todo{Jason - can you help fill in a few sentences about the simulation here and read below to make sure I say correct things!}
 The simulation ... describe it ...
 
-We use a snapshot of the simulation after \todo{X} pericentric passages of the
-satellite, which induces significant non-axisymmetric kinematic structure in the disk.
+We use a snapshot of the simulation after four pericentric passages, and six disc crossings of the
+satellite \citep[see Figure 3 of][for the orbit and mass loss of the satellite]{Hunt:2021}, which induces significant non-axisymmetric kinematic structure in the disk.
 Figure~\ref{fig:jason-mean-z-vz} shows the mean vertical position (left panel) and
 vertical velocity (right panel) of stars across the face of the simulated disk, showing
 that the disk is rich with substructure as a result of repeat satellite perturbations.
@@ -1234,7 +1238,7 @@ vertical action (below the 15th percentile values of the radial and vertical act
 respectively) and compute the mean azimuthal velocity $\langle v_\phi(R) \rangle$ as a
 function of cylindrical radius $R$, then adopt $v_c(R) = \langle v_\phi(R) \rangle$.
 \todo{Jason - describe how the actions were computed}
-The actions are computed using ...
+The actions are computed using \texttt{Agama}\ \citep{Vasiliev:2019}. We first approximate the host galaxy potential using two multipole expansions for the stellar bulge and dark matter halo, and an axisymmetric \texttt{CylSpline}\ expansion for the disc. We calculate actions, angles and frequencies in the reconstructed potential using \texttt{Agama}'s \texttt{ActionFinder}\ routine.
 
 We also use the orbital actions to ``paint'' element abundances onto star particles in
 this idealized $N$-body simulation without gas or star formation.
@@ -1267,8 +1271,7 @@ action values computed with the best-fit OTI model (horizontal axis) and with Ag
 (vertical axis).
 The actions computed with Agama are not necessarily ``true'' values, as this system is
 not in equilibrium or symmetric, but the adopted potential model used to compute the
-actions is both axisymmetric and time-invariant. \todo{Jason: fix previous sentence if
-not true}
+actions is both axisymmetric and time-invariant.
 At $z=1~\kpc$, we find ... TODO
 
 
