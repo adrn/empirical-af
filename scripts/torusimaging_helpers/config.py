@@ -4,7 +4,10 @@ import agama
 import astropy.coordinates as coord
 import astropy.units as u
 import gala.potential as gp
+import jax
 from gala.units import galactic
+
+jax.config.update("jax_enable_x64", True)
 
 this_path = pathlib.Path(__file__).absolute().parent
 base_path = this_path.parent.parent
