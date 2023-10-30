@@ -1387,7 +1387,34 @@ Also compute empirical actions and compare to Agama.
 
 \section{Discussion} \label{sec:discussion}
 
-Limitation that our acceleration can depend on $v_z$.
+In the subsections below, we return to our assumptions and several of the points raised
+in the results above to discuss the implications of our work and the limitations of the
+OTI framework.
+
+\subsection{The Tradeoff of Flexibility and Physicality} \label{sec:disc-tradeoff}
+
+% TODO: is it worth explicitly mentioning the point that the az and density can end up
+% depending on vz?
+The OTI framework provides a flexible means for inferring the orbit structure and,
+therefore, the mass distribution of phase-mixed stellar populations.
+It is flexible in that it does not require a global model for the gravitational
+potential or the \df, but instead uses the data itself to infer the orbit structure.
+However, this flexibility can come at the cost of physicality: Though it is possible to
+instantiate models with physical constraints (e.g., that the orbits follow a
+gravitational potential and the density is positive), the OTI framework does not require
+this.
+As was shown above in Section~\ref{sec:XX}, this can lead to unphysical inferred
+acceleration profiles that arise in our demonstrations both because of the presence of
+disequilibrium and because of the breakdown of our assumption of $R$--$z$ separability.
+However, what we gain from this flexibility is the ability to fit the data very well, in
+ways that more constrained equilibrium models may find stronger residuals.
+Depending on the scientific goal, this may be a worthwhile tradeoff, or one may want to
+enforce stronger constraints on the OTI model to ensure only physical solutions.
+
+
+\subsection{The Impact of Disequilibrium} \label{sec:disc-diseq}
+
+\todo{Discuss}
 
 
 \subsection{What stellar labels are useful for OTI?}
