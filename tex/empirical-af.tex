@@ -1396,7 +1396,7 @@ OTI framework.
 % TODO: is it worth explicitly mentioning the point that the az and density can end up
 % depending on vz?
 The OTI framework provides a flexible means for inferring the orbit structure and,
-therefore, the mass distribution of phase-mixed stellar populations.
+therefore, the mass distribution underlying phase-mixed, tracer stellar populations.
 It is flexible in that it does not require a global model for the gravitational
 potential or the \df, but instead uses the data itself to infer the orbit structure.
 However, this flexibility can come at the cost of physicality: Though it is possible to
@@ -1414,10 +1414,59 @@ enforce stronger constraints on the OTI model to ensure only physical solutions.
 
 \subsection{The Impact of Disequilibrium} \label{sec:disc-diseq}
 
-\todo{Discuss}
+The Milky Way's disk is known to be out of equilibrium, especially in terms of the
+vertical kinematics of stars \citep[e.g.,][]{Antoja:2018, TODO}.
+The imprint of the vertical ``phase spiral'' is apparent in both the residuals of the
+mean element abundance data in Section~\ref{sec:apogee} and in the residuals of the
+phase-space density in Section~\ref{sec:gaiadr3}.
+Non-phase-mixed structures in the vertical kinematics violates our assumptions and will
+generally bias our inferred orbit shapes and acceleration profile.
+In this work, we simply highlight this fact and do not attempt to correct for this in
+our demonstrations above.
+However, there is a path toward accounting for weak disequilibrium in the framework
+outlined above.
+
+In the limit that the dependence of stellar label moments on the phase-space coordinates
+is a sum of a smooth, equilibrium component and a low-amplitude, phase-coherent
+component, we can build the phase-dependence of the stellar labels into the OTI model.
+In what we have done in this work, in terms of the vertical phase space, we have assumed
+that the stellar labels $Y$ or moments of the stellar labels $\langle Y \rangle$ only
+depend on the distorted ellipsoidal radius $\rz$ (Equation~\ref{eq:rz}) such that, e.g.,
+$Y = Y(\rz)$.
+We can generalize this to allow for a phase-coherent component by instead making $Y =
+Y(\rz, \theta_z)$, where $\theta_z$ is the vertical angle (Equation~\ref{eq:thz-ell}),
+which can be computed internally within the OTI model for a given setting of the
+parameters.
+We consider a full exploration of this extensions as out of scope for this work, but
+hope to explore this in the future.
 
 
-\subsection{What stellar labels are useful for OTI?}
+\subsection{Beyond Vertical Dynamics} \label{sec:disc-beyond-vertical}
+
+While this work primarily focuses on the vertical dynamics of stars in the Milky Way
+disk, a natural extension of the current description of the OTI framework is to consider
+the radial $R$ and azimuthal $\phi$ dependencies as well.
+In principle, the OTI framework is applicable in any projection of phase space, meaning
+it is possible to extend the framework to model the dynamics in the entire 6D phase
+space.
+Incorporating the radial dependence of the stellar labels and their moments would allow
+us to connect and jointly model regions of the disk in a flexible framework that does
+not require imposing a global model of the potential or density distribution.
+As it is currently implemented, we can only achieve this by binning the data into
+regions of $R$ and/or $\phi$ to consider a single projection of the phase space.
+However, even this model, we could explore instead the $\Delta R = R - R_G$ vs. $v_R$
+phase space as a complementary view of the dynamics of the Milky Way disk.
+We hope to explore this in future work.
+
+Another intriguing avenue for exploration is the possibility of going fully
+coordinate-free to identify surfaces in the 6D phase space where stellar label moments
+remain approximately constant.
+Under the assumptions described above, these surfaces would correspond to the orbital
+tori of stars and would allow us to directly map the Galaxy's orbit structure.
+A first exploration of this more general path is considered in \cite{Novara:inprep}.
+
+
+\subsection{What stellar labels are useful for OTI?} \label{sec:disc-what-labels}
 
 For element abundances, this is more-or-less true for surveys like \apogee, where the
 primary survey target selection is done based on color and magnitude, which only weakly
@@ -1425,15 +1474,22 @@ depend on surface abundances \citep{ZasowskiXX, SantanaXX, BeatonXX}.
 However, this also implies that, e.g., stellar surface gravity, $\logg$, would
 \emph{not} be a useful stellar label for use in OTI because it is strongly covariant
 with luminosity or absolute magnitude.
-
+\todo{Say more...}
 
 
 \section{Summary and Conclusions} \label{sec:conclusions}
 
+In this work, we have introduced a new implementation of the Orbit Torus Imaging (OTI)
+framework, a novel approach for inferring the orbital structure of stellar populations
+and characterizing the underlying gravitational field.
+We have demonstrated the flexibility of OTI in handling complex dynamical systems and addressing the vertical dynamics of stars in the Milky Way's disk, a longstanding challenge in Galactic astronomy.
+We explored the ...
+Through a series of simulations and data applications, we've explored the framework's strengths and limitations, shedding light on various aspects of its performance.
+
 
 \begin{acknowledgements}
 
-It is a pleasure to thank ...
+It is a pleasure to thank Neige Frankel...
 
 % Funding for the Sloan Digital Sky Survey IV has been provided by the Alfred P.
 % Sloan Foundation, the U.S. Department of Energy Office of Science, and the
@@ -1473,9 +1529,8 @@ participating in the {\it Gaia} Multilateral Agreement.
     Astropy \citep{astropy:2013, astropy:2018, astropy:2022},
     gala \citep{gala},
     IPython \citep{ipython},
+    \todo{jax, pyia, agama, matplotlib},
     numpy \citep{numpy},
-    % pymc3 \citep{Salvatier2016},
-    % schwimmbad \citep{schwimmbad:2017},
     scipy \citep{scipy}.
 }
 
