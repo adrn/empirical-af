@@ -3,7 +3,6 @@
 % - The condition on d(r_z)/d(r_z')
 % - Widmark papers
 % - https://arxiv.org/abs/2303.18040
-% - cite Justin Read review, and https://arxiv.org/pdf/2012.11477.pdf
 % - https://arxiv.org/abs/2310.10225
 
 
@@ -528,7 +527,7 @@ As long as the gradient in stellar labels as a function of vertical action
 $\deriv{Y}{J}$ is non-zero (i.e. not flat), we can use the level sets of constant
 stellar label $Y$ to ``contour'' the orbits in the vertical phase space $(z,
 v_z)$.\footnote{We note that this idea, in the context of using the phase-space density
-as a stellar label, was briefly discussed in \citet{Kuijken:19XX} and referred to as
+as a stellar label, was briefly discussed in \citet{Kuijken:1989a} and referred to as
 ``direct contouring'' of the DF.}
 From the orbit contours, we can directly measure the vertical acceleration $a_z$: For
 any invariant stellar label $Y$, the total time derivative $\Deriv{Y}{t}$ must be equal
@@ -1278,11 +1277,31 @@ optimized OTI model (middle panel), and the residuals (right panel).
 
 As a final demonstration, we apply the OTI framework to a section of an N-body
 simulation of a stellar disk that has been perturbed by an orbiting satellite galaxy.
-\todo{Jason - can you help fill in a few sentences about the simulation here and read below to make sure I say correct things!}
-The simulation ... describe it ...
+For this, we use the $N$-body simulation M1 of the \texttt{SMUDGE}\ simulation suite
+\cite{Hunt:2021} now available on
+\texttt{SciServer}\footnote{https://sciserver.org/datasets/smudge/} \citep{sciserver}.
+M1 simulates the merger of a $\sim8\times10^{10}~\unit{\Msun}$ dwarf galaxy consisting
+of two Hernquist spheres \citep{Hernquist:1990} into a $\sim6\times10^{11}~\unit{\Msun}$
+disk galaxy host.
+The host galaxy consists of a $8.8\times10^8$ particle live NFW halo
+\citep{Navarro:1997}, a $2.2\times10^7$ particle Hernquist bulge and a $2.2\times10^8$
+particle exponential disk with a high Toomre parameter $\mathcal{Q}=2.2$
+\citep{Toomre:1964}, following model MWb from \cite{Widrow:2005}.
+For full details of the initial condition and simulation setup see \cite{Hunt:2021}.
 
-We use a snapshot of the simulation after \todo{X} pericentric passages of the
-satellite, which induces significant non-axisymmetric kinematic structure in the disk.
+The merger simulation is evolved for $\sim8.3~\unit{\giga\year}$ using the GPU-based
+$N$-body tree code \texttt{Bonsai}\ \citep{Bedorf:2012,Bedorf:2014}.
+Following \cite{Hunt:2021} we choose snapshot 702 (occurring at $t=6.874$) as the
+`present day' snapshot used in this work, as this is the snapshot where satellite is
+closest to the location of the Sagittarius dwarf galaxy in the Milky Way.
+However, we stress that model M1 is not meant to reproduce the Milky Way--Sagittarius
+interaction \citep[for which the reader should see][]{Bennett:2022} but instead be a
+laboratory for exploring satellite induced perturbation in an otherwise stable disk.
+
+We use a snapshot of the simulation after four pericentric passages, and six disk
+crossings of the satellite \citep[see Figure 3 of][for the orbit and mass loss of the
+satellite]{Hunt:2021}, which induces significant non-axisymmetric kinematic structure in
+the disk.
 Figure~\ref{fig:jason-mean-z-vz} shows the mean vertical position (left panel) and
 vertical velocity (right panel) of stars across the face of the simulated disk, showing
 that the disk is rich with substructure as a result of repeat satellite perturbations.
@@ -1305,8 +1324,13 @@ We compute the circular velocity by selecting star particles with low radial and
 vertical action (below the 15th percentile values of the radial and vertical actions,
 respectively) and compute the mean azimuthal velocity $\langle v_\phi(R) \rangle$ as a
 function of cylindrical radius $R$, then adopt $v_c(R) = \langle v_\phi(R) \rangle$.
-\todo{Jason - describe how the actions were computed}
-The actions are computed using ...
+
+The actions are computed using \texttt{Agama}\ \citep{Vasiliev:2019}.
+We first approximate the host galaxy potential using two multipole expansions for the
+stellar bulge and dark matter halo, and an axisymmetric \texttt{CylSpline}\ expansion
+for the disk.
+We calculate actions, angles, and frequencies in the reconstructed potential using
+\texttt{Agama}'s \texttt{ActionFinder}\ routine.
 
 We also use the orbital actions to ``paint'' element abundances onto star particles in
 this idealized $N$-body simulation without gas or star formation.
@@ -1339,8 +1363,7 @@ action values computed with the best-fit OTI model (horizontal axis) and with Ag
 (vertical axis).
 The actions computed with Agama are not necessarily ``true'' values, as this system is
 not in equilibrium or symmetric, but the adopted potential model used to compute the
-actions is both axisymmetric and time-invariant. \todo{Jason: fix previous sentence if
-not true}
+actions is both axisymmetric and time-invariant.
 At $z=1~\kpc$, we find ... TODO
 
 
@@ -1385,26 +1408,116 @@ Also compute empirical actions and compare to Agama.
 
 \section{Discussion} \label{sec:discussion}
 
-Limitation that our acceleration can depend on $v_z$.
+In the subsections below, we return to our assumptions and several of the points raised
+in the results above to discuss the implications of our work and the limitations of the
+Orbital Torus Imaging (OTI) framework.
+
+\subsection{The Tradeoff of Flexibility and Physicality} \label{sec:disc-tradeoff}
+
+% TODO: is it worth explicitly mentioning the point that the az and density can end up
+% depending on vz?
+The OTI framework provides a flexible means for inferring the orbit structure and,
+therefore, the mass distribution underlying phase-mixed, tracer stellar populations.
+It is flexible in that it does not require a global model for the gravitational
+potential or the \df, but instead uses the data itself to infer the orbit structure.
+However, this flexibility can come at the cost of physicality: Though it is possible to
+instantiate models with physical constraints (e.g., that the orbits follow a
+gravitational potential and the density is positive), the OTI framework does not require
+this.
+As was shown above in Section~\ref{sec:XX}, this can lead to unphysical inferred
+acceleration profiles that arise in our demonstrations both because of the presence of
+disequilibrium and because of the breakdown of our assumption of $R$--$z$ separability.
+However, what we gain from this flexibility is the ability to fit the data very well, in
+ways that more constrained equilibrium models may find stronger residuals.
+Depending on the scientific goal, this may be a worthwhile tradeoff, or one may want to
+enforce stronger constraints on the OTI model to ensure only physical solutions.
 
 
-\subsection{What stellar labels are useful for OTI?}
+\subsection{The Impact of Disequilibrium} \label{sec:disc-diseq}
 
+The Milky Way's disk is known to be out of equilibrium, especially in terms of the
+vertical kinematics of stars \citep[e.g.,][]{Antoja:2018, TODO}.
+The imprint of the vertical ``phase spiral'' is apparent in both the residuals of the
+mean element abundance data in Section~\ref{sec:apogee} and in the residuals of the
+phase-space density in Section~\ref{sec:gaiadr3}.
+Non-phase-mixed structures in the vertical kinematics violates our assumptions and will
+generally bias our inferred orbit shapes and acceleration profile.
+In this work, we simply highlight this fact and do not attempt to correct for this in
+our demonstrations above.
+However, there is a path toward accounting for weak disequilibrium in the framework
+outlined above.
+
+In the limit that the dependence of stellar label moments on the phase-space coordinates
+is a sum of a smooth, equilibrium component and a low-amplitude, phase-coherent
+component, we can build the phase-dependence of the stellar labels into the OTI model.
+In what we have done in this work, in terms of the vertical phase space, we have assumed
+that the stellar labels $Y$ or moments of the stellar labels $\langle Y \rangle$ only
+depend on the distorted ellipsoidal radius $\rz$ (Equation~\ref{eq:rz}) such that, e.g.,
+$Y = Y(\rz)$.
+We can generalize this to allow for a phase-coherent component by instead making $Y =
+Y(\rz, \theta_z)$, where $\theta_z$ is the vertical angle (Equation~\ref{eq:thz-ell}),
+which can be computed internally within the OTI model for a given setting of the
+parameters.
+We consider a full exploration of this extensions as out of scope for this work, but
+hope to explore this in the future.
+
+
+\subsection{Beyond Vertical Dynamics} \label{sec:disc-beyond-vertical}
+
+While this work primarily focuses on the vertical dynamics of stars in the Milky Way
+disk, a natural extension of the current description of the OTI framework is to consider
+the radial $R$ and azimuthal $\phi$ dependencies as well.
+In principle, the OTI framework is applicable in any projection of phase space, meaning
+it is possible to extend the framework to model the dynamics in the entire 6D phase
+space.
+Incorporating the radial dependence of the stellar labels and their moments would allow
+us to connect and jointly model regions of the disk in a flexible framework that does
+not require imposing a global model of the potential or density distribution.
+As it is currently implemented, we can only achieve this by binning the data into
+regions of $R$ and/or $\phi$ to consider a single projection of the phase space.
+However, even this model, we could explore instead the $\Delta R = R - R_G$ vs. $v_R$
+phase space as a complementary view of the dynamics of the Milky Way disk.
+We hope to explore this in future work.
+
+Another avenue for exploration is the possibility of going coordinate-free, or at least
+projection-free, to identify surfaces in the full 6D phase space upon which stellar
+label moments remain approximately constant.
+Under the assumptions described above, these surfaces would correspond to the orbital
+tori of stars and would allow us to directly map the Galaxy's orbit structure.
+A first exploration of this more general path is considered in \cite{Novara:inprep}.
+
+
+\subsection{What stellar labels are useful for OTI?} \label{sec:disc-what-labels}
+
+As mentioned above (Section~\ref{sec:sim-qiso-sel}), a critical requirement for OTI is
+that the selection function on stellar phase-space coordinates is separable from the
+selection function of the stellar labels considered.
 For element abundances, this is more-or-less true for surveys like \apogee, where the
 primary survey target selection is done based on color and magnitude, which only weakly
-depend on surface abundances \citep{ZasowskiXX, SantanaXX, BeatonXX}.
-However, this also implies that, e.g., stellar surface gravity, $\logg$, would
-\emph{not} be a useful stellar label for use in OTI because it is strongly covariant
-with luminosity or absolute magnitude.
-
+depend on surface abundances \citep{Zasowski:2017, Santana:2021, Beaton:2021}.
+However, this also implies that stellar surface gravity, $\logg$, or effective
+temperature, $\Teff$, would \emph{not} be useful stellar labels within the OTI framework
+because they are strongly covariant with luminosity or absolute magnitude.
+\todo{Say more about independence of labels? Other moments?}
 
 
 \section{Summary and Conclusions} \label{sec:conclusions}
 
+In this work, we have introduced a new implementation of the Orbit Torus Imaging (OTI)
+framework, a novel approach for inferring the orbital structure of stellar populations
+and characterizing the underlying gravitational field.
+We have demonstrated the flexibility of OTI in modeling and recovering the true
+underlying gravitational field for simulated tracer stellar populations in toy and more
+realistic settings.
+We also show the utility of OTI as a flexible way of fitting and subtracting an
+equilibrium model to reveal substructure and disequilibrium in data from the \apogee\
+and \gaia\ surveys.
+\todo{Final thoughts...}
+
 
 \begin{acknowledgements}
 
-It is a pleasure to thank ...
+It is a pleasure to thank Neige Frankel...
 
 % Funding for the Sloan Digital Sky Survey IV has been provided by the Alfred P.
 % Sloan Foundation, the U.S. Department of Energy Office of Science, and the
@@ -1444,9 +1557,8 @@ participating in the {\it Gaia} Multilateral Agreement.
     Astropy \citep{astropy:2013, astropy:2018, astropy:2022},
     gala \citep{gala},
     IPython \citep{ipython},
+    \todo{jax, pyia, agama, matplotlib},
     numpy \citep{numpy},
-    % pymc3 \citep{Salvatier2016},
-    % schwimmbad \citep{schwimmbad:2017},
     scipy \citep{scipy}.
 }
 
