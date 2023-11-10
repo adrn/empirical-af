@@ -17,13 +17,13 @@ jax.config.update("jax_enable_x64", True)
 
 # m = 5.4e11
 def eval_efunc(z_grid, m, b, R0, vc0=229 * u.km / u.s):
-    a = 3.0
     m = m * 1e10
+    h_R = 2.6
 
     def obj(logmh):
         gala_pot = gp.CCompositePotential(
-            disk=gp.MiyamotoNagaiPotential(m=m, a=a, b=b, units=galactic),
-            halo=gp.NFWPotential(m=np.exp(logmh), r_s=15.0, units=galactic),
+            disk=gp.MN3ExponentialDiskPotential(m=m, h_R=h_R, h_z=b, units=galactic),
+            halo=gp.NFWPotential(m=np.exp(logmh), r_s=15.63, units=galactic),
         )
         return (
             np.squeeze((gala_pot.circular_velocity(R0 * [1.0, 0, 0]) - vc0).value) ** 2
@@ -32,8 +32,8 @@ def eval_efunc(z_grid, m, b, R0, vc0=229 * u.km / u.s):
     res = minimize(obj, x0=np.log(5.4e11), method="BFGS")
 
     gala_pot = gp.CCompositePotential(
-        disk=gp.MiyamotoNagaiPotential(m=m, a=a, b=b, units=galactic),
-        halo=gp.NFWPotential(m=np.exp(res.x[0]), r_s=15.0, units=galactic),
+        disk=gp.MN3ExponentialDiskPotential(m=m, h_R=h_R, h_z=b, units=galactic),
+        halo=gp.NFWPotential(m=np.exp(res.x[0]), r_s=15.63, units=galactic),
     )
 
     # agama_pot = agama.Potential(
@@ -82,7 +82,7 @@ def eval_efunc(z_grid, m, b, R0, vc0=229 * u.km / u.s):
 
 def main(filename):
     N_p = 2
-    N_k = 8
+    N_k = 12
     N_z = 32
 
     par_names = ["m", "b"]
@@ -152,7 +152,7 @@ def main(filename):
         # binary_operators=["+", "-", "/", "*", "^"],
         unary_operators=["log", "exp", "square", "cube", "sqrt"],
         # unary_operators=["log", "exp", "sqrt"],
-        maxsize=20,
+        maxsize=30,
         # parsimony=1e-5,
         # batching=True,
         # niterations=128,
