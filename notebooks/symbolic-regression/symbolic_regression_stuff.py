@@ -1,3 +1,9 @@
+# ruff: noqa: E402
+# HACK: because of weirdness with julia on rusty
+from julia.core import Julia
+
+Julia()
+
 import astropy.units as u
 import gala.dynamics as gd
 import gala.potential as gp
@@ -82,7 +88,7 @@ def eval_efunc(z_grid, m, b, R0, vc0=229 * u.km / u.s):
 
 def main(filename):
     N_p = 2
-    N_k = 8
+    N_k = 16
     N_z = 32
 
     par_names = ["m", "b"]
@@ -90,7 +96,7 @@ def main(filename):
     b_1d = np.geomspace(0.075, 1.0, N_k)
 
     # z_1d = np.linspace(1e-3**0.5, 3.0**0.5, N_z) ** 2
-    z_1d = np.geomspace(2e-3, 3.0, N_z)
+    z_1d = np.geomspace(2e-3, 6.0, N_z)
 
     pars_1d = np.stack(np.meshgrid(m_1d, b_1d))
     pars = pars_1d.reshape(N_p, 1, -1)
@@ -117,11 +123,6 @@ def main(filename):
 
     flat_X = X.reshape(-1, 1 + N_p)
     flat_y = y.ravel()
-
-    mask = flat_y > 1e-13
-    flat_X = flat_X[mask]
-    flat_y = flat_y[mask]
-    flat_log_y = np.log(flat_y)
     print(f"flat_X shape = {flat_X.shape}, flat_y shape = {flat_y.shape}")
 
     np.savez(
@@ -130,8 +131,6 @@ def main(filename):
         y=y,
         flat_X=flat_X,
         flat_y=flat_y,
-        flat_log_y=flat_log_y,
-        mask=mask,
     )
 
     # Plot all r_e vs. e_sum curves
@@ -149,28 +148,61 @@ def main(filename):
     # ----------------------------------------------------------------------------------
     # Run PySR
     model = PySRRegressor(
-        # binary_operators=["+", "-", "/", "*", "^"],
-        unary_operators=["log", "exp", "square", "cube", "sqrt"],
+        binary_operators=["+", "-", "/", "*", "^"],
+        unary_operators=["log", "exp", "square", "sqrt"],
         # unary_operators=["log", "exp", "sqrt"],
-        maxsize=20,
+        maxsize=40,
         # parsimony=1e-5,
         # batching=True,
         # niterations=128,
-        niterations=1024,
+        niterations=2048,
         populations=64,
         early_stop_condition=(
-            "stop_if(loss, complexity) = loss < 1e-5 && complexity < 20"
+            "stop_if(loss, complexity) = loss < 1e-3 && complexity < 20"
             # Stop early if we find a good and simple equation
         ),
         precision=64,
         # ^ Higher precision calculations.
         # constraints={"^": (-1, 1)},
+        constraints={
+            # "^": (9, 1),
+            "/": (-1, 5),
+            # "tanh": 9,
+            "log": 9,
+            "exp": 9,
+        },
+        nested_constraints={
+            "log": {"exp": 1},
+            "exp": {"log": 1},
+            # "tanh": {"exp": 0, "tanh": 0},
+            "sqrt": {"sqrt": 1},
+            "square": {"square": 1},
+        },
+        complexity_of_operators={
+            "+": 1,
+            "-": 1,
+            "*": 1,
+            "square": 2,
+            "sqrt": 2,
+            "/": 2,
+            "^": 4,
+            "exp": 2,
+            "log": 2,
+            # "tanh": 3,
+        },
+        parsimony=0.0001,
+        population_size=100,
+        multithreading=False,
+        procs=128,
+        ncyclesperiteration=128 * 40,
+        # verbosity=0
+        progress=False,
     )
-    model.fit(flat_X, flat_log_y, variable_names=["r_e", "m", "b"])
+    model.fit(flat_X, flat_y, variable_names=["r_e", "m", "b"])
 
-    pred_flat_y = np.exp(model.predict(flat_X))
+    pred_flat_y = model.predict(flat_X)
     pred_y = np.full_like(y, np.nan)
-    pred_y.flat[mask] = pred_flat_y
+    pred_y.flat[:] = pred_flat_y
     print(f"All positive? {np.all(pred_flat_y > 0)}")
 
     fig = plt.figure(figsize=(12, 3))
