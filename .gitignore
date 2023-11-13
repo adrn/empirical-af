@@ -68,3 +68,6 @@ pip-wheel-metadata/
 # Snakemake and showyourwork temporaries
 **/.snakemake
 **/.showyourwork*
+
+.hypothesis
+.env
