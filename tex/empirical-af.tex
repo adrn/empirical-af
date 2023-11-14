@@ -1,6 +1,4 @@
 % Notes:
-% - The point that central regions of low J_z, density flattens = no constraining power
-% - The condition on d(r_z)/d(r_z')
 % - Widmark papers
 % - https://arxiv.org/abs/2303.18040
 % - https://arxiv.org/abs/2310.10225
@@ -60,7 +58,6 @@
     Data-driven Dynamics with Orbital Torus Imaging:  \\
     A Flexible Model of the Vertical Phase Space of the Galaxy
 }
-% ChatGPT: Empirical Modeling of Vertical Phase-Space Density in the Milky Way: A Flexible Method for Inferring the Acceleration Field
 
 \newcommand{\affcca}{
     Center for Computational Astrophysics, Flatiron Institute, \\
@@ -856,8 +853,6 @@ acceleration profiles and other dynamical quantities for these simulated data se
 \subsection{Simple Harmonic Oscillator}
 \label{sec:sim-sho}
 
-\todo{Added number density to figures, so need to update captions and descriptions of figures}
-
 As an initial application, we simulate phase-space data in a harmonic oscillator
 potential,
 \begin{equation}
@@ -894,9 +889,10 @@ We then additionally simulate measurement errors on the abundance values by draw
 abundance uncertainty, $\sigma_Y$, for each star particle such that $\log \sigma_Y \sim
 \mathcal{U}(-4, 0.5)$, where $\log$ is the natural logarithm and $\mathcal{U}(a, b)$ is
 the uniform distribution over the domain $[a, b)$.
-Figure~\ref{fig:sho-data-model} (left panel) shows the mean simulated \abun{Mg}{Fe}
-abundance for stars in bins of vertical phase-space coordinates with the same color
-scale as in the middle panel of Figure~\ref{fig:mgfe-zvz} (i.e. the real \apogee\ data).
+Figure~\ref{fig:sho-data-model} (middle left panel) shows the mean simulated
+\abun{Mg}{Fe} abundance for stars in bins of vertical phase-space coordinates with the
+same color scale as in the middle panel of Figure~\ref{fig:mgfe-zvz} (i.e. the real
+\apogee\ data).
 
 \begin{figure*}[t!]
 \begin{center}
@@ -905,15 +901,18 @@ scale as in the middle panel of Figure~\ref{fig:mgfe-zvz} (i.e. the real \apogee
 \caption{%
 A demonstration of an optimized OTI model using simulated data in a simple harmonic
 oscillator potential.
-\textbf{Left panel:} Simulated kinematic data in the vertical phase space with an
-isothermal distribution function and a linear relation between \abun{Mg}{Fe} and
-$z_{\textrm{max}}$ (see Figure~\ref{fig:mgfe-zvz}).
-\textbf{Middle panel:} The optimized OTI model evaluated on the same grid of phase-space
-coordinates as the data (left panel).
-\textbf{Right panel:} The residuals of the optimized model (i.e. the simulated data
-minus the optimized model, evaluated on the same grid of phase-space coordinates).
-The small residuals (except on the edges, where the number of stars per pixel is small)
-show that the model accurately represents the mean abundance trends in this phase space.
+\textbf{Leftmost panel:} The number density of star particles for a simulated kinematic
+dataset in the vertical phase space using an isothermal distribution function embedded in a harmonic oscillator potential.
+\textbf{Middle left panel:} The same simulated vertical kinematics now showing the mean
+simulated \abun{Mg}{Fe} abundance values, generated assuming a linear relation between
+the mean \abun{Mg}{Fe} and $z_{\textrm{max}}$ (see Figure~\ref{fig:mgfe-zvz}).
+\textbf{Middle right panel:} The optimized OTI model evaluated on the same grid of
+phase-space coordinates as the data (middle left panel).
+\textbf{Rightmost panel:} The residuals of the optimized model normalized by the
+uncertainty in each pixel (i.e. the simulated data minus the optimized model, evaluated
+on the same grid of phase-space coordinates, and normalized).
+The small and uniform residuals show that the model accurately represents the mean
+abundance trends in this phase space.
 \label{fig:sho-data-model}
 }
 \end{figure*}
@@ -942,7 +941,7 @@ Appendix~\ref{sec:appendix-spline}).
 For the label function, $Y(\rz)$, we assert that the value must monotonically increase
 from $\rz = 0$ to the maximum spline knot location by noting that the element abundance
 gradient has a positive slope from small values of the phase-space coordinates $(z,
-v_z)\sim (0,0)$ to larger values (see the left panel of
+v_z)\sim (0,0)$ to larger values (see the middle left panel of
 Figure~\ref{fig:sho-data-model}).
 We use $K_Y=8$ spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$
 and $r_{z, \textrm{max}}$ with function values at the knot locations $y_k^{(Y)}$.
@@ -1011,8 +1010,8 @@ We use a standard L-BFGS-B optimizer \citep{Byrd:1995} to minimize the regulariz
 negative log-probability as implemented in \texttt{JAXopt} \cite{jaxopt:2021}.
 For this simulated data set, the optimization runs in $\sim 10~\unit{\second}$ on a
 single CPU.
-The middle panel of Figure~\ref{fig:sho-data-model} shows the MAP model evaluated over
-the domain of our simulated data in the left panel, and the right panel shows the
+The middle right panel of Figure~\ref{fig:sho-data-model} shows the MAP model evaluated
+over the domain of our simulated data in the left panel, and the right panel shows the
 residuals.
 The residuals everywhere indicate that the best-fit model matches the data well.
 
@@ -1040,7 +1039,7 @@ parameter values with our OTI model, and the over-plotted dashed (green) lines s
 true orbital trajectories for this toy model, demonstrating agreement.
 The right panel of Figure~\ref{fig:sho-validation} shows the true vertical action values
 for all simulated particles on the vertical axis (i.e. the samples from the \df\ used to
-create the mean abundance data shown in the left panel of
+create the mean abundance data shown in the middle left panel of
 Figure~\ref{fig:sho-data-model}) and our estimates for the vertical action of each star
 particle as the black point markers, computed using the MAP parameter values.
 We compute the actions, frequencies, and angles using
@@ -1068,7 +1067,6 @@ equilibrium) galaxy model.
 \includegraphics[width=\textwidth]{sho-validation.pdf}
 \end{center}
 \caption{%
-\todo{suptitle same as previous figure?}
 Validation of the OTI model fit to the simulated simple harmonic oscillator data.
 \textbf{Left panel:} The inferred (maximum a posteriori; MAP) vertical acceleration
 profile, $a_z(z)$, from the OTI model (solid black line) compared to the true
@@ -1198,8 +1196,8 @@ and do for 100,000 not 20,000}
 \end{center}
 \caption{%
 The same as Figure~\ref{fig:sho-data-model}, but for the simulated quasi-isothermal disk
-sample from Section~\ref{sec:sim-qiso}, showing the simulated data set (left panel), the
-optimized OTI model (middle panel), and the residuals (right panel).
+sample from Section~\ref{sec:sim-qiso}, showing the simulated data set (left and middle
+left panels), the optimized OTI model (middle panel), and the residuals (right panel).
 % \textbf{Left panel:} Simulated kinematic data in the vertical phase space with an
 % isothermal distribution function and a linear relation between \abun{Mg}{Fe} and
 % $z_{\textrm{max}}$ (see Figure~\ref{fig:mgfe-zvz}).
@@ -1369,41 +1367,41 @@ At $z=1~\kpc$, we find ... TODO
 
 
 
-\section{Applications to Data} \label{sec:applications-data}
+% \section{Applications to Data} \label{sec:applications-data}
 
-In this section, we apply the OTI framework to data from the \apogee\ surveys and \gaia\
-Data Release 3.
-In Section~\ref{sec:apogee}, we fit the mean \abun{Mg}{Fe} data shown in
-Figure~\ref{fig:mgfe-zvz} to infer the vertical acceleration profile at the solar
-radius.
-However, we consider this to be a limited demonstration, as a full analysis of the
-\apogee\ data is presented in a companion paper \citep{Horta:2023}.
-In Section~\ref{sec:gaiadr3}, we use the vertical kinematics alone (using phase-space
-data from \gaia) to demonstrate using the phase-space density itself as a stellar label.
-We additionally show how OTI is useful as a means to fit a flexible but symmetric model
-of the phase space to subtract and reveal the residuals, which provides a new means to
-characterize the vertical phase-space spirals around the Milky Way.
+% In this section, we apply the OTI framework to data from the \apogee\ surveys and \gaia\
+% Data Release 3.
+% In Section~\ref{sec:apogee}, we fit the mean \abun{Mg}{Fe} data shown in
+% Figure~\ref{fig:mgfe-zvz} to infer the vertical acceleration profile at the solar
+% radius.
+% However, we consider this to be a limited demonstration, as a full analysis of the
+% \apogee\ data is presented in a companion paper \citep{Horta:2023}.
+% In Section~\ref{sec:gaiadr3}, we use the vertical kinematics alone (using phase-space
+% data from \gaia) to demonstrate using the phase-space density itself as a stellar label.
+% We additionally show how OTI is useful as a means to fit a flexible but symmetric model
+% of the phase space to subtract and reveal the residuals, which provides a new means to
+% characterize the vertical phase-space spirals around the Milky Way.
 
-\subsection{Data sources} \label{sec:data}
+% \subsection{Data sources} \label{sec:data}
 
-\todo{standard blurbs about APOGEE and Gaia}
-
-
-\subsection{The vertical \abun{Mg}{Fe} gradient in the solar neighborhood with \apogee}
-\label{sec:apogee}
-
-TODO
+% \todo{standard blurbs about APOGEE and Gaia}
 
 
-\subsection{The local vertical phase space in \gaia\ Data Release 3}
-\label{sec:gaiadr3}
+% \subsection{The vertical \abun{Mg}{Fe} gradient in the solar neighborhood with \apogee}
+% \label{sec:apogee}
 
-TODO: Empirical actions - show frequency-theta with empirical
+% TODO
 
-Fit the vertical acceleration in a slice around the sun, ignoring selection function.
-Show residuals: Phase spiral-o-rama
 
-Also compute empirical actions and compare to Agama.
+% \subsection{The local vertical phase space in \gaia\ Data Release 3}
+% \label{sec:gaiadr3}
+
+% TODO: Empirical actions - show frequency-theta with empirical
+
+% Fit the vertical acceleration in a slice around the sun, ignoring selection function.
+% Show residuals: Phase spiral-o-rama
+
+% Also compute empirical actions and compare to Agama.
 
 
 \section{Discussion} \label{sec:discussion}
