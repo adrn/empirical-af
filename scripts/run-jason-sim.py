@@ -28,8 +28,10 @@ def main(overwrite_data=False):
 
     if not bdata_file.exists() or overwrite_data:
         print("Generating binned data...")
-        max_z = np.round(3 * np.nanpercentile(pdata["z"].to(u.kpc), 90), 1)
-        max_vz = np.round(3 * np.nanpercentile(pdata["v_z"].to(u.km / u.s), 90), 0)
+        # max_z = np.round(3 * np.nanpercentile(pdata["z"].to(u.kpc), 90), 1)
+        # max_vz = np.round(3 * np.nanpercentile(pdata["v_z"].to(u.km / u.s), 90), 0)
+        max_z = 1.8 * u.kpc
+        max_vz = 72 * u.km / u.s
 
         zvz_bins = {
             "pos": np.linspace(-max_z, max_z, 151),
@@ -63,14 +65,15 @@ def main(overwrite_data=False):
         e_knots={2: 8, 4: 4},
         label_l2_sigma=1.0,
         label_smooth_sigma=0.5,
-        e_l2_sigmas={2: 0.1, 4: 0.1},
+        e_l2_sigmas={2: 1.0, 4: 1.0},
         e_smooth_sigmas={2: 0.2, 4: 0.2},
+        dacc_strength=1e3,
         label_knots_spacing_power=0.75,
-        e_knots_spacing_power=0.75,
+        e_knots_spacing_power=0.5,
     )
 
     init_params["e_params"][2]["vals"] = np.full_like(
-        init_params["e_params"][2]["vals"], -0.5
+        init_params["e_params"][2]["vals"], -0.1
     )
     init_params["e_params"][4]["vals"] = np.full_like(
         init_params["e_params"][4]["vals"], np.log(0.05 / model._label_knots.max())

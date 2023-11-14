@@ -265,30 +265,27 @@ def make_jason_sim_data(filename, overwrite=False):
     tbl["Rg"] = tbl["J"][:, 1] / vc
 
     # See: Jason-sim-find-good-volume.ipynb
-    x0 = -9.0
+    x0 = -8.0
     y0 = 0
-    R0 = np.sqrt(x0**2 + y0**2)
-    print(R0)
-
     xy_size = 2.0
-    print(vc_poly(R0))
 
     mask = (
         (np.abs(tbl["R"] - tbl["Rg"]) < xy_size / 2)
-        # & (np.abs(tbl["R"] - R0) < 1)
-        & (np.abs(tbl["v_R"]) < 20)
+        & (np.abs(tbl["v_R"]) < 15)
         & (np.abs(tbl["xyz"][:, 0] - x0) < xy_size / 2)
         & (np.abs(tbl["xyz"][:, 1] - y0) < xy_size / 2)
     )
-    pdata = at.QTable(tbl[mask])
+    tbl = tbl[mask]
 
-    with u.set_enabled_equivalencies(u.dimensionless_angles()):
-        zmax = np.sqrt(2 * pdata["init_J"][:, 2] / pdata["init_Omega"][:, 2]) * u.kpc
+    rng = np.random.default_rng(42)
+    zmax = np.sqrt(2 * tbl["init_J"][:, 2] / tbl["init_Omega"][:, 2]) * u.kpc
+
+    pdata = at.QTable(tbl)
 
     rng = np.random.default_rng(123)
     pdata["z"] = pdata["xyz"][:, 2] * u.kpc
     pdata["v_z"] = pdata["vxyz"][:, 2] * u.km / u.s
-    pdata["mgfe"], pdata["mgfe_err"] = make_mgfe(zmax, rng=rng, slope=0.12, std=0.01)
+    pdata["mgfe"], pdata["mgfe_err"] = make_mgfe(zmax, rng=rng, std=0.05 / 4)
 
     pdata.write(filename, overwrite=True, serialize_meta=True)
 
