@@ -72,6 +72,74 @@ def make_gaia_data(pdata_file, bdata_file):
     return Rg_bins
 
 
+def fit_model(i, bdata, cache_path, overwrite=False):
+    opt_file = cache_path / f"{short_name}-{i}-params-opt.pkl"
+    if opt_file.exists() and not overwrite:
+        print("Optimized parameters already exist - skipping")
+        with open(cache_path / f"{short_name}-{i}-model.pkl", "rb") as f:
+            model = pickle.load(f)
+        with open(opt_file, "rb") as f:
+            params = pickle.load(f)
+        return model, params
+
+    model, bounds, init_params = oti.TorusImaging1DSpline.auto_init(
+        bdata,
+        label_knots=12,
+        e_knots={2: 16, 4: 6},
+        label_l2_sigma=1.0,
+        label_smooth_sigma=0.5,
+        e_l2_sigmas={2: 1.0, 4: 1.0},
+        e_smooth_sigmas={2: 0.2, 4: 0.2},
+        dacc_strength=1e3,
+        label_knots_spacing_power=0.75,
+        e_knots_spacing_power=0.5,
+    )
+
+    init_params["e_params"][2]["vals"] = np.full_like(
+        init_params["e_params"][2]["vals"], -4
+    )
+    init_params["e_params"][4]["vals"] = np.full_like(
+        init_params["e_params"][4]["vals"],
+        np.log(0.05 / model._label_knots.max()),
+    )
+
+    with open(cache_path / f"{short_name}-{i}-model.pkl", "wb") as f:
+        pickle.dump(model, f)
+
+    with open(cache_path / f"{short_name}-{i}-params-init.pkl", "wb") as f:
+        pickle.dump(init_params, f)
+
+    data_kw = dict(
+        pos=bdata["pos"],
+        vel=bdata["vel"],
+        label=bdata["label"],
+        label_err=bdata["label_err"],
+    )
+    mask = (
+        np.isfinite(bdata["label"])
+        & np.isfinite(bdata["label_err"])
+        & (bdata["label_err"] > 0)
+    )
+    data_kw = {k: v[mask] for k, v in data_kw.items()}
+
+    test_val = model.objective_gaussian(init_params, **data_kw)
+    print(f"Test evaluation of objective function: {test_val}")
+
+    print("Running optimize...")
+    res = model.optimize(init_params, objective="gaussian", bounds=bounds, **data_kw)
+    if res.state.success:
+        print(f"Optimize completed successfully in {res.state.iter_num} steps")
+        print(res.params)
+    else:
+        print(f"Optimize failed: {res.state!r}")
+        sys.exit(1)
+
+    with open(opt_file, "wb") as f:
+        pickle.dump(res.params, f)
+
+    return model, res.params
+
+
 def main(overwrite_data=False, overwrite_fit=False):
     pdata_file = cache_path / f"{short_name}-pdata.hdf5"
     bdata_file = cache_path / f"{short_name}-bdata.hdf5"
@@ -85,6 +153,10 @@ def main(overwrite_data=False, overwrite_fit=False):
         with h5py.File(pdata_file, "r") as f:
             Rgs = np.array([float(f[k].attrs["Rg"]) for k in f.keys()]) * u.kpc
 
+    Rgs = np.sort(Rgs)
+
+    all_models = []
+    all_params = []
     with h5py.File(bdata_file, "r") as bf:
         for i, Rg_c in enumerate(Rgs):
             print("-" * 79)
@@ -92,74 +164,33 @@ def main(overwrite_data=False, overwrite_fit=False):
             group = bf[str(i)]
             bdata = {k: group[k][:] for k in group.keys()}
 
-            opt_file = cache_path / f"{short_name}-{i}-params-opt.pkl"
-            if opt_file.exists() and not overwrite_fit:
-                print("Optimized parameters already exist - skipping")
-                continue
+            model, params = fit_model(i, bdata, cache_path, overwrite=overwrite_fit)
+            all_models.append(model)
+            all_params.append(params)
 
-            model, bounds, init_params = oti.TorusImaging1DSpline.auto_init(
-                bdata,
-                label_knots=12,
-                e_knots={2: 16, 4: 6},
-                label_l2_sigma=1.0,
-                label_smooth_sigma=0.5,
-                e_l2_sigmas={2: 1.0, 4: 1.0},
-                e_smooth_sigmas={2: 0.2, 4: 0.2},
-                dacc_strength=1e3,
-                label_knots_spacing_power=0.75,
-                e_knots_spacing_power=0.5,
-            )
+    with h5py.File(pdata_file, "r") as pf:
+        for i, Rg_c in enumerate(Rgs):
+            pdata = at.QTable.read(pf[str(i)])
+            model = all_models[i]
+            params = all_params[i]
 
-            init_params["e_params"][2]["vals"] = np.full_like(
-                init_params["e_params"][2]["vals"], -4
-            )
-            init_params["e_params"][4]["vals"] = np.full_like(
-                init_params["e_params"][4]["vals"],
-                np.log(0.05 / model._label_knots.max()),
-            )
+            # Split into batches because we get memory issues otherwise:
+            idx = np.arange(0, len(pdata) - 1, 100_000)
+            if idx[-1] != len(pdata) - 1:
+                idx = np.concatenate([idx, [len(pdata) - 1]])
 
-            with open(cache_path / f"{short_name}-{i}-model.pkl", "wb") as f:
-                pickle.dump(model, f)
-
-            with open(cache_path / f"{short_name}-{i}-params-init.pkl", "wb") as f:
-                pickle.dump(init_params, f)
-
-            data_kw = dict(
-                pos=bdata["pos"],
-                vel=bdata["vel"],
-                label=bdata["label"],
-                label_err=bdata["label_err"],
-            )
-            mask = (
-                np.isfinite(bdata["label"])
-                & np.isfinite(bdata["label_err"])
-                & (bdata["label_err"] > 0)
-            )
-            data_kw = {k: v[mask] for k, v in data_kw.items()}
-
-            test_val = model.objective_gaussian(init_params, **data_kw)
-            print(f"Test evaluation of objective function: {test_val}")
-
-            print("Running optimize...")
-            res = model.optimize(
-                init_params, objective="gaussian", bounds=bounds, **data_kw
-            )
-            if res.state.success:
-                print(f"Optimize completed successfully in {res.state.iter_num} steps")
-                print(res.params)
-            else:
-                print(f"Optimize failed: {res.state!r}")
-                sys.exit(1)
-
-            with open(opt_file, "wb") as f:
-                pickle.dump(res.params, f)
-
-            # print("Running MCMC...")
-            # states, mcmc_samples = model.mcmc_run_label(
-            #     bdata, p0=res.params, bounds=bounds, num_warmup=1000, num_steps=1000
-            # )
-            # with open(cache_path / f"{short_name}-mcmc-results.pkl", "wb") as f:
-            #     pickle.dump((states, mcmc_samples), f)
+            aaf_batches = []
+            for i1, i2 in zip(idx[:-1], idx[1:]):
+                aaf_batches.append(
+                    model.compute_action_angle(
+                        pdata["z"][i1:i2],
+                        pdata["v_z"][i1:i2],
+                        params,
+                        N_grid=15,
+                    )
+                )
+            aaf = at.vstack(aaf_batches)
+            aaf.write(cache_path / f"{short_name}-{i}-aaf.hdf5", overwrite=True)
 
 
 if __name__ == "__main__":
