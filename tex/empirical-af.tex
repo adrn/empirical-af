@@ -398,7 +398,6 @@ $\Omega_z = \Omega_z(J_z)$.
 \includegraphics[width=1\textwidth]{mgfe-zvz.pdf}
 \end{center}
 \caption{%
-\todo{Title to emphasize that this is real APOGEE+Gaia data}
 A demonstration that stellar labels correlate with stellar orbits in the vertical phase
 space of the Milky Way disk.
 \textbf{Left panel:} Seven orbits computed in a Milky Way mass model (see
@@ -782,7 +781,6 @@ In a truly separable system, this would also lead to unphysical interpretations 
 force field inferred from the model, as the orbits should foliate the phase space.
 We do not find this to be a problem in practice with sufficient bounds set on the
 Fourier distortion functions to keep their amplitudes small.
-% \todo{words about drz/drzp, foliation, non-overlapping contours}
 
 We have implemented this new Orbital Torus Imaging (OTI) framework in \python\ using
 \jax\ \citep{jax:2018} to accelerate the model evaluation and to use automatic
@@ -840,7 +838,6 @@ and simultaneously handle the uncertainties on the phase-space coordinates.
 However, we have found that near the solar neighborhood with modern \gaia\ data, the
 uncertainty on the vertical position and velocity is typically comparable to our adopted
 pixel size, so we bin the data to speed up the evaluation of the likelihood.
-\todo{AUDIT numbers below}
 In all cases below, we set the maximum bin edge in each coordinate as three times the
 90th percentile value of the distributions of $z$ and $v_z$ for each simulated sample,
 and use 151 bins for each coordinate.
@@ -944,7 +941,8 @@ gradient has a positive slope from small values of the phase-space coordinates $
 v_z)\sim (0,0)$ to larger values (see the middle left panel of
 Figure~\ref{fig:sho-data-model}).
 We use $K_Y=8$ spline knot locations $x_k^{(Y)}$ equally spaced in $\rz$ between $0$
-and $r_{z, \textrm{max}}$ with function values at the knot locations $y_k^{(Y)}$.
+and $r_{z, \textrm{max}}\approx 0.7~\rzunit$ with function values at the knot locations
+$y_k^{(Y)}$.
 This choice is arbitrary: We could here do a form of cross-validation to set the number
 of spline knots, but we set the number for simplicity.
 
@@ -1125,7 +1123,7 @@ Section~\ref{sec:sim-sho}.
 We again use monotonic quadratic spline functions (Appendix~\ref{sec:appendix-spline})
 for both the label function and the Fourier coefficient functions.
 For the label function, we use 8 knots equally spaced in \rz\ between $0$ and $r_{z,
-\textrm{max}} \approx 0.53~\unit{\kilo\parsec\per\mega\year\tothe{1/2}}$.\todo{update}
+\textrm{max}} \approx 0.55~\rzunit$.
 However, here we use $m=\{2, 4\}$ Fourier terms with 12 and 4 spline knots,
 respectively.
 We space the Fourier coefficient spline knots equally in $\rz^2$ between $0$ and
@@ -1156,7 +1154,7 @@ values using the MCMC samples) along with the true vertical acceleration (green 
 line) evaluated at a constant $R=R_0$ in our adopted Milky Way potential model (see
 Appendix~\ref{sec:appendix-potential}).
 The acceleration precision at $z=1~\kpc$ is $\sim 1\%$ (in fractional error) with a
-$\sim 1\%$ bias. \todo{Check values here.}
+$\sim 1\%$ bias.
 
 The middle panel of Figure~\ref{fig:qiso-validation} shows eight orbits with
 equally-spaced (but arbitrary) values of the vertical velocity at $z=0$: The
@@ -1183,11 +1181,10 @@ star particles in this simulated data set.
 The right panel of Figure~\ref{fig:qiso-validation} shows (as black markers) the true
 vertical action values for a random subset of $10^5$ simulated particles on the vertical
 axis and our estimates for the vertical action of each star particle using the OTI
-model.
+model on the horizontal axis.
 We find the median fractional error of the vertical action, angle, and frequency are
-$\sim 5\%$, $\sim 5\%$, and $\sim 9\%$, respectively. \todo{Compute all numbers again,
-and do for 100,000 not 20,000}
-\todo{Also quote for midplane density}
+$\sim 5\%$, $\sim 6\%$, and $\sim 10\%$, respectively.
+But again, we do not need to assume a gravitational potential to compute the values.
 
 
 \begin{figure*}[t!]
@@ -1217,8 +1214,7 @@ left panels), the optimized OTI model (middle panel), and the residuals (right p
 Validation of the OTI model fit to the simulated quasi-isothermal disk sample. (i.e. the
 same as Figure~\ref{fig:sho-validation}, but for the simulated disk sample from
 Section~\ref{sec:sim-qiso}).
-\todo{Audit fractional error}
-The median (fractional) action error is $\approx 4\%$ for this sample dataset, but we do
+The median (fractional) action error is $\approx 6\%$ for this sample dataset, but we do
 not need to assume a gravitational potential to compute the actions.
 \label{fig:qiso-validation}
 }
@@ -1230,14 +1226,14 @@ not need to assume a gravitational potential to compute the actions.
 Real data from stellar surveys often has complex selection effects resulting from survey
 targeting and design, instrument limitations (e.g., magnitude limits), and/or real
 astronomical effects like bright stars, crowding, or dust extinction.
-All of these effects predominantly depend on position and brightness of the sources
-considered and not strongly on derived parameters like element abundances.
+All of these predominantly depend on position and brightness of the sources considered
+and not strongly on derived parameters like element abundances.
 One of the benefits of OTI is that positional selection effects do not bias our
 inferences so long as there are no strong correlations between the effective selection
 functions in position and the stellar labels considered.
 Here we demonstrate this by repeating the experiment in Section~\ref{sec:sim-qiso}, but
-now applying a $z$-dependent selection function such that the probability a source with
-a given $z$ value appears in our dataset $S(z)$ scales with
+now after applying a $z$-dependent selection function such that the probability a source
+with a given $z$ value appears in our dataset $S(z)$ scales with
 \begin{equation}
     S(z) \propto \left(\frac{|z| + 150~\unit{pc}}{2~\kpc}\right)^2 \quad .
 \end{equation}
@@ -1245,16 +1241,35 @@ a given $z$ value appears in our dataset $S(z)$ scales with
 Figure~\ref{fig:qiso-sel-data-model} again shows the input data, where the left two
 panels show the number counts of stars per pixel of vertical phase-space coordinates and
 the mean (simulated) \mgfe\ abundance per pixel.
-The missing and lower density of stars near the midplane (relative to
-Figure~\ref{fig:qiso-data-model}) is the effect of our simulated selection function.
-The middle right panel again shows the OTI model evaluated at the MAP parameters, and
-the rightmost panel shows the residuals between the data and the MAP model.
+The missing and lower density of stars near the midplane (mainly visible in the leftmost
+panel, relative to Figure~\ref{fig:qiso-data-model}) is the effect of our simulated
+selection function.
+The middle right panel again shows the OTI model evaluated at the MAP parameters after
+MCMC sampling, and the rightmost panel shows the residuals between the data and the MAP
+model.
 Even with the strong selection function, the OTI model leverages the strong (assumed)
 symmetries in the phase-space to infer the orbit shapes even when data are missing.
-Here, we find the precision of the inferred acceleration profile is lower, so that ...
-\todo{quote acceleration numbers at same height} as compared to XX for the data with no
-selection effects (Section~\ref{sec:sim-qiso}).
-\todo{Also quote for midplane density}
+
+Figure~\ref{fig:qiso-sel-validation} shows the validation of the OTI model fit to the
+data with a positional selection function imposed.
+Here, we see a potential pitfall of the flexibility of the OTI framework.
+For this and previous examples, we have used unconstrained monotonic spline functions to
+represent the label function and Fourier coefficient functions.
+This allows the model to fit the data in phase space extremely well, but can lead to
+unphysical behavior when interpreting the model in the context of dynamical quantities
+that we may want to infer.
+In this case, the gradient of the vertical acceleration changes sign at $|z| \approx
+1~\kpc$, and there is no obvious reason why this happens (i.e. the optimizer completes
+successfully and the optimized model is a good representation of the phase space data).
+The fact that the gradient of the acceleration goes positive should not be allowed in a
+physical system, as the negative of the gradient of the acceleration is related to the
+density, which must always be positive.
+
+In this case, we are not concerned by the unphysical behavior at large $z$ because we
+know that our assumption of separability in $R$--$z$ is not valid at large $z$, so any
+results for $|z| \gtrsim 1~\kpc$ or so will, in general, be biased.
+We discuss this further in Section~\ref{sec:disc-tradeoff}, including some suggestions
+for how to mitigate failures due to the flexibility of the spline model.
 
 
 \begin{figure*}[t!]
@@ -1263,9 +1278,27 @@ selection effects (Section~\ref{sec:sim-qiso}).
 \end{center}
 \caption{%
 The same as Figure~\ref{fig:sho-data-model}, but for the simulated quasi-isothermal disk
-sample from Section~\ref{sec:sim-qiso}, showing the simulated data set (left panel), the
-optimized OTI model (middle panel), and the residuals (right panel).
+sample with an imposed selection function that depends on $z$ from
+Section~\ref{sec:sim-qiso}.
+The left two panels show the simulated data set, the middle right panel shows the
+optimized OTI model, and the rightmost panel shows the residuals.
 \label{fig:qiso-sel-data-model}
+}
+\end{figure*}
+
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=\textwidth]{qiso-sel-validation.pdf}
+\end{center}
+\caption{%
+\todo{Did MCMC not work here? Where is error shaded region?}
+Validation of the OTI model fit to the simulated quasi-isothermal disk sample with an
+imposed selection function (i.e. the same as Figure~\ref{fig:sho-validation}, but for
+the simulated disk sample from Section~\ref{sec:sim-qiso-sel}).
+The model residuals in Figure~\ref{fig:qiso-sel-data-model} look reasonable, but this
+model has an unphysical gradient of the vertical acceleration (which would lead to
+negative density).
+\label{fig:qiso-sel-validation}
 }
 \end{figure*}
 
@@ -1273,8 +1306,9 @@ optimized OTI model (middle panel), and the residuals (right panel).
 \subsection{N-body Simulation with a Perturbed Disk}
 \label{sec:sim-jason}
 
-As a final demonstration, we apply the OTI framework to a section of an N-body
-simulation of a stellar disk that has been perturbed by an orbiting satellite galaxy.
+As a final demonstration with simulated data, we apply the OTI framework to a section of
+an $N$-body simulation of a stellar disk that has been perturbed by an orbiting
+satellite galaxy.
 For this, we use the $N$-body simulation M1 of the \texttt{SMUDGE}\ simulation suite
 \cite{Hunt:2021} now available on
 \texttt{SciServer}\footnote{https://sciserver.org/datasets/smudge/} \citep{sciserver}.
@@ -1295,20 +1329,18 @@ closest to the location of the Sagittarius dwarf galaxy in the Milky Way.
 However, we stress that model M1 is not meant to reproduce the Milky Way--Sagittarius
 interaction \citep[for which the reader should see][]{Bennett:2022} but instead be a
 laboratory for exploring satellite induced perturbation in an otherwise stable disk.
-
 We use a snapshot of the simulation after four pericentric passages, and six disk
 crossings of the satellite \citep[see Figure 3 of][for the orbit and mass loss of the
 satellite]{Hunt:2021}, which induces significant non-axisymmetric kinematic structure in
 the disk.
-Figure~\ref{fig:jason-mean-z-vz} shows the mean vertical position (left panel) and
-vertical velocity (right panel) of stars across the face of the simulated disk, showing
-that the disk is rich with substructure as a result of repeat satellite perturbations.
+% Figure~\ref{fig:jason-mean-z-vz} shows the mean vertical position (left panel) and
+% vertical velocity (right panel) of stars across the face of the simulated disk, showing
+% that the disk is rich with substructure as a result of repeat satellite perturbations.
 This application is a test of how well OTI can do (i.e. how biased the results are) in
 the presence of strong disequilibrium, which violates the assumptions laid out above.
 
-\todo{switch to doing multiple radii, and show density profile, acceleration in 2D plane like Danny's plots?}
 We select a small region of the disk near the solar radius, $R=8~\kpc$, by selecting all
-star particles within $|x-8~\kpc| < 1.5~\kpc$ and $|y| < 1.5~\kpc$.
+star particles within $|x - -8~\kpc| < 1~\kpc$ and $|y| < 1~\kpc$.
 We again mimic dynamical selections we could perform on real data by selecting stars
 near their guiding-center radius $R_G$, i.e. $|R-R_G| < 1~\kpc$, and with small radial
 velocity $|v_R| < 15~\kms$.
@@ -1323,14 +1355,18 @@ vertical action (below the 15th percentile values of the radial and vertical act
 respectively) and compute the mean azimuthal velocity $\langle v_\phi(R) \rangle$ as a
 function of cylindrical radius $R$, then adopt $v_c(R) = \langle v_\phi(R) \rangle$.
 
-The actions are computed using \texttt{Agama}\ \citep{Vasiliev:2019}.
+The ``true'' comparison actions are computed using \texttt{Agama}\
+\citep{Vasiliev:2019}.
 We first approximate the host galaxy potential using two multipole expansions for the
 stellar bulge and dark matter halo, and an axisymmetric \texttt{CylSpline}\ expansion
 for the disk.
 We calculate actions, angles, and frequencies in the reconstructed potential using
-\texttt{Agama}'s \texttt{ActionFinder}\ routine.
+\texttt{Agama}'s \texttt{ActionFinder}.
+We note that, in this case, there is no ground truth for the actions, as the galaxy
+potential model is only approximate and any method for computing actions will have some
+additional approximation error.
 
-We also use the orbital actions to ``paint'' element abundances onto star particles in
+We use these orbital actions to ``paint'' element abundances onto star particles in
 this idealized $N$-body simulation without gas or star formation.
 We compute the actions at an early snapshot of the simulation, after relaxation of the
 initial conditions and before the first pericentric passage of the satellite galaxy.
@@ -1339,69 +1375,83 @@ simulated \abun{Mg}{Fe} abundance value to each star particle following the proc
 explained in Section~\ref{sec:sim-qiso}.
 We then track the abundance values through to the final snapshot where the actions have
 evolved due to satellite perturbations.
+To better emphasize the disequilibrium in the space of abundances, we reduce the
+intrinsic scatter of the abundances relative to the value estimated from \apogee\ data
+(Figure~\ref{fig:mgfe-zvz}) to be $0.05 / 4$ instead of $0.05$.
 
-Figure~\ref{fig:jason-data-model} (left panel) shows the mean simulated \abun{Mg}{Fe}
-abundance of star particles in the vertical phase space of the ``solar neighborhood'' of
-the simulated stellar disk.
+The left two panels of Figure~\ref{fig:jason-data-model} show the number density of
+stars in this volume, and the mean simulated \abun{Mg}{Fe} abundance of star particles
+in the vertical phase space of the ``solar neighborhood'' of the simulated stellar disk.
 While the overall pattern is similar to the smooth examples (e.g.,
-Section~\ref{sec:sim-qiso}), the mean abundance values here show an appreciable ``phase
-spiral'' akin to the vertical phase-space spiral seen in kinematics alone
-\citep{Antoja:2018}.
-The middle panel of Figure~\ref{fig:jason-data-model} shows the mean \abun{Mg}{Fe} of
-the optimized OTI model for this simulated data set, and the right panel again shows the
-residuals.
-While the residuals are generally low, the simulated abundance spiral is faintly visible
-here in the residuals, which may bias our inferred dynamical quantities.
+Section~\ref{sec:sim-qiso}), the mean abundance values here show appreciable asymmetries
+due to the perturbations from the simulated satellite galaxy.
+The middle right panel of Figure~\ref{fig:jason-data-model} shows the mean \abun{Mg}{Fe}
+of the optimized OTI model for this simulated data set, and the rightmost panel again
+shows the residuals.
+While the residuals are generally low, the residuals here have clear structure: There is
+a faint spiral pattern in the abundance residuals that is an analog to the vertical
+phase spiral seen in \gaia\ data in the number densities of stars.
+The presence of this abundance spiral in this simulated ata should bias our inferred
+dynamical quantities.
 
 Figure~\ref{fig:jason-validation} (left panel) shows the vertical acceleration profile
 inferred by OTI for this region of the simulated disk (black line and gray shaded
-region) compared to the true acceleration profile.
+region) compared to the true acceleration profile (green dashed line).
+Within $|z| \lesssim 0.5~\kpc$, the OTI model agrees well with the true acceleration
+profile.
+However, for $|z| \gtrsim 0.5~\kpc$ the OTI model clearly diverges from the truth with a
+bias at $|z| = 1~\kpc$ of about $15\%$.
 The right panel of Figure~\ref{fig:jason-validation} shows a comparison of vertical
 action values computed with the best-fit OTI model (horizontal axis) and with Agama
 (vertical axis).
-The actions computed with Agama are not necessarily ``true'' values, as this system is
-not in equilibrium or symmetric, but the adopted potential model used to compute the
-actions is both axisymmetric and time-invariant.
-At $z=1~\kpc$, we find ... TODO
+As mentioned above, the actions computed with Agama are not necessarily ``true'' values,
+as this system is not in equilibrium or symmetric, but the adopted potential model used
+to compute the actions is both axisymmetric and time-invariant.
+We find a median fractional difference of $\sim 6\%$ for the vertical action values,
+$\sim 12\%$ for the vertical frequencies, and $\sim 5\%$ for the vertical angles.
+For real Milky Way stars, we expect similar biases due to the presence of the vertical
+phase spiral \citep{Antoja:2018}.
 
 
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=\textwidth]{jason-sim-data-model.pdf}
+\end{center}
+\caption{%
+The same as Figure~\ref{fig:sho-data-model}, but for data from a small region of a live
+$N$-body simulation of a disk galaxy perturbed by an orbiting satellite on an orbit
+similar to that predicted for the Sagittarius dwarf galaxy.
+The vertical structure of the simulated disk is perturbed repeatedly by interactions
+with the satellite, which create a vertical phase spiral in the number density of stars
+(leftmost panel) and weaker signatures of disequilibrium in simulated element abundances
+(middle left panel).
+The middle right panel again shows the optimized OTI model for these data, and the
+rightmost panel shows the (normalized) residuals.
+\label{fig:jason-data-model}
+}
+\end{figure*}
 
+\begin{figure*}[t!]
+\begin{center}
+\includegraphics[width=\textwidth]{jason-sim-validation.pdf}
+\end{center}
+\caption{%
+Validation of the OTI model fit to the vertical phase space of a small volume from an
+$N$-body simulation of a disk galaxy perturbed by an orbiting satellite.
+The left panel shows the inferred vertical acceleration profile and uncertainties (black
+line and gray shaded region) compared to the true acceleration profile (green dashed
+line).
+The inferred acceleration profile is biased for $|z| \gtrsim 0.5~\kpc$ by the
+disequilibrium.
+The right panel shows a comparison of vertical action values computed with the best-fit
+OTI model (horizontal axis) and with Agama, using a time-independent reconstruction of
+the total gravitational potential of the simulated disk and dark matter halo (vertical
+axis).
+\label{fig:jason-validation}
+}
+\end{figure*}
 
-% \section{Applications to Data} \label{sec:applications-data}
-
-% In this section, we apply the OTI framework to data from the \apogee\ surveys and \gaia\
-% Data Release 3.
-% In Section~\ref{sec:apogee}, we fit the mean \abun{Mg}{Fe} data shown in
-% Figure~\ref{fig:mgfe-zvz} to infer the vertical acceleration profile at the solar
-% radius.
-% However, we consider this to be a limited demonstration, as a full analysis of the
-% \apogee\ data is presented in a companion paper \citep{Horta:2023}.
-% In Section~\ref{sec:gaiadr3}, we use the vertical kinematics alone (using phase-space
-% data from \gaia) to demonstrate using the phase-space density itself as a stellar label.
-% We additionally show how OTI is useful as a means to fit a flexible but symmetric model
-% of the phase space to subtract and reveal the residuals, which provides a new means to
-% characterize the vertical phase-space spirals around the Milky Way.
-
-% \subsection{Data sources} \label{sec:data}
-
-% \todo{standard blurbs about APOGEE and Gaia}
-
-
-% \subsection{The vertical \abun{Mg}{Fe} gradient in the solar neighborhood with \apogee}
-% \label{sec:apogee}
-
-% TODO
-
-
-% \subsection{The local vertical phase space in \gaia\ Data Release 3}
-% \label{sec:gaiadr3}
-
-% TODO: Empirical actions - show frequency-theta with empirical
-
-% Fit the vertical acceleration in a slice around the sun, ignoring selection function.
-% Show residuals: Phase spiral-o-rama
-
-% Also compute empirical actions and compare to Agama.
+% Note: moved phase spiral / Gaia DR3 stuff to adrn/oti-phase-spiral
 
 
 \section{Discussion} \label{sec:discussion}
