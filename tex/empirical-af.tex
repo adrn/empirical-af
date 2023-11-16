@@ -747,6 +747,7 @@ the phase space coordinates.
 That is, from Equation~\ref{eq:Y-az} and applying the chain rule, we have
 \begin{equation}
     a_z = - v_z \, \pderiv{r_z}{z} \left(\pderiv{r_z}{v_z}\right)^{-1} \quad .
+    \label{eq:az-rz}
 \end{equation}
 From the definition of \rz\ and after some manipulation (see
 Appendix~\ref{sec:appendix-az}), we find that
@@ -1664,31 +1665,17 @@ TODO
 \section{Evaluation of the Vertical Acceleration from an OTI Model}
 \label{sec:appendix-az}
 
-We would like to evaluate the vertical acceleration as a function of height above the
-Galactic midplane, $a_z(z) = \frac{\partial \Phi}{\partial z}$.
-From the collisionless Boltzmann equation (Equation~\ref{eq:cbe-1d}), after rearranging
-terms, we have:
-\begin{align}
-    \frac{\partial \Phi}{\partial z} &=
-        v_z \, \frac{\partial f}{\partial z} \,
-        \left( \frac{\partial f}{\partial v_z} \right)^{-1} \\
-    &= v_z \, \frac{\partial f}{\partial \rz} \, \frac{\partial \rz}{\partial z} \,
-        \left( \frac{\partial f}{\partial \rz} \frac{\partial \rz}{\partial v_z} \right)^{-1} \\
-        &= v_z \, \frac{\partial \rz}{\partial z} \,
+We evaluate the vertical acceleration as a function of height above the Galactic
+midplane, $a_z(z) = \frac{\partial \Phi}{\partial z}$, given an OTI model and parameters
+using Equation~\ref{eq:az-rz}, reproduced here:
+\begin{equation}
+    a_z = - v_z \, \frac{\partial \rz}{\partial z} \,
         \left( \frac{\partial \rz}{\partial v_z} \right)^{-1}
-\end{align}
+\end{equation}
 The acceleration only depends on the shapes of the contours of the DF, i.e. curves of
 constant \rz, so that we only need to differentiate the distorted radius to evaluate it.
-Recall that, based on our definitions above,
-\begin{align}
-    \rzp &= \sqrt{z^2 \, \freqzero + v_z^2 \, \freqzero^{-1}} \\
-    \thzp &= \tan^{-1}\left(\frac{z}{v_z} \, \freqzero\right) \\
-    \rz &= \rzp \, \left( 1 + \sum_{m=2}^{\mmax} e_m(\rzp) \,
-        \cos(m \, \thzp) \right) \label{eq:rz-rzp}
-\end{align}
-where the sum in Equation~\ref{eq:rz-rzp} is only over even values of $m$.
-
-We must compute the partial derivatives of \rz\ with respect to $z$ and $v_z$:
+Based on our definitions above (Equations~\ref{eq:rzp}, \ref{eq:rz}, and
+\ref{eq:thz-ell}), the partial derivatives of \rz\ with respect to $z$ and $v_z$ are:
 \begin{align}
     \frac{\partial \rz}{\partial z} &=
         \frac{\partial \rzp}{\partial z} +
@@ -1697,8 +1684,7 @@ We must compute the partial derivatives of \rz\ with respect to $z$ and $v_z$:
         \frac{\partial \rzp}{\partial v_z} +
         \sum_{m=2}^{\mmax} \frac{\partial}{\partial v_z} \left[\rzp \, e_m(\rzp) \, \cos\left(m \, \thzp\right)\right]
 \end{align}
-
-To work out the resulting expressions, we will make use of the following terms:
+Plugging these in to Equation~\ref{eq:az-rz}, and using the following expressions
 \begin{alignat}{3}
     \frac{\partial \rzp}{\partial z} &= \frac{z\,\freqzero}{\rzp} \quad &; \quad
         \frac{\partial \rzp}{\partial v_z} &= \frac{v_z}{\freqzero \, \rzp} \\
@@ -1710,44 +1696,43 @@ To work out the resulting expressions, we will make use of the following terms:
         \frac{\partial e_m}{\partial v_z} &=
         \frac{\partial e_m}{\partial \rzp} \, \frac{\partial \rzp}{\partial v_z}
 \end{alignat}
-
-Our goal is to remove or collect terms that explicitly contain $v_z$, as we are going to
-take the limit as $\thzp \to \frac{\pi}{2}$, i.e. to evaluate the acceleration along the
-$z$-axis, which implies $v_z \to 0$.
-Starting with the derivative with respect to $z$:
+our goal is to remove or collect terms that explicitly contain $v_z$, as the
+acceleration should not depend on velocity (though we do not require this in the OTI
+framework).
+With this in mind, and using the expressions listed above to simplify, we find that
 \begin{align}
     \frac{\partial \rz}{\partial z} &=
         \frac{\partial \rzp}{\partial z} +
         \sum_{m=2}^{\mmax} \frac{\partial}{\partial z}
             \left[\rzp \, e_m(\rzp) \, \cos(m \, \thzp)\right]\\
-    &= \frac{\partial \rzp}{\partial z} +
-        \sum_{m=2}^{\mmax} \left[
-        \frac{\partial \rzp}{\partial z} \, e_m \, \cos(m \, \thzp)
-        + \rzp \, \frac{\partial e_m}{\partial z} \, \cos(m \, \thzp)
-        - \rzp \, e_m \, \sin(m \, \thzp) \, m \,\frac{\partial \thzp}{\partial z}\right]\\
-    &= \frac{z\,\freqzero}{\rzp} + \sum_{m=2}^{\mmax} \left[
-        \frac{z\,\freqzero}{\rzp} \, e_m \, \cos(m \, \thzp) +
-        \rzp \, \frac{z\,\freqzero}{\rzp} \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) -
-        \rzp \, e_m \, \sin(m \, \thzp) \, m \, \frac{v_z}{\rzp^2}\right]\\
-    &= \frac{z\,\freqzero}{\rzp} \, \left[
-        1 + \sum_{m=2}^{\mmax} \left(
-            e_m \, \cos(m \, \thzp) +
-                \rzp \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) -
-                m \, e_m \, \sin(m \, \thzp) \, \frac{v_z}{z\,\freqzero}
-        \right)
-    \right]\\
+    % &= \frac{\partial \rzp}{\partial z} +
+    %     \sum_{m=2}^{\mmax} \left[
+    %     \frac{\partial \rzp}{\partial z} \, e_m \, \cos(m \, \thzp)
+    %     + \rzp \, \frac{\partial e_m}{\partial z} \, \cos(m \, \thzp)
+    %     - \rzp \, e_m \, \sin(m \, \thzp) \, m \,\frac{\partial \thzp}{\partial z}\right]\\
+    % &= \frac{z\,\freqzero}{\rzp} + \sum_{m=2}^{\mmax} \left[
+    %     \frac{z\,\freqzero}{\rzp} \, e_m \, \cos(m \, \thzp) +
+    %     \rzp \, \frac{z\,\freqzero}{\rzp} \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) -
+    %     \rzp \, e_m \, \sin(m \, \thzp) \, m \, \frac{v_z}{\rzp^2}\right]\\
+    % &= \frac{z\,\freqzero}{\rzp} \, \left[
+    %     1 + \sum_{m=2}^{\mmax} \left(
+    %         e_m \, \cos(m \, \thzp) +
+    %             \rzp \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) -
+    %             m \, e_m \, \sin(m \, \thzp) \, \frac{v_z}{z\,\freqzero}
+    %     \right)
+    % \right]\\
     &= \frac{z\,\freqzero}{\rzp} \, \left[
         1 + \sum_{m=2}^{\mmax} \left(
             \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right) \,
                 \cos(m \, \thzp) -
             m \, e_m \, \frac{\sin(m \, \thzp)}{\sin(\thzp)} \, \cos(\thzp)
         \right)
-    \right]
+    \right] \label{eq:drz-pre-lim}
 \end{align}
 As we are interested in evaluating this expression along the $z$-axis, we will take the
-limit of this expression as $\thzp \to \frac{\pi}{2}$.
-For even values of $m$, as we require, the sine term in the sum will be zero, and the
-cosine terms become:
+limit of this expression as $\thzp \to \frac{\pi}{2}$, which is equivalent to the limit
+$v_z \to 0$.
+For even values of $m$, as we require, the sine term in the sum of Equation~\ref{eq:drz-pre-lim} will be zero, and the cosine terms become:
 \begin{equation}
     \cos(m \, \thzp) = (-1)^{m/2} \quad .
 \end{equation}
@@ -1766,22 +1751,22 @@ Similarly for the derivative with respect to $v_z$:
         \frac{\partial \rzp}{\partial v_z} +
         \sum_{m=2}^{\mmax} \frac{\partial}{\partial v_z}
             \left[\rzp \, e_m(\rzp) \, \cos(m \, \thzp)\right]\\
-    &= \frac{\partial \rzp}{\partial v_z} +
-        \sum_{m=2}^{\mmax} \left[
-        \frac{\partial \rzp}{\partial v_z} \, e_m \, \cos(m \, \thzp)
-        + \rzp \, \frac{\partial e_m}{\partial v_z} \, \cos(m \, \thzp)
-        - \rzp \, e_m \, \sin(m \, \thzp) \, m \,\frac{\partial \thzp}{\partial v_z}\right]\\
-    &= \frac{v_z}{\freqzero\,\rzp} + \sum_{m=2}^{\mmax} \left[
-        \frac{v_z}{\freqzero\,\rzp} \, e_m \, \cos(m \, \thzp) +
-        \rzp \, \frac{v_z}{\freqzero\,\rzp} \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) +
-        \rzp \, e_m \, \sin(m \, \thzp) \, m \, \frac{z}{\rzp^2}\right]\\
-    &= \frac{v_z}{\freqzero \, \rzp} \, \left[
-        1 + \sum_{m=2}^{\mmax} \left(
-            e_m \, \cos(m \, \thzp) +
-                \rzp \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) +
-                m \, e_m \, \sin(m \, \thzp) \, \tan(\thzp)
-        \right)
-    \right]\\
+    % &= \frac{\partial \rzp}{\partial v_z} +
+    %     \sum_{m=2}^{\mmax} \left[
+    %     \frac{\partial \rzp}{\partial v_z} \, e_m \, \cos(m \, \thzp)
+    %     + \rzp \, \frac{\partial e_m}{\partial v_z} \, \cos(m \, \thzp)
+    %     - \rzp \, e_m \, \sin(m \, \thzp) \, m \,\frac{\partial \thzp}{\partial v_z}\right]\\
+    % &= \frac{v_z}{\freqzero\,\rzp} + \sum_{m=2}^{\mmax} \left[
+    %     \frac{v_z}{\freqzero\,\rzp} \, e_m \, \cos(m \, \thzp) +
+    %     \rzp \, \frac{v_z}{\freqzero\,\rzp} \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) +
+    %     \rzp \, e_m \, \sin(m \, \thzp) \, m \, \frac{z}{\rzp^2}\right]\\
+    % &= \frac{v_z}{\freqzero \, \rzp} \, \left[
+    %     1 + \sum_{m=2}^{\mmax} \left(
+    %         e_m \, \cos(m \, \thzp) +
+    %             \rzp \, \frac{\partial e_m}{\partial \rzp} \, \cos(m \, \thzp) +
+    %             m \, e_m \, \sin(m \, \thzp) \, \tan(\thzp)
+    %     \right)
+    % \right]\\
     &= \frac{v_z}{\freqzero \, \rzp} \, \left[
         1 + \sum_{m=2}^{\mmax} \left(
             \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right) \,
@@ -1801,10 +1786,10 @@ Taking the same limit $\thzp \to \frac{\pi}{2}$, this expression becomes:
 
 Combining these expressions, we have:
 \begin{align}
-    \frac{\partial \Phi}{\partial z} &=
-        v_z \, \frac{\partial \rz}{\partial z} \,
+    a_z &=
+        -v_z \, \frac{\partial \rz}{\partial z} \,
         \left( \frac{\partial \rz}{\partial v_z} \right)^{-1}\\
-    &= v_z \, \frac{z\,\freqzero}{\rzp} \, \frac{\freqzero \, \rzp}{v_z} \,
+    &= -v_z \, \frac{z\,\freqzero}{\rzp} \, \frac{\freqzero \, \rzp}{v_z} \,
         \frac{\left[
             1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
                 \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
@@ -1812,71 +1797,75 @@ Combining these expressions, we have:
             1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
                 \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
         \right]} \\
-    &= \freqzero^2 \, z \,
+    &= -\freqzero^2 \, z \,
         \frac{\left[
             1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
                 \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
         \right]}{\left[
             1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
                 \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
-        \right]}
+        \right]} \label{eq:az-after-lim}
 \end{align}
+This expression is evaluated at $\rzp = z$.
+The multiplicative factor at the front of Equation~\ref{eq:az-after-lim} is the
+acceleration profile of a simple harmonic oscillator, and the ratio of the sums captures
+the changing orbit shapes due to the Fourier distortion functions.
 
-\section{Model Function and Parameter Choices}
-\label{sec:appendix-params}
+% \section{Model Function and Parameter Choices}
+% \label{sec:appendix-params}
 
-TODO: Move all tables down here?
+% TODO: Move all tables down here?
 
-\begin{table}
-    \begin{centering}
-\begin{tabular}{c c c}
-    \multicolumn{3}{c}{\textbf{Simple Harmonic Oscillator Model Fit}} \\ [0.75ex]
-    Parameter & Description & Bounds \\ [0.5ex]
-    \hline\hline
-    $\ln(\freqzero / (\unit{\radian\per\mega\year}))$ & Asymptotic frequency at $r_z=0$ & $(-9, 0)$\\
-    $z_0$ & Solar position relative to midplane & $(-0.5, 0.5)~\kpc$\\
-    $v_{z,0}$ & Solar velocity relative to midplane & $(-50, 50)~\kms$\\
-    $y_0^{\ln n}$ & Label function value (\abun{Mg}{Fe}) at $r_z=0$ & $(-5, 25)$\\
-    $y_{1\dots K}^{\ln n}$ & Label function derivative values & $(-25, 0)$\\
-    $y_0^{e_2}$ & $m=2$ Fourier coefficient function value at $r_z=0$ & fixed to $0$\\
-    $y_{1\dots L}^{e_2}$ & $m=2$ Fourier coefficient function derivative values & $(0, 1)$\\
-\end{tabular}
-\caption{
-    A summary of the parameters and parameter bounds used for fitting the simulated
-    simple harmonic oscillator data in Section~\ref{sec:sim-sho}.
-    We use $K=10$ spline knots for the log-phase-space density spline function and $L=5$
-    spline knots for the $m=2$ Fourier coefficient spline function.
-    In total, this model has 17 free parameters.
-    \label{tbl:sho-params}
-}
-\end{centering}
-\end{table}
+% \begin{table}
+%     \begin{centering}
+% \begin{tabular}{c c c}
+%     \multicolumn{3}{c}{\textbf{Simple Harmonic Oscillator Model Fit}} \\ [0.75ex]
+%     Parameter & Description & Bounds \\ [0.5ex]
+%     \hline\hline
+%     $\ln(\freqzero / (\unit{\radian\per\mega\year}))$ & Asymptotic frequency at $r_z=0$ & $(-9, 0)$\\
+%     $z_0$ & Solar position relative to midplane & $(-0.5, 0.5)~\kpc$\\
+%     $v_{z,0}$ & Solar velocity relative to midplane & $(-50, 50)~\kms$\\
+%     $y_0^{\ln n}$ & Label function value (\abun{Mg}{Fe}) at $r_z=0$ & $(-5, 25)$\\
+%     $y_{1\dots K}^{\ln n}$ & Label function derivative values & $(-25, 0)$\\
+%     $y_0^{e_2}$ & $m=2$ Fourier coefficient function value at $r_z=0$ & fixed to $0$\\
+%     $y_{1\dots L}^{e_2}$ & $m=2$ Fourier coefficient function derivative values & $(0, 1)$\\
+% \end{tabular}
+% \caption{
+%     A summary of the parameters and parameter bounds used for fitting the simulated
+%     simple harmonic oscillator data in Section~\ref{sec:sim-sho}.
+%     We use $K=10$ spline knots for the log-phase-space density spline function and $L=5$
+%     spline knots for the $m=2$ Fourier coefficient spline function.
+%     In total, this model has 17 free parameters.
+%     \label{tbl:sho-params}
+% }
+% \end{centering}
+% \end{table}
 
-% TODO: update the table
-\begin{table}
-    \begin{centering}
-\begin{tabular}{c c c}
-    \multicolumn{3}{c}{\textbf{Quasi-isothermal Disk Model Fit}} \\ [0.75ex]
-    Parameter & Description & Bounds \\ [0.5ex]
-    \hline\hline
-    $\ln(\freqzero / (\unit{\radian\per\mega\year}))$ & Asymptotic frequency at $r_z=0$ & $(-9, 0)$\\
-    $z_0$ & Solar position relative to midplane & $(-0.5, 0.5)~\kpc$\\
-    $v_{z,0}$ & Solar velocity relative to midplane & $(-50, 50)~\kms$\\
-    $y_0^{\ln n}$ & Label function value (\abun{Mg}{Fe}) at $r_z=0$ & $(-5, 25)$\\
-    $y_{1\dots K}^{\ln n}$ & Label function derivative values & $(-25, 0)$\\
-    $y_0^{e_2}$ & $m=2$ Fourier coefficient function value at $r_z=0$ & fixed to $0$\\
-    $y_{1\dots L}^{e_2}$ & $m=2$ Fourier coefficient function derivative values & $(0, 1)$\\
-\end{tabular}
-\caption{
-    A summary of the parameters and parameter bounds used for fitting the simulated
-    simple harmonic oscillator data in Section~\ref{sec:sim-sho}.
-    We use $K=10$ spline knots for the log-phase-space density spline function and $L=5$
-    spline knots for the $m=2$ Fourier coefficient spline function.
-    In total, this model has 17 free parameters.
-    \label{tbl:sho-params}
-}
-\end{centering}
-\end{table}
+% % TODO: update the table
+% \begin{table}
+%     \begin{centering}
+% \begin{tabular}{c c c}
+%     \multicolumn{3}{c}{\textbf{Quasi-isothermal Disk Model Fit}} \\ [0.75ex]
+%     Parameter & Description & Bounds \\ [0.5ex]
+%     \hline\hline
+%     $\ln(\freqzero / (\unit{\radian\per\mega\year}))$ & Asymptotic frequency at $r_z=0$ & $(-9, 0)$\\
+%     $z_0$ & Solar position relative to midplane & $(-0.5, 0.5)~\kpc$\\
+%     $v_{z,0}$ & Solar velocity relative to midplane & $(-50, 50)~\kms$\\
+%     $y_0^{\ln n}$ & Label function value (\abun{Mg}{Fe}) at $r_z=0$ & $(-5, 25)$\\
+%     $y_{1\dots K}^{\ln n}$ & Label function derivative values & $(-25, 0)$\\
+%     $y_0^{e_2}$ & $m=2$ Fourier coefficient function value at $r_z=0$ & fixed to $0$\\
+%     $y_{1\dots L}^{e_2}$ & $m=2$ Fourier coefficient function derivative values & $(0, 1)$\\
+% \end{tabular}
+% \caption{
+%     A summary of the parameters and parameter bounds used for fitting the simulated
+%     simple harmonic oscillator data in Section~\ref{sec:sim-sho}.
+%     We use $K=10$ spline knots for the log-phase-space density spline function and $L=5$
+%     spline knots for the $m=2$ Fourier coefficient spline function.
+%     In total, this model has 17 free parameters.
+%     \label{tbl:sho-params}
+% }
+% \end{centering}
+% \end{table}
 
 \bibliographystyle{aasjournal}
 \bibliography{refs}
