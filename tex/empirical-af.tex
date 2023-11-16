@@ -1466,38 +1466,60 @@ Orbital Torus Imaging (OTI) framework.
 % depending on vz?
 The OTI framework provides a flexible means for inferring the orbit structure and,
 therefore, the mass distribution underlying phase-mixed, tracer stellar populations.
+It works by parameterizing and modeling the shapes of contours of constant stellar
+labels in phase-space.
+By assuming that these contours correspond to orbits, we can use the changing shapes of
+the contours to infer the underlying total gravitational acceleration profile traced by
+the observed stars.
+In this way, it decouples the problem of modeling the phase space variation of stellar
+labels from the interpretation step, when this variation is mapped to the underlying
+gravitational field.
 It is flexible in that it does not require a global model for the gravitational
 potential or the \df, but instead uses the data itself to infer the orbit structure.
-However, this flexibility can come at the cost of physicality: Though it is possible to
-instantiate models with physical constraints (e.g., that the orbits follow a
-gravitational potential and the density is positive), the OTI framework does not require
-this.
-As was shown above in Section~\ref{sec:XX}, this can lead to unphysical inferred
-acceleration profiles that arise in our demonstrations both because of the presence of
-disequilibrium and because of the breakdown of our assumption of $R$--$z$ separability.
-However, what we gain from this flexibility is the ability to fit the data very well, in
-ways that more constrained equilibrium models may find stronger residuals.
-Depending on the scientific goal, this may be a worthwhile tradeoff, or one may want to
-enforce stronger constraints on the OTI model to ensure only physical solutions.
+However, this flexibility and this separation of modeling the phase space from physical
+interpretation can come at the cost of physicality.
+
+Though it is possible to instantiate an OTI model with specific physical constraints
+(e.g., that the orbits follow a gravitational potential and the density is positive),
+the general OTI framework does not require this.
+As was shown with our demonstrations above (Section~\ref{sec:applications-sim}), this
+can lead to unphysical inferred acceleration profiles that arise both because of the
+presence of disequilibrium and because of the breakdown of our assumption of $R$--$z$
+separability (Sections~\ref{sec:sim-qiso-sel}--\ref{sec:sim-jason}).
+What we gain from this flexibility is the ability to fit the phase space data very well,
+in ways that more constrained equilibrium models may find stronger residuals.
+Depending on the scientific goal, this may be a worthwhile tradeoff.
+For example, one may only want a flexible, symmetric model of the phase space to act as
+a filter to subtract and study the morphology of substructure (e.g., the \gaia\ phase
+spiral; \citealt{Antoja:2018}).
+If one wants to infer the acceleration profile or other dynamical quantities (e.g.,
+orbital actions, frequencies, or angles), the model must be validated by assessing the
+physicality of the inferred quantities.
+Or, one must use a more constrained model by adopting functional forms for the Fourier
+distortion functions and/or the label function that only permit physical solutions for
+the acceleration and density field.
+We leave this as a topic for future work.
 
 
 \subsection{The Impact of Disequilibrium} \label{sec:disc-diseq}
 
 The Milky Way's disk is known to be out of equilibrium, especially in terms of the
 vertical kinematics of stars \citep[e.g.,][]{Antoja:2018, TODO}.
-The imprint of the vertical ``phase spiral'' is apparent in both the residuals of the
-mean element abundance data in Section~\ref{sec:apogee} and in the residuals of the
-phase-space density in Section~\ref{sec:gaiadr3}.
-Non-phase-mixed structures in the vertical kinematics violates our assumptions and will
-generally bias our inferred orbit shapes and acceleration profile.
-In this work, we simply highlight this fact and do not attempt to correct for this in
-our demonstrations above.
+The imprint of the vertical ``phase spiral'' is apparent in both the phase-space density
+in the Milky Way and even in the mean element abundances of stars
+\citep{Frankel:inprep}.
+Non-phase-mixed structures in the vertical kinematics violate our assumptions and will
+generally bias our inferred orbit shapes and acceleration profile, as demonstrated in
+Section~\ref{sec:sim-jason}.
+In this work, we simply highlight this potential biase and do not attempt to correct for
+this in our demonstrations above.
 However, there is a path toward accounting for weak disequilibrium in the framework
 outlined above.
 
 In the limit that the dependence of stellar label moments on the phase-space coordinates
 is a sum of a smooth, equilibrium component and a low-amplitude, phase-coherent
-component, we can build the phase-dependence of the stellar labels into the OTI model.
+component, we can build the phase-dependence of the stellar labels directly into the OTI
+model.
 In what we have done in this work, in terms of the vertical phase space, we have assumed
 that the stellar labels $Y$ or moments of the stellar labels $\langle Y \rangle$ only
 depend on the distorted ellipsoidal radius $\rz$ (Equation~\ref{eq:rz}) such that, e.g.,
@@ -1602,11 +1624,15 @@ participating in the {\it Gaia} Multilateral Agreement.
 \end{acknowledgements}
 
 \software{
+    Agama \citep{Vasiliev:2019},
     Astropy \citep{astropy:2013, astropy:2018, astropy:2022},
     gala \citep{gala},
     IPython \citep{ipython},
-    \todo{jax, pyia, agama, matplotlib},
+    JAX \citep{jax:2018},
+    JAXOpt \citep{jaxopt:2021},
+    matplotlib \citep{Hunter:2007},
     numpy \citep{numpy},
+    pyia \citep{pyia},
     scipy \citep{scipy}.
 }
 
