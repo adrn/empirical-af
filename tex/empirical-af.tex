@@ -1641,7 +1641,19 @@ participating in the {\it Gaia} Multilateral Agreement.
 \section{A Toy Milky Way Mass Model}
 \label{sec:appendix-potential}
 
-TODO
+For the demonstrations with equilibrium models above
+(Section~\ref{sec:sim-qiso}--\ref{sec:sim-qiso-sel}), we use a simplistic mass model to
+represent the total gravitational potential of the Milky Way.
+We use a two component model consisting of a Miyamoto--Nagai disk \citep{Miyamoto:1975}
+embedded in a spherical Navarro--Frenk--White (NFW) halo \citep{Navarro:1997}.
+We adopt the following parameter values for the disk and halo, respectively: $M_{\rm
+disk} = 6.91\times 10^{10}~\unit{\Msun}$, $a = 3~\kpc$, $b = 0.25~\kpc$, $M_{\rm halo} =
+5.4\times 10^{11}~\unit{\Msun}$, $r_s = 15~\kpc$, where $a$ and $b$ are the disk scale
+length and scale height, respectively, $M_{\rm halo}$ is the scale mass of the halo (not
+the virial mass), and $r_s$ is the scale radius of the halo.
+These values are chosen so that the circular velocity at the solar radius $R_0 =
+8.3~\kpc$ is $v_c(R_0) = 229~\kms$, and other parameters are chosen to be consistent
+with the \texttt{MilkyWayPotential2022} implemented in \texttt{gala} \citep{gala}.
 
 
 \section{Monotonic Quadratic Spline}
