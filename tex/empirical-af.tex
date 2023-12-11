@@ -96,8 +96,9 @@
 
 \begin{abstract}\noindent
 
+\todo{Audit abstract given current scope of the paper.}
 The vertical positions and velocities of stars near the Sun can be used to measure the
-local dark-matter density and surface mass density, to constrain processes of scattering
+local dark-matter density and surface mass density near the Galactic disk, to constrain processes of scattering
 and heating, and to study out-of-equilibrium dynamics (e.g., with the \gaia\ phase-space
 spiral).
 With contemporary stellar surveys (e.g., \gaia, \apogee, and others), the tracers of
@@ -111,8 +112,8 @@ Once the phase space is foliated with orbits, the orbital actions, angles, mass 
 and vertical acceleration field can all be derived directly from that orbit foliation.
 We show that this model does a good job of fitting orbits to stellar abundance
 data (this is ``Orbital Torus Imaging'') and to the stellar phase-space density.
-We also show that residuals away from such fits deliver high signal-to-noise images of
-the vertical \textsl{Gaia} phase spiral.
+% We also show that residuals away from such fits deliver high signal-to-noise images of
+% the vertical \textsl{Gaia} phase spiral.
 We discuss the approximations and limitations of this approach, which is orbits-first,
 and which also presently separates the vertical and radial dynamics.
 We also release an open-source tool, \texttt{torusimaging}, to accompany this article.
@@ -122,9 +123,6 @@ We also release an open-source tool, \texttt{torusimaging}, to accompany this ar
 % \keywords{}
 
 \section{Introduction} \label{sec:intro}
-
-% TODO: Make sure there are references to figures for motivating the trends between
-% stellar labels and kinematics
 
 The distribution of mass in the Milky Way is key to
 many of the questions of astrophysics.
@@ -141,7 +139,7 @@ density profiles and different populations of substructures
 We therefore hope that precise measurements of the dark matter within the
 Milky Way and other nearby galaxies will enable new constraints on the particle nature
 of dark matter.
-For yet another, the phase-space structure in the mass encodes, at some level, the assembly history of the Galaxy, and thus the initial conditions of the primordial patch that evolved into our home in the Universe (HOGG CHALLENGES APW TO CITE THINGS HERE).
+For yet another, the phase-space structure in the mass encodes, at some level, the assembly history of the Galaxy, and thus the initial conditions of the primordial patch that evolved into our home in the Universe \todo{HOGG CHALLENGES APW TO CITE THINGS HERE}.
 
 Until direct measurements of the Galactic acceleration field become more ubiquitous
 \citep{Klioner:2021, Chakrabarti:2021}, our best hope for studying the mass and dark
@@ -159,6 +157,7 @@ Binney:2008, Magorrian:2014}.
 Contemporary stellar surveys have opened up a new dimension of Galactic dynamical
 inferences by providing an abundance of high-quality stellar label and kinematic data
 for millions to billions of stars throughout our Galaxy.
+These surveys have enabled new views of the Milky Way that extend far beyond the solar neighborhood.
 This includes the transformative astrometric, photometric, and spectroscopic data from
 the \gaia\ Mission \citep{Gaia:2016, Gaia:2023}, deep, multi-band photometric
 surveys such as the Sloan Digital Sky Survey (SDSS; \citealt{York:2000}) and Dark Energy
@@ -168,7 +167,7 @@ Many other stellar surveys are currently underway or planned for the near future
 will expand (or are expanding) the spatial volume, number of stars, number of measured
 properties, and precision of the available data for Milky Way stars (LAMOST
 \citealt{LAMOST:2022}, GALAH \citealt{DeSilva:2015, Buder:2022}, WEAVE
-\citealt{WEAVE:2023}, 4MOST \citealt{deJong:2019}, and SDSS-V \citealt{Kollmeier:2017}).
+\citealt{WEAVE:2023}, 4MOST \citealt{deJong:2019}, Rubin/LSST \citealt{LSST:2009}, and SDSS-V \citealt{Kollmeier:2017}).
 This wealth of stellar survey data presently available brings an opportunity to make
 precise measurements of the detailed structure of dark matter throughout the Milky Way
 and learn about its formation history by combining stellar label and kinematic data.
@@ -177,38 +176,38 @@ Near-invariant stellar labels are complementary to measurements of phase-space
 dimensions and can serve as invariant tracers that provide important information in
 dynamical analyses.
 This idea has already been used and exploited in many contexts.
-For example, additional stellar labels can be added in to the DF explicitly to form an
-``extended distribution function'' (eDF) $f(\bs{J}, \bs{Y})$
-\citep[e.g.,][]{Sanders:2015, Binney:2023}, where here the vector $\bs{J}$ represents
-the kinematic information and $\bs{Y}$ represents any additional stellar labels, like
+For example, additional stellar labels can be added in to the phase-space distribution function (DF) explicitly to form an
+``extended distribution function'' (eDF) $f(\bs{W}, \bs{Y})$
+\citep[e.g.,][]{Sanders:2015, Binney:2023}, where here the vector $\bs{W}$ represents
+the kinematic information (i.e. positions and velocities, or integrals of motion) and $\bs{Y}$ represents any additional stellar labels, like
 element abundances.
 This is a powerful approach because it allows for using the additional stellar labels to
-help in the dynamical inference of the potential, but again requires making choices
-about how to parametrize the form of the eDF and any covariances between the kinematics
+help in the dynamical inference of the potential, but requires making choices
+about how to parameterize the form of the eDF and any correlations between the kinematics
 and stellar labels.
 Another challenge with this approach is that it requires a model for the selection
 function of the survey to accurately infer the DF properties, which is often not modeled
 at a high enough precision to handle the model flexibility demanded by present data.
 
-A different approach has been to model and study the conditional distribution $f(\bs{J}
+A different approach has been to model and study the conditional distribution $f(\bs{W}
 \given \bs{Y})$.
 When $\bs{Y}$ represents element abundances, these are called ``mono-abundance
-populations'' (MAPs; \citealt{Bovy:2012,Bovy:2016}).
+populations'' (\citealt{Bovy:2012,Bovy:2016}).
 This approach is useful because it is conditional on the stellar labels and therefore
-does not necessarily require explicitly parameterizing the covariances between the
+does not necessarily require explicitly parameterizing the relationship between the
 kinematics and stellar labels (e.g., one can bin in the parameters $\bs{Y}$ and study
 the kinematic DF in those bins).
 However, this still requires parameterizing the form of the DF in the kinematic
 dimensions, and using a model for the selection function of the survey.
 
 We previously introduced a third approach that involves modeling the complementary
-factorization $f(\bs{Y} \given \bs{J})$, which we call ``Orbital Torus Imaging'' (OTI;
+factorization $f(\bs{Y} \given \bs{W})$, which we call ``Orbital Torus Imaging'' (OTI;
 \citealt{PW:2021}).
 This approach does not require detailed knowledge of the survey selection function in
 terms of kinematic quantities as long as there is no strong joint dependence on
 kinematics and stellar labels.
 OTI should therefore be more robust to selection effects than the eDF or
-MAP approaches to modeling Milky Way disk kinematics.
+mono-abundance population approaches to modeling Milky Way disk kinematics.
 However, it does still require parameterizing any relationships between the kinematics
 and stellar labels.
 
@@ -232,6 +231,7 @@ and limit the dimensionality of expressions.
 In particular, for now we will assume that the Galaxy is in equilibrium, that the
 distribution function (\df) is in steady state, that the system is axisymmetric, and
 that orbital motion is separable in cylindrical radius $R$ and vertical position $z$.
+This is a typical assumption for near-circular orbits in an axisymmetric potential, such as for stellar populations within the Galactic disk.
 % Our assumptions are summarized as follows:
 % \begin{description}
 %     \item[Equilibrium \& Steady State] \hfill \\
@@ -264,14 +264,15 @@ If we assume that we will always work in a small annular volume (i.e. a small ra
 $R$), the radial gradient in the left hand side will be small and can be neglected,
 leaving only the vertical terms
 \begin{equation}
-    \pderiv{a_z}{z}\biggr\rvert_R = 4\pi \, G \, \rho_z(z \,;\, R)
+    -\pderiv{a_z}{z}\biggr\rvert_R = 4\pi \, G \, \rho_z(z \,;\, R)
 \end{equation}
 where the expressions are assumed to be valid at a given radius $R$.
 % Based on historical measurements of the vertical mass density distribution of the Milky Way disk, commonly-adopted forms for $\rho_z(z)$ are a single exponential, a double exponential, or a $\textrm{sech}(z)^2$ profile.
 Very near the galactic midplane, the mass density distribution is approximately
 constant,
 \begin{equation}
-    \rho(z) \approx \rho_0
+    \rho(z\approx 0) \approx \rho_0 
+        \rightarrow a_z(z) \approx -4\pi \, G \, \rho_0 \, z
 \end{equation}
 so the shapes of orbits in the vertical phase space are close to ellipses with an aspect
 ratio set by the asymptotic midplane vertical frequency,
@@ -484,7 +485,7 @@ The left panel of Figure~\ref{fig:mgfe-zvz} shows seven orbits in the vertical p
 space (with $J_R=0$ and $J_\phi \approx 1900~\kms~\kpc$), with equally-spaced values of
 \zmax\ as computed in a Milky Way-like gravitational potential around the solar position
 (see Section~\ref{sec:appendix-potential}).
-The vertical action scales approximately with $J_z \propto \zmax^2$.
+The vertical action scales approximately with $J_z \approx \frac{1}{2} \Omega_z \, \zmax^2$.
 The middle panel shows the mean \abun{Mg}{Fe} abundance (as measured by the \apogee\
 surveys, \dr{17}; \citealt{APOGEE:2017, APOGEE:DR17}) for stars in different locations
 of the vertical phase space.
@@ -1510,7 +1511,7 @@ in the Milky Way and even in the mean element abundances of stars
 Non-phase-mixed structures in the vertical kinematics violate our assumptions and will
 generally bias our inferred orbit shapes and acceleration profile, as demonstrated in
 Section~\ref{sec:sim-jason}.
-In this work, we simply highlight this potential biase and do not attempt to correct for
+In this work, we simply highlight this potential bias and do not attempt to correct for
 this in our demonstrations above.
 However, there is a path toward accounting for weak disequilibrium in the framework
 outlined above.
