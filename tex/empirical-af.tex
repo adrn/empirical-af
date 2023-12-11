@@ -235,25 +235,12 @@ and limit the dimensionality of expressions.
 In particular, for now we will assume that the Galaxy is in equilibrium, that the
 distribution function (\df) is in steady state, that the system is axisymmetric, and
 that orbital motion is separable in cylindrical radius $R$ and vertical position $z$.
-This is a typical assumption for near-circular orbits in an axisymmetric potential, such as for stellar populations within the Galactic disk.
-% Our assumptions are summarized as follows:
-% \begin{description}
-%     \item[Equilibrium \& Steady State] \hfill \\
-%         The mass distribution (i.e. gravitational potential) and distribution function
-%         have no explicit time dependence, $\Phi = \Phi(\bs{x})$ and
-%         $f = f(\bs{x}, \bs{v})$. % $\frac{\partial f}{\partial t}=0$.
-%     \item[Axisymmetric] \hfill \\
-%         The mass distribution and potential depend only on cylindrical radius $R$ and
-%         height $z$, $\Phi = \Phi(R, z)$.
-%     \item[Separable]
-%         The gravitational potential and distribution function are separable, but we allow the parameters of the vertical potential $\Phi_z$ to depend on radius $R$,
-%         \begin{align*}
-%             \Phi(R, z) &= \Phi_R(R) + \Phi_z(z \given R)\\  % TODO: is this right??
-%             f &= f_{R,\phi}(R, v_R, L_z) \, f_z(z, v_z \given L_z) \quad .
-%         \end{align*}
-%         % $\Phi(R, z) = \Phi_R(R) + \Phi_z(z)$ and
-%         % $f = f_{R,\phi}(R, v_R, L_z) \, f_z(z, v_z \given L_z)$.
-% \end{description}
+That is, we assume that the gravitational potential is additively separable such that
+\begin{equation}
+    \Phi(R, z) \approx \Phi(R) + \Phi(z) \quad .
+\end{equation}
+This is a typical assumption for near-circular orbits in an axisymmetric potential, such
+as for stellar populations within the Galactic disk.
 
 Under the assumptions stated above, the orbits in such a system are governed by a
 gravitational acceleration field $\bs{a}(R, z)$ that is related to the underlying mass
@@ -265,8 +252,9 @@ density $\rho$ through Poisson's equation,
 \end{align}
 where $\Phi(R, z)$ is the gravitational potential.
 If we assume that we will always work in a small annular volume (i.e. a small range of
-$R$), the radial gradient in the left hand side will be small and can be neglected,
-leaving only the vertical terms
+$R$), and that the circular velocity curve as a function of radius $v_c(R)$ is nearly
+flat over the volume considered, then the radial gradient in the left hand side will be
+small and can be neglected, leaving only the vertical terms
 \begin{equation}
     -\pderiv{a_z}{z}\biggr\rvert_R = 4\pi \, G \, \rho_z(z \,;\, R)
 \end{equation}
@@ -449,9 +437,6 @@ generalize and accelerate the model construction and fitting.
 \subsection{Using stellar labels to map orbits}
 \label{sec:oti-stat}
 
-% TODO: mention "direct contouring" in phase-space density below -- and that the
-% phase-space density itself can be a label
-
 % From the shapes of these orbits, we can then infer the underlying acceleration field
 % and therefore constrain the mass distribution of the Galaxy.
 % We will also assume that, for each star, we have measurements of a set of invariant
@@ -489,7 +474,8 @@ The left panel of Figure~\ref{fig:mgfe-zvz} shows seven orbits in the vertical p
 space (with $J_R=0$ and $J_\phi \approx 1900~\kms~\kpc$), with equally-spaced values of
 \zmax\ as computed in a Milky Way-like gravitational potential around the solar position
 (see Section~\ref{sec:appendix-potential}).
-The vertical action scales approximately with $J_z \approx \frac{1}{2} \Omega_z \, \zmax^2$.
+The vertical action scales approximately with $J_z \approx \frac{1}{2} \Omega_z \,
+\zmax^2$.
 The middle panel shows the mean \abun{Mg}{Fe} abundance (as measured by the \apogee\
 surveys, \dr{17}; \citealt{APOGEE:2017, APOGEE:DR17}) for stars in different locations
 of the vertical phase space.
@@ -519,6 +505,8 @@ In the context of vertical dynamics, the vertical action $J_z$ is, by constructi
 constant along an orbit, so any time-invariant function of the vertical action is also
 constant along an orbit.
 
+\todo{try Larry's approach to describing this instead}
+
 With a suitably large sample of stars, this provides a means to measure the orbital
 structure the acceleration field of the Galaxy directly, without having to assume a form
 for the potential and without needing to compute the actions.
@@ -528,12 +516,15 @@ stellar label $Y$ to ``contour'' the orbits in the vertical phase space $(z,
 v_z)$.\footnote{We note that this idea, in the context of using the phase-space density
 as a stellar label, was briefly discussed in \citet{Kuijken:1989a} and referred to as
 ``direct contouring'' of the DF.}
+In this, we take the stellar label $Y$ to be a smooth and differentiable function of the
+phase space coordinates $Y = Y(\bs{w})$.
 From the orbit contours, we can directly measure the vertical acceleration $a_z$: For
 any invariant stellar label $Y$, the total time derivative $\Deriv{Y}{t}$ must be equal
 to zero,
 \begin{align}
     \Deriv{Y}{t} &= \pderiv{Y}{t} +
-        \pderiv{Y}{z} \, \deriv{z}{t} + \pderiv{Y}{v_z} \, \deriv{v_z}{t} = 0 \\
+        \pderiv{Y}{z} \, \deriv{z}{t} + \pderiv{Y}{v_z} \, \deriv{v_z}{t} = 0
+        \label{eq:tot-time-deriv}\\
     0 &= \pderiv{Y}{z} \, v_z + \pderiv{Y}{v_z} \, a_z
 \end{align}
 where $a_z = \deriv{v_z}{t}$ is the vertical acceleration.
@@ -543,6 +534,11 @@ Rearranging this expression, we can write the vertical acceleration as
 \end{align}
 where the right hand side and partial derivatives are evaluated along a curve of
 constant $Y$.
+The expression above for the total time derivative (Equation~\ref{eq:tot-time-deriv}) is
+equivalent to the collisionless Boltzmann equation (CBE; see, e.g.,
+\citealt{Binney:2008}) thanks to Liouville's theorem: If the phase-space density is
+constant along trajectories, then the stellar label $Y$ can be taken to be the local
+phase-space probability density $Y = f$.
 
 A simple example of this is the case where the stellar label $Y$ is a function of the
 vertical energy $Y=Y(E_z)$ where
@@ -552,13 +548,13 @@ vertical energy $Y=Y(E_z)$ where
 and $\Phi_z(z)$ is the vertical potential.
 In this case, the partial derivatives in Equation~\ref{eq:Y-az} are:
 \begin{align}
-    \pderiv{Y}{z} &= \pderiv{Y}{E_z} \, \pderiv{\Phi_z}{z}\\
-    \pderiv{Y}{v_z} &= \pderiv{Y}{E_z} \, v_z
+    \pderiv{Y}{z} &= \deriv{Y}{E_z} \, \deriv{\Phi_z}{z}\\
+    \pderiv{Y}{v_z} &= \deriv{Y}{E_z} \, v_z
 \end{align}
 so that
 \begin{align}
-    a_z &= - v_z \, \pderiv{\Phi_z}{z} \, \pderiv{Y}{E_z} \, \left(\pderiv{Y}{E_z} \, v_z\right)^{-1} \\
-    a_z &= - \pderiv{\Phi_z}{z}
+    a_z &= - v_z \, \deriv{\Phi_z}{z} \, \deriv{Y}{E_z} \, \left(\deriv{Y}{E_z} \, v_z\right)^{-1} \\
+    a_z &= - \deriv{\Phi_z}{z}
 \end{align}
 as expected.
 
@@ -589,7 +585,7 @@ Two subtleties complicate this idea.
 For one, the labels are not deterministic functions of the actions.
 For example, processes that cause dynamical heating of stars, which may introduce a
 correlations between the vertical action, stellar age, and metallicity are inherently
-stochastic \citep{TODO}.
+stochastic \citep{Nordstrom:2004, Hayden:2022}.
 This means that, in general, for any value of the vertical action $J_z$, there will be
 a distribution of possible stellar label values.
 A second complication is that we only have a finite sample of stars, so we will
@@ -1507,8 +1503,9 @@ We leave this as a topic for future work.
 
 \subsection{The Impact of Disequilibrium} \label{sec:disc-diseq}
 
-The Milky Way's disk is known to be out of equilibrium, especially in terms of the
-vertical kinematics of stars \citep[e.g.,][]{Antoja:2018, TODO}.
+The Milky Way's disk is now known to be out of equilibrium, especially in terms of the
+vertical kinematics of stars \citep[e.g.,][]{Antoja:2018, Katz:2018, Ramos:2018,
+Tian:2018, Laporte:2019, Khanna:2019, Hunt:2022, Darragh-Ford:2023}.
 The imprint of the vertical ``phase spiral'' is apparent in both the phase-space density
 in the Milky Way and even in the mean element abundances of stars
 \citep{Frankel:inprep}.
