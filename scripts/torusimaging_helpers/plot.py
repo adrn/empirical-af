@@ -179,7 +179,7 @@ def plot_data_model_residual(
     axes[1].set_title("Label Data", fontsize=title_fontsize, pad=title_pad)
     axes[2].set_title("OTI Model", fontsize=title_fontsize, pad=title_pad)
     axes[3].set_title("Residuals", fontsize=title_fontsize, pad=title_pad)
-    fig.suptitle(f"{suptitle1} {suptitle2}", fontsize=24)
+    fig.suptitle(f"{suptitle1} {suptitle2}", fontsize=20)
 
     # Labels
     axes[0].set_ylabel(f"$z$ [{u.kpc:latex_inline}]")
