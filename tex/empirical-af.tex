@@ -2,17 +2,9 @@
 % - Widmark papers
 % - https://arxiv.org/abs/2303.18040
 % - https://arxiv.org/abs/2310.10225
-
-
-% \begin{figure}[!t]
-% \begin{center}
-% % \includegraphics[width=0.9\textwidth]{visitstats.pdf}
-% {\color{red} Figure placeholder}
-% \end{center}
-% \caption{ Stuff.
-% \label{fig:chiplots}
-% }
-% \end{figure}
+% - Add discussion of J_z vs. Omega_z and one demonstration of recovered Omega_zs
+% - Suptitle spacings
+% - Update Danny paper bibtex and cite it somewhere, or multiple places
 
 \PassOptionsToPackage{usenames,dvipsnames}{xcolor}
 \documentclass[modern]{aastex631}
@@ -23,6 +15,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{cancel}
 \usepackage{booktabs}
 \usepackage{graphicx}
 % \usepackage{color}
@@ -44,10 +37,12 @@
 \newcommand{\freqzero}{\ensuremath{\Omega_0}}
 \newcommand{\mmax}{\ensuremath{M}}
 \newcommand{\rz}{\ensuremath{r_z}}
-% \newcommand{\rzp}{\ensuremath{r_z'}}
 \newcommand{\rzp}{\ensuremath{\tilde{r}_z}}
 \newcommand{\thz}{\ensuremath{\theta_z}}
 \newcommand{\thzp}{\ensuremath{\tilde{\theta}_z}}
+
+\newcommand{\meanY}{\ensuremath{\langle Y \rangle}}
+\newcommand{\meanYf}{\ensuremath{\left(\meanY \, f\right)}}
 
 \shorttitle{}
 \shortauthors{Price-Whelan et al.}
@@ -505,58 +500,97 @@ In the context of vertical dynamics, the vertical action $J_z$ is, by constructi
 constant along an orbit, so any time-invariant function of the vertical action is also
 constant along an orbit.
 
-\todo{try Larry's approach to describing this instead}
-
 With a suitably large sample of stars, this provides a means to measure the orbital
 structure the acceleration field of the Galaxy directly, without having to assume a form
 for the potential and without needing to compute the actions.
 As long as the gradient in stellar labels as a function of vertical action
-$\deriv{Y}{J}$ is non-zero (i.e. not flat), we can use the level sets of constant
+$\deriv{Y}{J_z}$ is non-zero (i.e. not flat), we can use the level sets of constant
 stellar label $Y$ to ``contour'' the orbits in the vertical phase space $(z,
 v_z)$.\footnote{We note that this idea, in the context of using the phase-space density
 as a stellar label, was briefly discussed in \citet{Kuijken:1989a} and referred to as
 ``direct contouring'' of the DF.}
-In this, we take the stellar label $Y$ to be a smooth and differentiable function of the
-phase space coordinates $Y = Y(\bs{w})$.
-From the orbit contours, we can directly measure the vertical acceleration $a_z$: For
-any invariant stellar label $Y$, the total time derivative $\Deriv{Y}{t}$ must be equal
-to zero,
+In reality, the stellar labels are not deterministic functions of the action or of the
+vertical phase space: There is a distribution of abundance values at any location of the
+phase space $p(Y \given z, v_z)$, as is apparent in Figure~\ref{fig:mgfe-zvz}.
+This is expected, given that the processes that induce correlations between the vertical
+action, stellar age, and metallicity are inherently stochastic \citep{Nordstrom:2004,
+Hayden:2022}.
+We will show, however, that moments of the stellar label distribution at different
+locations of phase space still enable us to contour the orbits because the distribution
+of abundances changes across the vertical phase space.
+
+To see this, we define the extended distribution function (eDF) $\mathcal{F}$ of the
+vertical phase space as
+\begin{equation}
+    \mathcal{F}(z, v_z, Y, t) = f(z, v_z, t) \, p(Y \given z, v_z, t)  \label{eq:edf}
+\end{equation}
+where $f(z, v_z, t)$ is the phase-space density or distribution function (DF) and $p(Y
+\given z, v_z, t)$ is the distribution of stellar labels at each location in phase space
+and time \citep[see also][]{Sanders:2015}.
+The DF necessarily satisfies the collisionless Boltzmann equation (CBE; see, e.g.,
+\citealt{Binney:2008}),
 \begin{align}
-    \Deriv{Y}{t} &= \pderiv{Y}{t} +
-        \pderiv{Y}{z} \, \deriv{z}{t} + \pderiv{Y}{v_z} \, \deriv{v_z}{t} = 0
-        \label{eq:tot-time-deriv}\\
-    0 &= \pderiv{Y}{z} \, v_z + \pderiv{Y}{v_z} \, a_z
+    \Deriv{f}{t} &= 0 \\
+    0 &= \pderiv{f}{t} + v_z \, \pderiv{f}{z} - \deriv{\Phi}{z} \, \pderiv{f}{v_z}
+        \label{eq:cbe}
+        \quad .
 \end{align}
-where $a_z = \deriv{v_z}{t}$ is the vertical acceleration.
-Rearranging this expression, we can write the vertical acceleration as
+Plugging the eDF into the CBE, we find that
 \begin{align}
-    a_z &= - v_z \, \pderiv{Y}{z} \left(\pderiv{Y}{v_z}\right)^{-1} \label{eq:Y-az}
+    \Deriv{\mathcal{F}}{t} &=
+        \pderiv{\mathcal{F}}{t} +
+        \pderiv{\mathcal{F}}{z} \, \deriv{z}{t} +
+        \pderiv{\mathcal{F}}{v_z} \, \deriv{v_z}{t} +
+        \pderiv{\mathcal{F}}{Y} \, \cancelto{0}{\deriv{Y}{t}} \label{eq:F-cbe}
+\end{align}
+where we assume that the stellar labels are time invariant so that $\deriv{Y}{t} = 0$.
+If we multiply Equation~\ref{eq:F-cbe} by $Y$ and integrate over all $Y$ --- i.e.
+compute the first moment of the eDF, $\meanY = \int \dd{Y} \, Y \mathcal{F}$
+--- we get an expression in terms of the mean stellar label:
+\begin{align}
+    \Deriv{\meanYf}{t} &=
+        \pderiv{\meanYf}{t} +
+        \pderiv{\meanYf}{z} \, \deriv{z}{t} +
+        \pderiv{\meanYf}{v_z} \, \deriv{v_z}{t} \label{eq:cbe-Yf} \\
+    0 &= \cancelto{0}{\Deriv{f}{t}} +
+        \pderiv{\meanY}{t} +
+        \pderiv{\meanY}{z} \, \deriv{z}{t} +
+        \pderiv{\meanY}{v_z} \, \deriv{v_z}{t}  \label{eq:cbe-Y}
+\end{align}
+where in moving from Equation~\ref{eq:cbe-Yf} to Equation~\ref{eq:cbe-Y}, we expanded
+the derivatives and used the definition of the CBE to cancel the first term of
+Equation~\ref{eq:cbe-Y}.
+Rearranging Equation~\ref{eq:cbe-Y}, we can write the vertical acceleration as
+\begin{align}
+    a_z &= - v_z \, \pderiv{\meanY}{z} \left(\pderiv{\meanY}{v_z}\right)^{-1}
+    \label{eq:Y-az}
 \end{align}
 where the right hand side and partial derivatives are evaluated along a curve of
-constant $Y$.
-The expression above for the total time derivative (Equation~\ref{eq:tot-time-deriv}) is
-equivalent to the collisionless Boltzmann equation (CBE; see, e.g.,
-\citealt{Binney:2008}) thanks to Liouville's theorem: If the phase-space density is
-constant along trajectories, then the stellar label $Y$ can be taken to be the local
-phase-space probability density $Y = f$.
+constant $\meanY$, and we have replaced $\deriv{v_z}{t} = a_z$.
 
-A simple example of this is the case where the stellar label $Y$ is a function of the
-vertical energy $Y=Y(E_z)$ where
-\begin{equation}
-    E_z = \frac{1}{2} v_z^2 + \Phi_z(z)
-\end{equation}
-and $\Phi_z(z)$ is the vertical potential.
-In this case, the partial derivatives in Equation~\ref{eq:Y-az} are:
-\begin{align}
-    \pderiv{Y}{z} &= \deriv{Y}{E_z} \, \deriv{\Phi_z}{z}\\
-    \pderiv{Y}{v_z} &= \deriv{Y}{E_z} \, v_z
-\end{align}
-so that
-\begin{align}
-    a_z &= - v_z \, \deriv{\Phi_z}{z} \, \deriv{Y}{E_z} \, \left(\deriv{Y}{E_z} \, v_z\right)^{-1} \\
-    a_z &= - \deriv{\Phi_z}{z}
-\end{align}
-as expected.
+In the next section, we develop a method for inferring the vertical acceleration profile
+$a_z(z)$ that uses this motivation.
+In particular, it does not assume a form for the potential and instead parametrizes the
+dependence of $\meanY$ on the vertical phase space coordinates, which is sufficient for
+inferring the acceleration (Equation~\ref{eq:Y-az}).
+
+% A simple example of this is the case where the stellar label $Y$ is a function of the
+% vertical energy $Y=Y(E_z)$ where
+% \begin{equation}
+%     E_z = \frac{1}{2} v_z^2 + \Phi_z(z)
+% \end{equation}
+% and $\Phi_z(z)$ is the vertical potential.
+% In this case, the partial derivatives in Equation~\ref{eq:Y-az} are:
+% \begin{align}
+%     \pderiv{Y}{z} &= \deriv{Y}{E_z} \, \deriv{\Phi_z}{z}\\
+%     \pderiv{Y}{v_z} &= \deriv{Y}{E_z} \, v_z
+% \end{align}
+% so that
+% \begin{align}
+%     a_z &= - v_z \, \deriv{\Phi_z}{z} \, \deriv{Y}{E_z} \, \left(\deriv{Y}{E_z} \, v_z\right)^{-1} \\
+%     a_z &= - \deriv{\Phi_z}{z}
+% \end{align}
+% as expected.
 
 \begin{figure*}[t!]
 \begin{center}
@@ -581,33 +615,30 @@ constant-frequency ellipses, but now shown in the elliptical radius, \rzp\
 }
 \end{figure*}
 
-Two subtleties complicate this idea.
-For one, the labels are not deterministic functions of the actions.
-For example, processes that cause dynamical heating of stars, which may introduce a
-correlations between the vertical action, stellar age, and metallicity are inherently
-stochastic \citep{Nordstrom:2004, Hayden:2022}.
-This means that, in general, for any value of the vertical action $J_z$, there will be
-a distribution of possible stellar label values.
-A second complication is that we only have a finite sample of stars, so we will
-never observe two or more stars on \emph{exactly} the same orbit.
-Together, these necessitate working with the distribution of stellar label values
-conditioned on action, $p(\bs{Y} \given J_z(z, v_z))$, such that the distribution of
-stellar label values has properties or parameters that vary smoothly with the vertical
-action.
-
-In the next section, we develop a method for fitting the contours of constant stellar
-label that does not assume a form for the potential $\Phi_z(z)$.
-Instead of modeling the full distribution $p(\bs{Y} \given z, v_z)$, we assume that our
-data are measurements of \emph{moments} of the distribution at different locations in
-phase-space.
-Contours of constant moments of the stellar label distribution equivalently satisfy the
-expressions above (e.g., Equation~\ref{eq:Y-az}).
-For example, the mean value of a stellar label $\mean{Y}$ is
-\begin{equation}
-    \mean{Y} = \int \dd Y \, Y \, p(Y \given J_z) \quad .
-\end{equation}
-It is straightforward to show that this also satisfies $\Deriv{\mean{Y}}{t} = 0$, along
-with other moments of this distribution.
+% Two subtleties complicate this idea.
+% For one, the labels are not deterministic functions of the actions.
+% For example, processes that cause dynamical heating of stars, which may introduce a
+% correlations between the vertical action, stellar age, and metallicity are inherently
+% stochastic \citep{Nordstrom:2004, Hayden:2022}.
+% This means that, in general, for any value of the vertical action $J_z$, there will be
+% a distribution of possible stellar label values.
+% A second complication is that we only have a finite sample of stars, so we will
+% never observe two or more stars on \emph{exactly} the same orbit.
+% Together, these necessitate working with the distribution of stellar label values
+% conditioned on action, $p(\bs{Y} \given J_z(z, v_z))$, such that the distribution of
+% stellar label values has properties or parameters that vary smoothly with the vertical
+% action.
+% Instead of modeling the full distribution $p(\bs{Y} \given z, v_z)$, we assume that our
+% data are measurements of \emph{moments} of the distribution at different locations in
+% phase-space.
+% Contours of constant moments of the stellar label distribution equivalently satisfy the
+% expressions above (e.g., Equation~\ref{eq:Y-az}).
+% For example, the mean value of a stellar label $\mean{Y}$ is
+% \begin{equation}
+%     \mean{Y} = \int \dd Y \, Y \, p(Y \given J_z) \quad .
+% \end{equation}
+% It is straightforward to show that this also satisfies $\Deriv{\mean{Y}}{t} = 0$, along
+% with other moments of this distribution.
 
 
 % - But: f(z, vz) = C define contours
@@ -831,9 +862,15 @@ We start by using a one-dimensional simple harmonic oscillator potential
 from an $N$-body simulation of a disk galaxy perturbed by an orbiting satellite
 (Section~\ref{sec:sim-jason}).
 
-As input to OTI, we bin the data into pixels of vertical position $z$ and velocity $v_z$
-and compute the mean abundance value in each pixel, but we do not simulate uncertainties
-on the phase-space coordinates.
+Each demonstration below follows the same general procedure: (1) We bin the data into
+pixels of the vertical phase space ($z$--$v_z$) and compute the mean element abundance
+in each pixel, (2) we fit the OTI model to the binned data and then use a Markov Chain
+Monte Carlo (MCMC) sampler to sample the posterior distribution of the model parameters,
+and (3) we compute the vertical acceleration profile and other dynamical quantities from
+the fitted and sampled models.
+Note that, as input to OTI, we bin the data into pixels of vertical position $z$ and
+velocity $v_z$ and compute the mean abundance value in each pixel, but we do not
+simulate uncertainties on the phase-space coordinates.
 This is not a requirement of OTI: We could also use the individual particle positions
 and simultaneously handle the uncertainties on the phase-space coordinates.
 However, we have found that near the solar neighborhood with modern \gaia\ data, the
