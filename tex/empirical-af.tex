@@ -560,13 +560,18 @@ compute the first moment of the eDF, $\meanY = \int \dd{Y} \, Y \mathcal{F}$
 where in moving from Equation~\ref{eq:cbe-Yf} to Equation~\ref{eq:cbe-Y}, we expanded
 the derivatives and used the definition of the CBE to cancel the first term of
 Equation~\ref{eq:cbe-Y}.
-Rearranging Equation~\ref{eq:cbe-Y}, we can write the vertical acceleration as
+Rearranging Equation~\ref{eq:cbe-Y}, and dropping the time derivative of $\meanY$ under
+our assumption of equilibrium, we can write the vertical acceleration as
 \begin{align}
     a_z &= - v_z \, \pderiv{\meanY}{z} \left(\pderiv{\meanY}{v_z}\right)^{-1}
     \label{eq:Y-az}
 \end{align}
 where the right hand side and partial derivatives are evaluated along a curve of
 constant $\meanY$, and we have replaced $\deriv{v_z}{t} = a_z$.
+This works for any $Y$ moments of the eDF, $\mathcal{M}_Y = \int \dd{Y} \, M(Y) \,
+\mathcal{F}$, where $M(Y)$ is a function of $Y$ that defines the moment of interest.
+For simplicity below, as with the expressions above, we only use $M(Y) = Y$ so that we
+use the mean stellar label $\meanY$ as our moment of choice.
 
 In the next section, we develop a method for inferring the vertical acceleration profile
 $a_z(z)$ that uses this motivation.
@@ -755,17 +760,17 @@ the vertical phase space, and the right panel shows the same orbits and Fourier 
 the elliptical radius and angle coordinates, \rzp\ and \thzp.
 
 When fitting stellar label data, we assume that the contours of constant stellar label
-are only functions of the distorted radius, \rz\ (Equation~\ref{eq:rz}).
-This then enforces that \rz\ is constant along a contour of constant label value and,
+moments are only functions of the distorted radius, \rz\ (Equation~\ref{eq:rz}). This
+then enforces that \rz\ is constant along a contour of constant label value and,
 therefore, nearly constant along a vertical orbit.
-We then need to specify a functional form for the dependence of the stellar label moment
-on \rz, $Y(\rz)$, which we assume is a smooth function of \rz\ but is otherwise
+We then need to specify a functional form for the dependence of the mean stellar label
+on \rz, $\meanY(\rz)$, which we assume is a smooth function of \rz\ but is otherwise
 customizable (we adopt choices below in the demonstrations in
-Sections~\ref{sec:applications-sim}--\ref{sec:applications-data}).
+Section~\ref{sec:applications-sim}.
 The model components that must be specified in order to fit this model given a sample of
 stellar phase-space positions and labels are: the Fourier distortion amplitude functions
 $\epsilon_m(\rzp)$ for all $m$ orders up to the specified \mmax, the functional form and
-any parameters of the stellar label function $Y(\rz)$, and the asymptotic midplane
+any parameters of the stellar label function $\meanY(\rz)$, and the asymptotic midplane
 orbital frequency \freqzero.
 As we will be fitting this model to data where we do not know the true zero-point
 position or velocity of the midplane, we additionally include parameters $z_0$ and
