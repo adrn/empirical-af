@@ -172,18 +172,18 @@ def main_sel():
     model, bounds, init_params = oti.TorusImaging1DSpline.auto_init(
         bdata,
         label_knots=8,
-        e_knots={2: 12, 4: 4},
+        e_knots={2: 8, 4: 4},
         label_l2_sigma=1.0,
         label_smooth_sigma=0.5,
         e_l2_sigmas={2: 1.0, 4: 1.0},
         e_smooth_sigmas={2: 0.1, 4: 0.1},
-        dacc_strength=100.0,
+        dacc_strength=0.0,
         label_knots_spacing_power=0.75,
         e_knots_spacing_power=0.5,
     )
 
     init_params["e_params"][2]["vals"] = np.full_like(
-        init_params["e_params"][2]["vals"], -0.5
+        init_params["e_params"][2]["vals"], np.log(0.1 / model._label_knots.max())
     )
     init_params["e_params"][4]["vals"] = np.full_like(
         init_params["e_params"][4]["vals"], np.log(0.05 / model._label_knots.max())
@@ -228,7 +228,7 @@ def main_sel():
 
     print("Running MCMC...")
     states, mcmc_samples = model.mcmc_run_label(
-        bdata, p0=res.params, bounds=bounds, num_warmup=1000, num_steps=1000
+        bdata, p0=res.params, bounds=bounds, num_warmup=2000, num_steps=4000
     )
     with open(cache_path / f"{short_name}-mcmc-results.pkl", "wb") as f:
         pickle.dump((states, mcmc_samples), f)
