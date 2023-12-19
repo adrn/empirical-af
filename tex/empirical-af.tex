@@ -1,6 +1,5 @@
 % Notes:
 % - Add discussion of J_z vs. Omega_z and one demonstration of recovered Omega_zs
-% - Suptitle spacings
 
 \PassOptionsToPackage{usenames,dvipsnames}{xcolor}
 \documentclass[modern]{aastex631}
@@ -510,7 +509,7 @@ as a stellar label, was briefly discussed in \citet{Kuijken:1989a} and referred 
 ``direct contouring'' of the DF.}
 In reality, the stellar labels are not deterministic functions of the action or of the
 vertical phase space: There is a distribution of abundance values at any location of the
-phase space $p(Y \given z, v_z)$, as is apparent in Figure~\ref{fig:mgfe-zvz}.
+phase space $p_Y(Y \given z, v_z)$, as is apparent in Figure~\ref{fig:mgfe-zvz}.
 This is expected, given that the processes that induce correlations between the vertical
 action, stellar age, and metallicity are inherently stochastic \citep{Nordstrom:2004,
 Hayden:2022}.
@@ -518,49 +517,53 @@ We will show, however, that moments of the stellar label distribution at differe
 locations of phase space still enable us to contour the orbits because the distribution
 of abundances changes across the vertical phase space.
 
-To see this, we define the extended distribution function (eDF) $\mathcal{F}$ of the
-vertical phase space as
+To see this, we define the (steady-state) extended distribution function (eDF)
+$\mathcal{F}$ of the vertical phase space and stellar label $Y$ as
 \begin{equation}
-    \mathcal{F}(z, v_z, Y, t) = f(z, v_z, t) \, p(Y \given z, v_z, t)  \label{eq:edf}
+    \mathcal{F}(z, v_z, Y) = f(z, v_z) \, p_Y(Y \given z, v_z)  \label{eq:edf}
 \end{equation}
-where $f(z, v_z, t)$ is the phase-space density or distribution function (DF) and $p(Y
-\given z, v_z, t)$ is the distribution of stellar labels at each location in phase space
-and time \citep[see also][]{Sanders:2015}.
+where $f(z, v_z)$ is the distribution function (DF) and $p_Y(Y \given z, v_z)$ is the
+distribution of stellar labels at each location in phase space.
 The DF necessarily satisfies the collisionless Boltzmann equation (CBE; see, e.g.,
-\citealt{Binney:2008}),
+\citealt{Binney:2008}), assuming stars are not created or destroyed, which is a
+statement of the continuity equation for the phase-space density $f$:
 \begin{align}
     \Deriv{f}{t} &= 0 \\
-    0 &= \pderiv{f}{t} + v_z \, \pderiv{f}{z} - \deriv{\Phi}{z} \, \pderiv{f}{v_z}
-        \label{eq:cbe}
-        \quad .
+    0 &= \cancel{\pderiv{f}{t}} + \dot{z} \, \pderiv{f}{z} + \dot{v_z} \, \pderiv{f}{v_z} \\
+    &= v_z \, \pderiv{f}{z} - \deriv{\Phi}{z} \, \pderiv{f}{v_z} \label{eq:cbe}
 \end{align}
-Plugging the eDF into the CBE, we find that
+where $\dot{x} = \deriv{x}{t}$.
+The eDF $\mathcal{F}$ also satisfies a continuity equation: Defining the vector $\bs{w} = (z, v_z, Y)$, we have
 \begin{align}
-    \Deriv{\mathcal{F}}{t} &=
-        \pderiv{\mathcal{F}}{t} +
-        \pderiv{\mathcal{F}}{z} \, \deriv{z}{t} +
-        \pderiv{\mathcal{F}}{v_z} \, \deriv{v_z}{t} +
-        \pderiv{\mathcal{F}}{Y} \, \cancelto{0}{\deriv{Y}{t}} \label{eq:F-cbe}
+    \pderiv{\mathcal{F}}{t} + \pderiv{}{\bs{w}}
+        \cdot (\mathcal{F} \, \dot{\bs{w}}) &= 0 \\
+    \pderiv{}{\bs{w}} \cdot (\mathcal{F} \, \dot{\bs{w}}) &=
+        \pderiv{}{z} \left(\mathcal{F} \, \dot{z}\right) +
+        \pderiv{}{v_z} \left(\mathcal{F} \, \dot{v}_z\right) +
+        \pderiv{}{Y} \cancelto{0}{\left(\mathcal{F} \, \dot{Y}\right)} \\
+    &= \dot{z} \, \pderiv{\mathcal{F}}{z} + \dot{v}_z \, \pderiv{\mathcal{F}}{v_z}
+    \label{eq:F-cbe}
 \end{align}
-where we assume that the stellar labels are time invariant so that $\deriv{Y}{t} = 0$.
-If we multiply Equation~\ref{eq:F-cbe} by $Y$ and integrate over all $Y$ --- i.e.
-compute the first moment of the eDF, $\meanY = \int \dd{Y} \, Y \mathcal{F}$
---- we get an expression in terms of the mean stellar label:
+where $\deriv{Y}{t} = 0$ as the stellar labels are assumed to be time invariant.
+By expanding the derivatives in Equation~\ref{eq:F-cbe}, this expression simplifies to
 \begin{align}
-    \Deriv{\meanYf}{t} &=
-        \pderiv{\meanYf}{t} +
-        \pderiv{\meanYf}{z} \, \deriv{z}{t} +
-        \pderiv{\meanYf}{v_z} \, \deriv{v_z}{t} \label{eq:cbe-Yf} \\
-    0 &= \cancelto{0}{\Deriv{f}{t}} +
-        \pderiv{\meanY}{t} +
-        \pderiv{\meanY}{z} \, \deriv{z}{t} +
-        \pderiv{\meanY}{v_z} \, \deriv{v_z}{t}  \label{eq:cbe-Y}
+    \dot{z} \, \pderiv{\mathcal{F}}{z} + \dot{v}_z \, \pderiv{\mathcal{F}}{v_z}
+    &= p_y \,
+    \cancelto{0}{\left(\dot{z} \, \pderiv{f}{z} + \dot{v}_z \, \pderiv{f}{v_z}\right)}
+    + f \, \left(\dot{z} \, \pderiv{p_Y}{z} + \dot{v}_z \, \pderiv{p_Y}{v_z}\right)
+    \label{eq:cbe-py-tmp} \\
+    0 &= \dot{z} \, \pderiv{p_Y}{z} + \dot{v}_z \, \pderiv{p_Y}{v_z} \label{eq:cbe-py}
 \end{align}
-where in moving from Equation~\ref{eq:cbe-Yf} to Equation~\ref{eq:cbe-Y}, we expanded
-the derivatives and used the definition of the CBE to cancel the first term of
-Equation~\ref{eq:cbe-Y}.
-Rearranging Equation~\ref{eq:cbe-Y}, and dropping the time derivative of $\meanY$ under
-our assumption of equilibrium, we can write the vertical acceleration as
+where the first term in the right-hand side of Equation~\ref{eq:cbe-py-tmp} is set to
+zero by the definition of the CBE (Equation~\ref{eq:cbe}).
+If we multiply Equation~\ref{eq:cbe-py} by $Y$ and integrate over all $Y$ --- i.e.
+compute the first moment of $p_Y$, $\meanY = \int \dd{Y} \, Y p_Y$
+--- we get an expression in terms of the mean stellar label,
+\begin{align}
+    0 &= \pderiv{\meanY}{z} \, \dot{z} +
+        \pderiv{\meanY}{v_z} \, \dot{v}_z  \label{eq:cbe-meanY} \quad .
+\end{align}
+Rearranging Equation~\ref{eq:cbe-meanY}, we can write the vertical acceleration $a_z$ as
 \begin{align}
     a_z &= - v_z \, \pderiv{\meanY}{z} \left(\pderiv{\meanY}{v_z}\right)^{-1}
     \label{eq:Y-az}
@@ -790,10 +793,10 @@ Appendix~\ref{sec:appendix-az}), we find that
     a_z(z) = - \freqzero^2 \, z \,
     \frac{\left[
         1 + \sum_{m}^{{2, \dots, \mmax}} (-1)^{m/2} \,
-            \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+            \left(e_m(\rzp) + \rzp \, \deriv{e_m}{\rzp}\right)
     \right]_{\rzp = \sqrt{\freqzero}\,z}}{\left[
         1 + \sum_{m}^{{2, \dots, \mmax}} (-1)^{m/2} \,
-            \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+            \left(e_m(\rzp) \, (1 - m^2) + \rzp \, \deriv{e_m}{\rzp}\right)
     \right]_{\rzp = \sqrt{\freqzero}\,z}} \label{eq:az-ugly}
 \end{equation}
 where $\mmax$ is the maximum (even) order of the Fourier expansion of the distorted
@@ -809,7 +812,7 @@ However, because our model parametrizes the shapes of orbits without imposing
 physicality, our inferred force law can end up depending on velocity.
 This is unphysical, but is a tradeoff we make to allow for a flexible model of the phase
 space --- we discuss this point further in the Discussion
-(Section~\ref{sec:discussion-vz-dependence}).
+(Section~\ref{sec:disc-tradeoff}).
 Another potential pathology of our model setup is that, for some settings of the
 functions $e_m(\rzp)$, the orbits can cross (i.e. the contours of constant label can
 intersect).
@@ -853,8 +856,10 @@ phase-space coordinates $(z, v_z)^*$.
 The conjugate angle variable, $\theta_z$, is computed as the fractional time
 \begin{equation}
     \theta_z = \frac{2\pi}{T_z} \, \int_0^{\thzp^*} \frac{\dd \thzp}{v_z(\thzp)}
-        \, \left|\frac{\dd z}{\dd \thzp}\right| \label{eq:thz-ell} \quad .
+        \, \left|\frac{\dd z}{\dd \thzp}\right| \label{eq:thz-ell}
 \end{equation}
+where $\thzp^*$ is the value of $\thzp$ corresponding to the phase-space coordinates
+$(z, v_z)^*$.
 
 \section{Applications to Simulated Data} \label{sec:applications-sim}
 
@@ -1000,8 +1005,8 @@ assuming that the surface density increases with increasing height $z$.
 We use $K_{e_2}=8$ spline knot locations $x_k^{(e_2)}$ with values $y_k^{(e_2)}$ equally
 spaced in $\rz^2$ between $0$ and $r_{z, \textrm{max}}$, but we require the knot value
 at $\rzp = 0$ to be equal to zero $y_0^{(e_2)}=0$.
-All of the parameters used in this demonstrative model fit and the adopted bounds used
-when optimizing are summarized in Table~\ref{tbl:sho-params}.
+% All of the parameters used in this demonstrative model fit and the adopted bounds used
+% when optimizing are summarized in Table~\ref{tbl:sho-params}.
 When optimizing, we reparameterize to use $\log \freqzero$ and $\log y_k$ for any spline
 coefficients as a trick to control the sign of the parameter values.
 
@@ -1047,7 +1052,7 @@ initialize a Markov Chain Monte Carlo (MCMC) sampling of the parameters, to asse
 uncertainty on the model parameters.
 
 We use a standard L-BFGS-B optimizer \citep{Byrd:1995} to minimize the regularized
-negative log-probability as implemented in \texttt{JAXopt} \cite{jaxopt:2021}.
+negative log-probability as implemented in \texttt{JAXopt} \citep{jaxopt:2021}.
 For this simulated data set, the optimization runs in $\sim 10~\unit{\second}$ on a
 single CPU.
 The middle right panel of Figure~\ref{fig:sho-data-model} shows the MAP model evaluated
@@ -1057,7 +1062,7 @@ The residuals everywhere indicate that the best-fit model matches the data well.
 
 We use the optimized parameter values to initialize two MCMC chains using the
 Hamiltonian Monte Carlo ``No U-turn Sampler'' (NUTS) implemented in the
-\texttt{blackjax} \citep{blackjax} Python package.
+\texttt{blackjax} \citep{blackjax2020github} Python package.
 We run the chains for 1000 initial steps to allow the NUTS sampler to tune the
 hyperparameters of the sampling procedure (e.g., the mass matrix), and then run for an
 additional 1000 steps.
@@ -1333,7 +1338,6 @@ optimized OTI model, and the rightmost panel shows the residuals.
 \includegraphics[width=\textwidth]{qiso-sel-validation.pdf}
 \end{center}
 \caption{%
-\todo{Did MCMC not work here? Where is error shaded region?}
 Validation of the OTI model fit to the simulated quasi-isothermal disk sample with an
 imposed selection function (i.e. the same as Figure~\ref{fig:sho-validation}, but for
 the simulated disk sample from Section~\ref{sec:sim-qiso-sel}).
@@ -1710,8 +1714,8 @@ TODO
 \label{sec:appendix-az}
 
 We evaluate the vertical acceleration as a function of height above the Galactic
-midplane, $a_z(z) = \frac{\partial \Phi}{\partial z}$, given an OTI model and parameters
-using Equation~\ref{eq:az-rz}, reproduced here:
+midplane, $a_z(z) = \deriv{\Phi}{z}$, given an OTI model and parameters using
+Equation~\ref{eq:az-rz}, reproduced here:
 \begin{equation}
     a_z = - v_z \, \frac{\partial \rz}{\partial z} \,
         \left( \frac{\partial \rz}{\partial v_z} \right)^{-1}
@@ -1767,7 +1771,7 @@ With this in mind, and using the expressions listed above to simplify, we find t
     % \right]\\
     &= \frac{z\,\freqzero}{\rzp} \, \left[
         1 + \sum_{m=2}^{\mmax} \left(
-            \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right) \,
+            \left(e_m + \rzp \, \deriv{e_m}{\rzp}\right) \,
                 \cos(m \, \thzp) -
             m \, e_m \, \frac{\sin(m \, \thzp)}{\sin(\thzp)} \, \cos(\thzp)
         \right)
@@ -1782,17 +1786,17 @@ For even values of $m$, as we require, the sine term in the sum of Equation~\ref
 \end{equation}
 In this limit, the expression becomes:
 \begin{equation}
-    \lim_{\thzp \to \frac{\pi}{2}} \frac{\partial \rz}{\partial z} =
+    \lim_{\thzp \to \frac{\pi}{2}} \pderiv{\rz}{z} =
         \frac{z\,\freqzero}{\rzp} \, \left[
             1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
-                \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+                \left(e_m + \rzp \, \deriv{e_m}{\rzp}\right)
         \right] \quad .
 \end{equation}
 
 Similarly for the derivative with respect to $v_z$:
 \begin{align}
-    \frac{\partial \rz}{\partial v_z} &=
-        \frac{\partial \rzp}{\partial v_z} +
+    \pderiv{\rz}{v_z} &=
+        \pderiv{\rzp}{v_z} +
         \sum_{m=2}^{\mmax} \frac{\partial}{\partial v_z}
             \left[\rzp \, e_m(\rzp) \, \cos(m \, \thzp)\right]\\
     % &= \frac{\partial \rzp}{\partial v_z} +
@@ -1813,7 +1817,7 @@ Similarly for the derivative with respect to $v_z$:
     % \right]\\
     &= \frac{v_z}{\freqzero \, \rzp} \, \left[
         1 + \sum_{m=2}^{\mmax} \left(
-            \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right) \,
+            \left(e_m + \rzp \, \deriv{e_m}{\rzp}\right) \,
                 \cos(m \, \thzp) +
             m \, e_m \, \sin(m \, \thzp) \, \tan(\thzp)
         \right)
@@ -1824,7 +1828,7 @@ Taking the same limit $\thzp \to \frac{\pi}{2}$, this expression becomes:
     \lim_{\thzp \to \frac{\pi}{2}} \frac{\partial \rz}{\partial v_z} =
         \frac{v_z}{\freqzero \, \rzp} \, \left[
             1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
-                \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+                \left(e_m\,(1 - m^2) + \rzp \, \deriv{e_m}{\rzp}\right)
         \right] \quad .
 \end{equation}
 
@@ -1836,21 +1840,21 @@ Combining these expressions, we have:
     &= -v_z \, \frac{z\,\freqzero}{\rzp} \, \frac{\freqzero \, \rzp}{v_z} \,
         \frac{\left[
             1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
-                \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+                \left(e_m + \rzp \, \deriv{e_m}{\rzp}\right)
         \right]}{\left[
             1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
-                \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+                \left(e_m\,(1 - m^2) + \rzp \, \deriv{e_m}{\rzp}\right)
         \right]} \\
     &= -\freqzero^2 \, z \,
         \frac{\left[
             1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
-                \left(e_m + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+                \left(e_m + \rzp \, \deriv{e_m}{\rzp}\right)
         \right]}{\left[
             1 + \sum_{m=2}^{\mmax} (-1)^{m/2} \,
-                \left(e_m\,(1 - m^2) + \rzp \, \frac{\partial e_m}{\partial \rzp}\right)
+                \left(e_m\,(1 - m^2) + \rzp \, \deriv{e_m}{\rzp}\right)
         \right]} \label{eq:az-after-lim}
 \end{align}
-This expression is evaluated at $\rzp = z$.
+This expression is evaluated at $\rzp = \sqrt{\freqzero} \, z$.
 The multiplicative factor at the front of Equation~\ref{eq:az-after-lim} is the
 acceleration profile of a simple harmonic oscillator, and the ratio of the sums captures
 the changing orbit shapes due to the Fourier distortion functions.
