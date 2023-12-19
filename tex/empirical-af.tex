@@ -107,7 +107,7 @@ data (this is ``Orbital Torus Imaging'') and to the stellar phase-space density.
 We discuss the approximations and limitations of this approach, which is orbits-first,
 and which also presently separates the vertical and radial dynamics.
 We also release an open-source tool, \texttt{torusimaging}, to accompany this article.
-
+% TODO: do you want to emphasize here the benefits of OTI over other methods?? i.e., less affected by selection function?
 \end{abstract}
 
 % \keywords{}
@@ -163,8 +163,9 @@ properties, and precision of the available data for Milky Way stars, such as LAM
 4MOST \citep{deJong:2019}, SDSS-V \citep{Kollmeier:2017}, and the Rubin observatory LSST
 \citep{LSST:2009}.
 This wealth of stellar survey data presently available brings an opportunity to make
-precise measurements of the detailed structure of dark matter throughout the Milky Way
-and learn about its formation history by combining stellar label and kinematic data.
+precise measurements of the detailed structure of matter and dark matter throughout the
+Milky Way and learn about its formation history by combining stellar label and kinematic
+data.
 
 Near-invariant stellar labels are complementary to measurements of phase-space
 dimensions and can serve as invariant tracers that provide important information in
@@ -206,9 +207,9 @@ However, it does still require parameterizing any relationships between the kine
 and stellar labels.
 
 In this work, motivated by the need for flexible dynamical inference methods that make
-fewer assumptions about the form of the potential and DF, we build off of the Orbital
-Torus Imaging idea to outline an approach that only requires modeling the shapes of
-orbits in projections of phase-space.
+fewer assumptions about the form of the potential and DF, we build off of the OTI
+framework to outline an approach that only requires modeling the shapes of orbits in
+projections of phase-space.
 A companion paper uses this modeling framework to measure the acceleration field and
 properties of the Milky Way disk without assuming a global model for the Galactic
 potential \citep{Horta:2023}.
@@ -416,8 +417,10 @@ The orbital actions $\bs{J}$ are useful quantities for summarizing orbits and
 constructing dynamical models.
 However, they require a global model for the gravitational potential, are expensive to
 compute, and are not directly observable.
+This makes action-based dynamical modeling methods computationally challenging to apply
+to large samples and restrictive in terms of the flexibility of the potential model.
 Fortunately, for increasingly large samples of stars in the Milky Way, we have access to
-measurements of intrinsically-invariant stellar labels, such as surface element
+measurements of intrinsically-invariant stellar labels, such as stellar surface element
 abundance ratios or stellar ages.
 These stellar labels can be used instead to trace out the orbit structure of the Galaxy.
 This forms the basis of the method of Orbital Torus Imaging (OTI; \citealt{PW:2021}),
@@ -825,8 +828,10 @@ We have implemented this new Orbital Torus Imaging (OTI) framework in \python\ u
 \jax\ \citep{jax:2018} to accelerate the model evaluation and to use automatic
 differentiation to compute the gradients of the model with respect to the (many) model
 parameters.
-We release a software package, \texttt{torusimaging}, along with this Article that
-contains our implementation.
+% TODO: zenodo link
+We release a software package, \texttt{torusimaging}
+\citep{torusimaging:zenodo}\footnote{\url{https://github.com/adrn/torusimaging}}, along
+with this Article that contains our implementation.
 This framework is therefore very general and our implementation accepts any functional
 forms for the model components.
 
@@ -1270,6 +1275,8 @@ not need to assume a gravitational potential to compute the actions.
 \subsection{Axisymmetric Quasi-isothermal Disk with Survey Selection}
 \label{sec:sim-qiso-sel}
 
+% TODO: add a distance-dependent selection function as well!
+
 Real data from stellar surveys often has complex selection effects resulting from survey
 targeting and design, instrument limitations (e.g., magnitude limits), and/or real
 astronomical effects like bright stars, crowding, or dust extinction.
@@ -1296,27 +1303,29 @@ MCMC sampling, and the rightmost panel shows the residuals between the data and 
 model.
 Even with the strong selection function, the OTI model leverages the strong (assumed)
 symmetries in the phase-space to infer the orbit shapes even when data are missing.
-
 Figure~\ref{fig:qiso-sel-validation} shows the validation of the OTI model fit to the
-data with a positional selection function imposed.
-Here, we see a potential pitfall of the flexibility of the OTI framework.
-For this and previous examples, we have used unconstrained monotonic spline functions to
-represent the label function and Fourier coefficient functions.
-This allows the model to fit the data in phase space extremely well, but can lead to
-unphysical behavior when interpreting the model in the context of dynamical quantities
-that we may want to infer.
-In this case, the gradient of the vertical acceleration changes sign at $|z| \approx
-1~\kpc$, and there is no obvious reason why this happens (i.e. the optimizer completes
-successfully and the optimized model is a good representation of the phase space data).
-The fact that the gradient of the acceleration goes positive should not be allowed in a
-physical system, as the negative of the gradient of the acceleration is related to the
-density, which must always be positive.
+data with a positional selection function imposed, demonstrating that the OTI model is
+still able to recover the true vertical acceleration profile and orbital shapes where
+our assumption of $R$--$z$ separability is most valid ($|z| \lesssim 1~\kpc$).
 
-In this case, we are not concerned by the unphysical behavior at large $z$ because we
-know that our assumption of separability in $R$--$z$ is not valid at large $z$, so any
-results for $|z| \gtrsim 1~\kpc$ or so will, in general, be biased.
-We discuss this further in Section~\ref{sec:disc-tradeoff}, including some suggestions
-for how to mitigate failures due to the flexibility of the spline model.
+% Here, we see a potential pitfall of the flexibility of the OTI framework.
+% For this and previous examples, we have used unconstrained monotonic spline functions to
+% represent the label function and Fourier coefficient functions.
+% This allows the model to fit the data in phase space extremely well, but can lead to
+% unphysical behavior when interpreting the model in the context of dynamical quantities
+% that we may want to infer.
+% In this case, the gradient of the vertical acceleration changes sign at $|z| \approx
+% 1~\kpc$, and there is no obvious reason why this happens (i.e. the optimizer completes
+% successfully and the optimized model is a good representation of the phase space data).
+% The fact that the gradient of the acceleration goes positive should not be allowed in a
+% physical system, as the negative of the gradient of the acceleration is related to the
+% density, which must always be positive.
+
+% In this case, we are not concerned by the unphysical behavior at large $z$ because we
+% know that our assumption of separability in $R$--$z$ is not valid at large $z$, so any
+% results for $|z| \gtrsim 1~\kpc$ or so will, in general, be biased.
+% We discuss this further in Section~\ref{sec:disc-tradeoff}, including some suggestions
+% for how to mitigate failures due to the flexibility of the spline model.
 
 
 \begin{figure*}[t!]
@@ -1511,6 +1520,7 @@ Orbital Torus Imaging (OTI) framework.
 % TODO: is it worth explicitly mentioning the point that the az and density can end up
 % depending on vz?
 % TODO: add text from chatting with Larry here.
+% TODO: here or somewhere in discussion, discuss the robustness to selection effects
 The OTI framework provides a flexible means for inferring the orbit structure and,
 therefore, the mass distribution underlying phase-mixed, tracer stellar populations.
 It works by parameterizing and modeling the shapes of contours of constant stellar
@@ -1610,9 +1620,9 @@ A first exploration of this more general path is considered in \cite{Novara:inpr
 As mentioned above (Section~\ref{sec:sim-qiso-sel}), a critical requirement for OTI is
 that the selection function on stellar phase-space coordinates is separable from the
 selection function of the stellar labels considered.
-For element abundances, this is more-or-less true for surveys like \apogee, where the
-primary survey target selection is done based on color and magnitude, which only weakly
-depend on surface abundances \citep{Zasowski:2017, Santana:2021, Beaton:2021}.
+For element abundances, this is nearly true for surveys like \apogee, where the primary
+survey target selection is done based on color and magnitude, which only weakly depend
+on surface abundances \citep{Zasowski:2017, Santana:2021, Beaton:2021}.
 However, this also implies that stellar surface gravity, $\logg$, or effective
 temperature, $\Teff$, would \emph{not} be useful stellar labels within the OTI framework
 because they are strongly covariant with luminosity or absolute magnitude.
