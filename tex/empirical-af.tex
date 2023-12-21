@@ -102,28 +102,28 @@
 
 \begin{abstract}\noindent
 
-\todo{Audit abstract given current scope of the paper.}
-The vertical positions and velocities of stars near the Sun can be used to measure the
-local dark-matter density and surface mass density near the Galactic disk, to constrain
-processes of scattering and heating, and to study out-of-equilibrium dynamics (e.g.,
-with the \gaia\ phase-space spiral).
-With contemporary stellar surveys (e.g., \gaia, \apogee, and others), the tracers of
-vertical dynamics are so numerous and so well measured that the orbit shapes are
-more-or-less directly visible in the data through studies of element abundances or even
-stellar density.
-These orbits can be used to infer a detailed mass model for the Milky Way.
+The vertical kinematics of stars near the Sun can be used to measure the total mass
+distribution near the Galactic disk and to study out-of-equilibrium dynamics (e.g., the
+\gaia\ spiral).
+With contemporary stellar surveys, the tracers of vertical dynamics are so numerous and
+so well measured that the shapes of underlying orbits are almost directly visible in the
+data through element abundances or even stellar density.
+These orbits can be used to directly infer a mass model for the Milky Way, enabling
+constraints on the dark matter distribution in the inner galaxy.
 Here we present a flexible model for foliating the vertical position--velocity phase
 space with orbits, for use in data-driven studies of dynamics.
-Once the phase space is foliated with orbits, the orbital actions, angles, mass density,
-and vertical acceleration field can all be derived directly from that orbit foliation.
-We show that this model does a good job of fitting orbits to stellar abundance
-data (this is ``Orbital Torus Imaging'') and to the stellar phase-space density.
-% We also show that residuals away from such fits deliver high signal-to-noise images of
-% the vertical \textsl{Gaia} phase spiral.
-We discuss the approximations and limitations of this approach, which is orbits-first,
-and which also presently separates the vertical and radial dynamics.
-We also release an open-source tool, \texttt{torusimaging}, to accompany this article.
-% TODO: do you want to emphasize here the benefits of OTI over other methods?? i.e., less affected by selection function?
+The vertical acceleration profile in the vicinity of the disk, along with the orbital
+actions, angles, and frequencies for individual stars, can all be derived from that
+orbit foliation.
+We show that this framework --- ``Orbital Torus Imaging'' (OTI) --- does a good job of
+fitting orbits to simulated stellar abundance data with varying degrees of realism.
+Importantly, OTI (1) does not require a global model for the Milky Way mass
+distribution, and (2) does not require detailed modeling of the selection function of
+the input survey data.
+We discuss the approximations and limitations of the OTI framework, which currently
+trades dynamical interpretability for flexibility in representing the data in some
+regimes, and which also presently separates the vertical and radial dynamics.
+We release an open-source tool, \texttt{torusimaging}, to accompany this article.
 \end{abstract}
 
 % \keywords{}
@@ -1290,8 +1290,6 @@ not need to assume a gravitational potential to compute the actions.
 
 \subsection{Axisymmetric Quasi-isothermal Disk with Survey Selection}
 \label{sec:sim-qiso-sel}
-
-% TODO: add a distance-dependent selection function as well!
 
 Real data from stellar surveys often has complex selection effects resulting from survey
 targeting and design, instrument limitations (e.g., magnitude limits), and/or real
