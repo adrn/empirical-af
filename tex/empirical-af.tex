@@ -58,16 +58,20 @@
     726 Broadway, New York, NY 10003, USA
 }
 \newcommand{\affmpia}{
-    Max-Planck-Institut fur Astronomie, \\
+    Max-Planck-Institut fur Astronomie,
     Konigstuhl 17, D-69117 Heidelberg, Germany
 }
 \newcommand{\affcolumbia}{
-    Department of Astronomy, Columbia University, \\
+    Department of Astronomy, Columbia University,
     550 West 120th Street, New York, NY 10027, USA
 }
 \newcommand{\affqueens}{
     Department of Physics, Engineering Physics and Astronomy, Queen's University, \\
     Kingston, K7L 3X5, Canada
+}
+\newcommand{\affmerced}{
+    Department of Physics, University of California, Merced, \\
+    5200 Lake Road, Merced, CA 95343, USA
 }
 
 \author[0000-0003-0872-7098]{Adrian~M.~Price-Whelan}
@@ -81,8 +85,8 @@
 \author[0000-0003-1856-2151]{Daniel~Horta~Darrington}
 \affiliation{\affcca}
 
-\author{Micah~Oeur}
-% \affiliation{\aff}
+\author[0000-0001-5636-3108]{Micah~Oeur}
+\affiliation{\affmerced}
 
 \author[0000-0003-2866-9403]{David~W.~Hogg}
 \affiliation{\affcca}
@@ -117,9 +121,8 @@ actions, angles, and frequencies for individual stars, can all be derived from t
 orbit foliation.
 We show that this framework --- ``Orbital Torus Imaging'' (OTI) --- does a good job of
 fitting orbits to simulated stellar abundance data with varying degrees of realism.
-Importantly, OTI (1) does not require a global model for the Milky Way mass
-distribution, and (2) does not require detailed modeling of the selection function of
-the input survey data.
+OTI (1) does not require a global model for the Milky Way mass distribution, and (2)
+does not require detailed modeling of the selection function of the input survey data.
 We discuss the approximations and limitations of the OTI framework, which currently
 trades dynamical interpretability for flexibility in representing the data in some
 regimes, and which also presently separates the vertical and radial dynamics.
@@ -142,12 +145,12 @@ turn has implications for fundamental physics and the cosmological model.
 On Galaxy mass scales (and smaller), effective models for dark matter predict different
 density profiles and different populations of substructures
 \citep[e.g.,][]{Bullock:2017}.
-We therefore hope that precise measurements of the dark matter within the Milky Way and
-other nearby galaxies will enable new constraints on the particle nature of dark matter.
-As a last example, the phase-space structure in the mass encodes, at some level, the
-assembly history of the Galaxy \citep[e.g.,][]{Helmi:2018, Belokurov:2018}, and thus the
-initial conditions of the primordial patch that evolved into our home in the Universe
-\citep[e.g.,][]{Peebles:2011}.
+Precise measurements of the dark matter within the Milky Way and other nearby galaxies
+therefore constrain the particle nature of dark matter.
+As a last example, the phase-space distribution function of stars encodes, at some
+level, the assembly history of the Galaxy \citep[e.g.,][]{Helmi:2018, Belokurov:2018},
+and thus the initial conditions of the primordial patch that evolved into our home in
+the Universe \citep[e.g.,][]{Peebles:2011}.
 
 Until direct measurements of the Galactic acceleration field become more ubiquitous
 \citep{Klioner:2021, Chakrabarti:2021}, our best hope for studying the mass and dark
@@ -162,11 +165,12 @@ Instead, we have to rely on statistical mechanics to relate the snapshot of trac
 kinematics we observe to the underlying mass distribution \citep[e.g.,][]{Kuijken:1989a,
 Binney:2008, Magorrian:2014}.
 
-Contemporary stellar surveys have opened up a new dimension of Galactic dynamical
-inferences by providing an abundance of high-quality stellar label and kinematic data
-for millions to billions of stars throughout our Galaxy.
+Contemporary stellar surveys provide kinematic data for millions to billions of stars
+throughout our Galaxy.
 These surveys have enabled new views of the Milky Way that extend far beyond the solar
-neighborhood.
+neighborhood, and have opened up new dimensions for studying the stellar populations of
+the Milky Way by providing high-quality stellar labels (e.g., element abundances, ages,
+masses, etc.) for large samples of stars.
 This includes the transformative astrometric, photometric, and spectroscopic data from
 the \gaia\ Mission \citep{Gaia:2016, Gaia:2023}, deep, multi-band photometric surveys
 such as the Sloan Digital Sky Survey (SDSS; \citealt{York:2000}), Dark Energy Survey
@@ -245,9 +249,10 @@ and limit the dimensionality of expressions.
 In particular, for now we will assume that the Galaxy is in equilibrium, that the
 distribution function (\df) is in steady state, that the system is axisymmetric, and
 that orbital motion is separable in cylindrical radius $R$ and vertical position $z$.
-That is, we assume that the gravitational potential is additively separable such that
+That is, we assume that the total gravitational potential $\Phi$ is additively separable
+such that
 \begin{equation}
-    \Phi(R, z) \approx \Phi(R) + \Phi(z) \quad .
+    \Phi(R, z) \approx \Phi_R(R) + \Phi_z(z) \quad .
 \end{equation}
 This is a typical assumption for near-circular orbits in an axisymmetric potential, such
 as for stellar populations within the Galactic disk.
@@ -257,10 +262,9 @@ gravitational acceleration field $\bs{a}(R, z)$ that is related to the underlyin
 density $\rho$ through Poisson's equation,
 \begin{align}
     \frac{1}{R} \, \pderiv{}{R}\left(R \, a_R\right) + \pderiv{a_z}{z}
-        &= - 4\pi \, G \, \rho(R, z) \\
-    a_R = -\pderiv{\Phi}{R} \quad &; \quad a_z = -\pderiv{\Phi}{z}
+        &= - 4\pi \, G \, \rho(R, z)
 \end{align}
-where $\Phi(R, z)$ is the gravitational potential.
+where $\bs{a} = -\nabla \Phi$ is the acceleration.
 If we assume that we will always work in a small annular volume (i.e. a small range of
 $R$), and that the circular velocity curve as a function of radius $v_c(R)$ is nearly
 flat over the volume considered, then the radial gradient in the left hand side will be
@@ -301,19 +305,19 @@ In this coordinate system, the angle variables $\bs{\theta}$ are the conjugate p
 coordinates that increase linearly with time with a rate set by the orbital frequencies
 $\bs{\Omega}$.
 
-For this work, we will consider only the vertical phase-space of the Galaxy under the
+For this work, we will consider only the vertical phase space of the Galaxy under the
 assumption that the radial and vertical motion are separable \citep[see also,
 e.g.,][]{Oort:1932, Bahcall:1984,Kuijken:1989b, Kuijken:1991, Holmberg:2000, Li:2021,
 Green:2023}.
-Orbits in the vertical phase-space are then fully summarized by the vertical action
+Orbits in the vertical phase space are then fully summarized by the vertical action
 $J_z$, and the phase of a star along its orbit is set by the vertical angle $\theta_z$.
 The vertical action is defined as the area that an orbit sweeps out in the vertical
-phase-space, i.e.,
+phase space, i.e.,
 \begin{equation}
-    J_z = \frac{1}{2\pi} \, \oint \dd z \, p_z =
-        \frac{1}{2\pi} \, \oint \dd z \, v_z(z) \quad, \label{eq:Jz}
+    J_z = \frac{1}{2\pi} \, \oint \dd z \, v_z(z) \quad, \label{eq:Jz}
 \end{equation}
-where this integral is done over the full orbital path.
+where this integral is done over a full orbital path, which is a closed curve in the
+vertical phase space under our assumptions.
 Another important invariant property of orbits is the vertical frequency $\Omega_z$,
 which is related to the vertical period of an orbit $T_z = 2\pi / \Omega_z$.
 The vertical period can be computed as
@@ -525,7 +529,9 @@ $\deriv{Y}{J_z}$ is non-zero (i.e. not flat), we can use the level sets of const
 stellar label $Y$ to ``contour'' the orbits in the vertical phase space $(z,
 v_z)$.\footnote{We note that this idea, in the context of using the phase-space density
 as a stellar label, was briefly discussed in \citet{Kuijken:1989a} and referred to as
-``direct contouring'' of the DF.}
+``direct contouring'' of the DF. This has been implemented and used previously with
+parametric models of the \df\ and potential to study the vertical dynamics
+\cite{Li:2021, Li:2023}.}
 In reality, the stellar labels are not deterministic functions of the action or of the
 vertical phase space: There is a distribution of abundance values at any location of the
 phase space $p_Y(Y \given z, v_z)$, as is apparent in Figure~\ref{fig:mgfe-zvz}.
@@ -632,7 +638,7 @@ for the Milky Way (see Appendix~\ref{sec:appendix-potential}).
 The dashed (pink) lines show a Fourier series expansion with $m=\{2, 4\}$ with
 parameters ($\rz, e_2, e_4$) determined by fitting to each orbit.
 The under-plotted (gray) ellipses show ellipses with the same values of $v_{z,
-\textrm{max}}$ as the orbits to emphasize that the orbits have a changing oblateness
+\textrm{max}}$ as the orbits to emphasize that the orbits have a changing axis ratio
 (i.e. frequency) with increased vertical action $J_z$.
 \textbf{Right panel:} The same orbits, Fourier series representations, and
 constant-frequency ellipses, but now shown in the elliptical radius, \rzp\
@@ -743,13 +749,15 @@ For orbits near the midplane (i.e. with small $J_z$), $\rzp \approx \sqrt{2\,J_z
 Away from the midplane, the shapes of orbits have steadily decreasing frequencies with
 increasing maximum height $z_{\textrm{max}}$, which leads to, to first order, a changing
 aspect ratio of the contours.
-For example, the orbits in the left panel of Figure~\ref{fig:mgfe-zvz} start oblate for
-the lowest values of \zmax\ and become more prolate for the largest values of \zmax.
+For example, the orbits in the left panel of Figure~\ref{fig:mgfe-zvz} start as
+horizontal ellipses for the lowest values of \zmax\ and transition to vertical ellipses
+for the largest values of \zmax.
 For contours with sufficiently large $z_{\textrm{max}}$ values (i.e. orbits that reach
-many scale heights above the disk), the influence of the dark matter halo's potential
-distorts the orbit shapes, and the contours of the DF are no longer well-approximated by
-ellipses (e.g., the orbits with $\zmax \gtrsim 1~\kpc$ in Figure~\ref{fig:mgfe-zvz}).
-The potential of the dark matter halo causes the orbits to deform from ellipses to more
+many scale heights above the disk), the decreasing density of the disk and the influence
+of the dark matter halo's potential distorts the orbit shapes, and the contours of the
+DF are no longer well-approximated by ellipses (e.g., the orbits with $\zmax \gtrsim
+1~\kpc$ in Figure~\ref{fig:mgfe-zvz}).
+Orbits with $z_{\textrm{max}} \gtrsim 1~\kpc$ feel deform from ellipses to more
 ``diamond-like'' shapes that are ``pinched'' near the midplane ($z=0$).
 This shape arises because the orbits feel a nearly uniform density at their vertical
 apocenter (i.e. near $v_z = 0$), but then feel a rapidly changing potential as they
@@ -1000,8 +1008,8 @@ each pixel, and for the Fourier coefficient functions, $e_m(\rzp)$, which here i
 $e_2(\rzp)$.
 For both of these functions, $Y(\rz)$ and $e_2(\rzp)$, we use monotonic quadratic spline
 functions defined such that the function is always monotonically increasing or
-decreasing, which must be set before optimization (see
-Appendix~\ref{sec:appendix-spline}).
+decreasing, which must be set before optimization.
+% (see Appendix~\ref{sec:appendix-spline}).
 
 For the label function, $Y(\rz)$, we assert that the value must monotonically increase
 from $\rz = 0$ to the maximum spline knot location by noting that the element abundance
@@ -1021,8 +1029,8 @@ Requiring $e_2(0) = 0$ ensures that the parameter $\freqzero$ corresponds to the
 asymptotic orbital frequency as $\rzp \rightarrow 0$ and can therefore be used to
 estimate the midplane volume mass density (Equation~\ref{eq:freqzero}).
 Assuming that the coefficient value increases with $\rzp$ (so that the orbit shapes
-can only become more prolate with increasing $z_{\textrm{max}}$) is equivalent to
-assuming that the surface density increases with increasing height $z$.
+can only become more vertically stretched with increasing $z_{\textrm{max}}$) is
+equivalent to assuming that the surface density increases with increasing height $z$.
 We use $K_{e_2}=8$ spline knot locations $x_k^{(e_2)}$ with values $y_k^{(e_2)}$ equally
 spaced in $\rz^2$ between $0$ and $r_{z, \textrm{max}}$, but we require the knot value
 at $\rzp = 0$ to be equal to zero $y_0^{(e_2)}=0$.
@@ -1034,6 +1042,7 @@ coefficients as a trick to control the sign of the parameter values.
 Our framework is implemented with \jax\ so that our objective function is just-in-time
 compiled and we can use automatic differentiation to compute the gradients of the
 objective function with respect to the, in this case, 17 model parameters.
+% TODO: what are they?
 We use a Gaussian log-likelihood for the mean \abun{Mg}{Fe} abundance data in each pixel
 of phase space.
 That is, the log likelihood of the data, $\ln \mathcal{L}$, is computed as
@@ -1188,8 +1197,9 @@ We model the simulated mean abundance data in pixels of phase-space coordinates 
 the OTI framework described above (Section~\ref{sec:oti}) and following the same
 procedure for optimizing and then MCMC sampling the model as in
 Section~\ref{sec:sim-sho}.
-We again use monotonic quadratic spline functions (Appendix~\ref{sec:appendix-spline})
-for both the label function and the Fourier coefficient functions.
+%(Appendix~\ref{sec:appendix-spline})
+We again use monotonic quadratic spline functions for both the label function and the
+Fourier coefficient functions.
 For the label function, we use 8 knots equally spaced in \rz\ between $0$ and $r_{z,
 \textrm{max}} \approx 0.55~\rzunit$.
 However, here we use $m=\{2, 4\}$ Fourier terms with 12 and 4 spline knots,
@@ -1279,7 +1289,7 @@ left panels), the optimized OTI model (middle panel), and the residuals (right p
 \includegraphics[width=\textwidth]{qiso-validation.pdf}
 \end{center}
 \caption{%
-Validation of the OTI model fit to the simulated quasi-isothermal disk sample. (i.e. the
+Validation of the OTI model fit to the simulated quasi-isothermal disk sample (i.e. the
 same as Figure~\ref{fig:sho-validation}, but for the simulated disk sample from
 Section~\ref{sec:sim-qiso}).
 The median (fractional) action error is $\approx 6\%$ for this sample dataset, but we do
@@ -1409,7 +1419,7 @@ This application is a test of how well OTI can do (i.e. how biased the results a
 the presence of strong disequilibrium, which violates the assumptions laid out above.
 
 We select a small region of the disk near the solar radius, $R=8~\kpc$, by selecting all
-star particles within $|x - -8~\kpc| < 1~\kpc$ and $|y| < 1~\kpc$.
+star particles within $|x - -\kpc| < 1~\kpc$ and $|y| < 1~\kpc$.
 We again mimic dynamical selections we could perform on real data by selecting stars
 near their guiding-center radius $R_G$, i.e. $|R-R_G| < 1~\kpc$, and with small radial
 velocity $|v_R| < 15~\kms$.
@@ -1634,31 +1644,53 @@ A first exploration of this more general path is considered in \cite{Novara:inpr
 As mentioned above (Section~\ref{sec:sim-qiso-sel}), a critical requirement for OTI is
 that the selection function on stellar phase-space coordinates is separable from the
 selection function of the stellar labels considered.
-For element abundances, this is nearly true for surveys like \apogee, where the primary
+For element abundances, this is mostly true for surveys like \apogee, where the primary
 survey target selection is done based on color and magnitude, which only weakly depend
 on surface abundances \citep{Zasowski:2017, Santana:2021, Beaton:2021}.
 However, this also implies that stellar surface gravity, $\logg$, or effective
 temperature, $\Teff$, would \emph{not} be useful stellar labels within the OTI framework
 because they are strongly covariant with luminosity or absolute magnitude.
-\todo{Say more about independence of labels? Other moments?}
+
+The method presented here works for any moments of any stellar labels that satisfy the
+condition that the selection function on the stellar labels is separable from the
+selection function on the phase-space coordinates.
+Can we therefore combine the likelihoods from multiple element abundances or multiple
+moments of the abundances to improve the precision of our inferences?
+In principle, yes, but element abundances tend to be strongly correlated with each other
+\citep[e.g.,][]{Ness:2019}, so the different moments and/or abundances must be
+incorporated conditionally \citep[e.g.,][]{Ratcliffe:2023}.
+We will explore this in future work.
 
 
 \section{Summary and Conclusions} \label{sec:conclusions}
 
-In this work, we have introduced a new implementation of the Orbit Torus Imaging (OTI)
+We introduce a new definition and implementation of the Orbit Torus Imaging (OTI)
 framework, a novel approach for inferring the orbital structure of stellar populations
-and characterizing the underlying gravitational field.
-We have demonstrated the flexibility of OTI in modeling and recovering the true
-underlying gravitational field for simulated tracer stellar populations in toy and more
-realistic settings.
-Our companion paper uses the OTI framework to measure the vertical acceleration profile
-and the mass distribution of the Milky Way disk using \apogee\ data \citep{Horta:2023}.
-\todo{Final thoughts...}
-
+and characterizing the underlying gravitational field using stellar labels.
+OTI works by parameterizing and modeling the shapes of contours of constant stellar
+labels or constant moments of the stellar label distribution in regions of phase space.
+By assuming that these contours correspond to orbits, we can use the changing shapes of
+the contours to infer the underlying total gravitational acceleration profile traced by
+the observed stars.
+OTI is less sensitive to selection effects than traditional methods that model the
+stellar phase-space density, and does not require specifying a global model for the
+gravitational potential or the stellar distribution function.
+We demonstrate the flexibility of OTI in modeling and recovering the true underlying
+gravitational field for simulated tracer stellar populations in toy and more realistic
+settings.
+The OTI framework is implemented in the open-source \texttt{Python} package
+\texttt{torusimaging} \citep{torusimaging:zenodo}.
+In our companion paper, we use the OTI framework to measure the vertical acceleration
+profile and the mass distribution of the Milky Way disk using \apogee\ data
+\citep{Horta:2023}.
+Future data releases from \gaia, \sdssv, and upcoming spectroscopic surveys will enable
+new and more precise measurements of the Milky Way's gravitational field using OTI.
 
 \begin{acknowledgements}
 
-It is a pleasure to thank Neige Frankel...
+It is a pleasure to thank Neige Frankel, Melissa Ness, Scott Tremaine, Julianne
+Dalcanton, and the \textit{Nearby Universe Group} at the CCA for useful discussions and
+feedback on this work.
 
 % Funding for the Sloan Digital Sky Survey IV has been provided by the Alfred P.
 % Sloan Foundation, the U.S. Department of Energy Office of Science, and the
@@ -1693,6 +1725,8 @@ has been provided by national institutions, in particular the institutions
 participating in the {\it Gaia} Multilateral Agreement.
 
 KVJ's contributions were supported by a grant from the Simons Foundation (CCA 1018465).
+LMW was supported by a Discovery Grant with the Natural Sciences and and Engineering
+Research Council of Canada.
 
 \end{acknowledgements}
 
@@ -1700,7 +1734,7 @@ KVJ's contributions were supported by a grant from the Simons Foundation (CCA 10
     Agama \citep{Vasiliev:2019},
     Astropy \citep{astropy:2013, astropy:2018, astropy:2022},
     gala \citep{gala},
-    IPython \citep{ipython},
+    % IPython \citep{ipython},
     JAX \citep{jax:2018},
     JAXOpt \citep{jaxopt:2021},
     matplotlib \citep{Hunter:2007},
@@ -1729,10 +1763,10 @@ These values are chosen so that the circular velocity at the solar radius $R_0 =
 with the \texttt{MilkyWayPotential2022} implemented in \texttt{gala} \citep{gala}.
 
 
-\section{Monotonic Quadratic Spline}
-\label{sec:appendix-spline}
+% \section{Monotonic Quadratic Spline}
+% \label{sec:appendix-spline}
 
-TODO
+% TODO
 
 \section{Evaluation of the Vertical Acceleration from an OTI Model}
 \label{sec:appendix-az}
