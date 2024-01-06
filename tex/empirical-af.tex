@@ -73,6 +73,9 @@
     Department of Physics, University of California, Merced, \\
     5200 Lake Road, Merced, CA 95343, USA
 }
+\newcommand{\affsurrey}{
+    School of Mathematics \& Physics, University of Surrey, Guildford, GU2 7XH, UK
+}
 
 \author[0000-0003-0872-7098]{Adrian~M.~Price-Whelan}
 \affiliation{\affcca}
@@ -81,6 +84,7 @@
 
 \author[0000-0001-8917-1532]{Jason~A.~S.~Hunt}
 \affiliation{\affcca}
+\affiliation{\affsurrey}
 
 \author[0000-0003-1856-2151]{Danny~Horta}
 \affiliation{\affcca}
@@ -118,8 +122,9 @@ space with orbits, for use in data-driven studies of dynamics.
 The vertical acceleration profile in the vicinity of the disk, along with the orbital
 actions, angles, and frequencies for individual stars, can all be derived from that
 orbit foliation.
-We show that this framework --- ``Orbital Torus Imaging'' (OTI) --- does a good job of
-fitting orbits to simulated stellar abundance data with varying degrees of realism.
+We show that this framework --- ``Orbital Torus Imaging'' (OTI) --- is rigorously
+justified in the context of dynamical theory, and does a good job of fitting orbits to
+simulated stellar abundance data with varying degrees of realism.
 OTI (1) does not require a global model for the Milky Way mass distribution, and (2)
 does not require detailed modeling of the selection function of the input survey data.
 We discuss the approximations and limitations of the OTI framework, which currently
@@ -220,7 +225,9 @@ factorization $f(\bs{Y} \given \bs{W})$, which we call ``Orbital Torus Imaging''
 This approach does not require detailed knowledge of the survey selection function in
 terms of kinematic quantities as long as there is no strong joint dependence on
 kinematics and stellar labels.
-OTI should therefore be more robust to selection effects than the eDF or
+That is, the selection function $S$ should be approximately separable in kinematic
+quantities and stellar labels such that $S = S(\bs{W}) \,S(\bs{Y})$.
+OTI should therefore be more robust to spatial selection effects than the eDF or
 mono-abundance population approaches to modeling Milky Way disk kinematics.
 However, it does still require parameterizing any relationships between the kinematics
 and stellar labels.
@@ -304,10 +311,10 @@ In this coordinate system, the angle variables $\bs{\theta}$ are the conjugate p
 coordinates that increase linearly with time with a rate set by the orbital frequencies
 $\bs{\Omega}$.
 
-For this work, we will consider only the vertical phase space of the Galaxy under the
-assumption that the radial and vertical motion are separable \citep[see also,
-e.g.,][]{Oort:1932, Bahcall:1984,Kuijken:1989b, Kuijken:1991, Holmberg:2000, Li:2021,
-Green:2023}.
+For this work, as mentioned above, we will consider only the vertical phase space of the
+Galaxy under the assumption that the radial and vertical motion are separable \citep[see
+also, e.g.,][]{Oort:1932, Bahcall:1984,Kuijken:1989b, Kuijken:1991, Holmberg:2000,
+Li:2021, Green:2023}.
 Orbits in the vertical phase space are then fully summarized by the vertical action
 $J_z$, and the phase of a star along its orbit is set by the vertical angle $\theta_z$.
 The vertical action is defined as the area that an orbit sweeps out in the vertical
@@ -1388,7 +1395,7 @@ As a final demonstration with simulated data, we apply the OTI framework to a se
 an $N$-body simulation of a stellar disk that has been perturbed by an orbiting
 satellite galaxy.
 For this, we use the $N$-body simulation M1 of the \texttt{SMUDGE}\ simulation suite
-\cite{Hunt:2021} now available on
+\cite[]{Hunt:2021} now available on
 \texttt{SciServer}\footnote{https://sciserver.org/datasets/smudge/} \citep{sciserver}.
 M1 simulates the merger of a $\sim8\times10^{10}~\unit{\Msun}$ dwarf galaxy consisting
 of two Hernquist spheres \citep{Hernquist:1990} into a $\sim6\times10^{11}~\unit{\Msun}$
@@ -1625,9 +1632,9 @@ us to connect and jointly model regions of the disk in a flexible framework that
 not require imposing a global model of the potential or density distribution.
 As it is currently implemented, we can only achieve this by binning the data into
 regions of $R$ and/or $\phi$ to consider a single projection of the phase space.
-However, even this model, we could explore instead the $\Delta R = R - R_G$ vs. $v_R$
-phase space as a complementary view of the dynamics of the Milky Way disk.
-We hope to explore this in future work.
+However, even within this model, we could explore instead the $\Delta R = R - R_G$ vs.
+$v_R$ phase space as a complementary view of the dynamics of the Milky Way disk. We hope
+to explore this in future work.
 
 Another avenue for exploration is the possibility of going coordinate-free, or at least
 projection-free, to identify surfaces in the full 6D phase space upon which stellar
@@ -1641,13 +1648,19 @@ A first exploration of this more general path is considered in \cite{Novara:inpr
 
 As mentioned above (Section~\ref{sec:sim-qiso-sel}), a critical requirement for OTI is
 that the selection function on stellar phase-space coordinates is separable from the
-selection function of the stellar labels considered.
+selection function of the stellar labels considered (see Section~\ref{sec:intro}).
 For element abundances, this is mostly true for surveys like \apogee, where the primary
 survey target selection is done based on color and magnitude, which only weakly depend
 on surface abundances \citep{Zasowski:2017, Santana:2021, Beaton:2021}.
 However, this also implies that stellar surface gravity, $\logg$, or effective
 temperature, $\Teff$, would \emph{not} be useful stellar labels within the OTI framework
 because they are strongly covariant with luminosity or absolute magnitude.
+Additionally, there is a potential danger in using kinematic measurements that are
+inferred from spectroscopy (e.g., spectrophotometric distances; \citealt{Hogg:2019,
+Leung:2019}) in OTI:
+If the kinematic measurements are inferred from the spectra, even if the target
+selection is separable, the estimators may inject correlations between the stellar
+labels and the phase-space coordinates.
 
 The method presented here works for any moments of any stellar labels that satisfy the
 condition that the selection function on the stellar labels is separable from the
@@ -1655,27 +1668,32 @@ selection function on the phase-space coordinates.
 Can we therefore combine the likelihoods from multiple element abundances or multiple
 moments of the abundances to improve the precision of our inferences?
 In principle, yes, but element abundances tend to be strongly correlated with each other
-\citep[e.g.,][]{Ness:2019}, so the different moments and/or abundances must be
-incorporated conditionally \citep[e.g.,][]{Ratcliffe:2023}.
+\citep[e.g.,][]{Ness:2019, Griffith:2023}, so the different moments and/or abundances
+must be incorporated conditionally \citep[e.g.,][]{Ratcliffe:2023}.
 We will explore this in future work.
 
 
 \section{Summary and Conclusions} \label{sec:conclusions}
 
-We introduce a new definition and implementation of the Orbit Torus Imaging (OTI)
-framework, a novel approach for inferring the orbital structure of stellar populations
-and characterizing the underlying gravitational field using stellar labels.
+We introduce a new formulation and implementation of the Orbital Torus Imaging (OTI)
+framework.
+We derive a rigorous justification for OTI based on dynamical theory, and demonstrate
+its utility for inferring the orbital structure of stellar populations and
+characterizing the underlying gravitational field using stellar labels.
 OTI works by parameterizing and modeling the shapes of contours of constant stellar
 labels or constant moments of the stellar label distribution in regions of phase space.
-By assuming that these contours correspond to orbits, we can use the changing shapes of
-the contours to infer the underlying total gravitational acceleration profile traced by
-the observed stars.
+By assuming that these contours correspond to orbits, we use the changing shapes of the
+contours to infer the underlying total gravitational acceleration profile traced by the
+observed stars.
 OTI is less sensitive to selection effects than traditional methods that model the
 stellar phase-space density, and does not require specifying a global model for the
 gravitational potential or the stellar distribution function.
 We demonstrate the flexibility of OTI in modeling and recovering the true underlying
 gravitational field for simulated tracer stellar populations in toy and more realistic
-settings.
+settings in the vertical phase space.
+However, the mathematical formulation of OTI applies to a wider range of systems, both
+with higher dimensions (e.g., axisymmetric systems) and out of equilibrium (e.g., with
+weak disequilibrium).
 The OTI framework is implemented in the open-source \texttt{Python} package
 \texttt{torusimaging} \citep{torusimaging:zenodo}.
 In our companion paper, we use the OTI framework to measure the vertical acceleration
