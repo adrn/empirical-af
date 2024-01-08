@@ -195,15 +195,15 @@ Near-invariant stellar labels are complementary to measurements of phase-space
 dimensions and can serve as invariant tracers that provide important information in
 dynamical analyses.
 This idea has already been used and exploited in many contexts.
-For example, additional stellar labels can be added in to the phase-space distribution function (DF) explicitly to form an
-``extended distribution function'' (eDF) $f(\bs{W}, \bs{Y})$
-\citep[e.g.,][]{Sanders:2015, Binney:2023}, where here the vector $\bs{W}$ represents
-the kinematic information (i.e. positions and velocities, or integrals of motion) and $\bs{Y}$ represents any additional stellar labels, like
-element abundances.
-This is a powerful approach because it allows for using the additional stellar labels to
-help in the dynamical inference of the potential, but requires making choices
-about how to parameterize the form of the eDF and any correlations between the kinematics
-and stellar labels.
+For example, additional stellar labels can be added in to the phase-space distribution
+function (DF) explicitly to form an ``extended distribution function'' (eDF) $f(\bs{W},
+\bs{Y})$ \citep[e.g.,][]{Sanders:2015, Binney:2023}, where here the vector $\bs{W}$
+represents the kinematic information (i.e. positions and velocities, or integrals of
+motion) and $\bs{Y}$ represents any stellar labels, like element abundances.
+This is a powerful approach because it allows for using the stellar labels to help in
+the dynamical inference of the mass distribution, but requires making choices about how
+to parameterize the form of the eDF and any correlations between the kinematics and
+stellar labels.
 Another challenge with this approach is that it requires a model for the selection
 function of the survey to accurately infer the DF properties, which is often not modeled
 at a high enough precision to handle the model flexibility demanded by present data.
@@ -227,8 +227,8 @@ terms of kinematic quantities as long as there is no strong joint dependence on
 kinematics and stellar labels.
 That is, the selection function $S$ should be approximately separable in kinematic
 quantities and stellar labels such that $S = S(\bs{W}) \,S(\bs{Y})$.
-OTI should therefore be more robust to spatial selection effects than the eDF or
-mono-abundance population approaches to modeling Milky Way disk kinematics.
+OTI is therefore more robust to spatial selection effects than the eDF or mono-abundance
+population approaches to modeling Milky Way disk kinematics.
 However, it does still require parameterizing any relationships between the kinematics
 and stellar labels.
 
@@ -243,7 +243,7 @@ potential \citep{Horta:2023}.
 
 \section{Review of Vertical Dynamics in an Axisymmetric Disk} \label{sec:dynreview}
 
-Our goal, like many past efforts, is to define a framework for measuring the mass
+Our goal, like many past efforts, is to define a path for measuring the mass
 distribution underlying a tracer population given a snapshot of kinematic data for the
 tracers.
 For this work, we will consider stars as the tracers and the particular case of modeling
@@ -446,14 +446,14 @@ compute, and are not directly observable.
 This makes action-based dynamical modeling methods computationally challenging to apply
 to large samples and restrictive in terms of the flexibility of the potential model.
 Fortunately, for increasingly large samples of stars in the Milky Way, we have access to
-measurements of intrinsically-invariant stellar labels, such as stellar surface element
+measurements of intrinsic, invariant stellar labels, such as stellar surface element
 abundance ratios or stellar ages.
 These stellar labels can be used instead to trace out the orbit structure of the Galaxy.
 This forms the basis of the method of Orbital Torus Imaging (OTI; \citealt{PW:2021}),
 which we describe below.
-Here we build on past work by developing a new framework and implementation of OTI that
-leverages modern auto-differentiation tools (e.g., \jax; \citealt{jax:2018}) to
-generalize and accelerate the model construction and fitting.
+Here we build on past work by rigorously justifying the method and developing a new
+implementation of OTI that leverages modern auto-differentiation tools (e.g., \jax;
+\citealt{jax:2018}) to generalize and accelerate the model construction and fitting.
 
 
 \subsection{Using stellar labels to map orbits}
@@ -528,7 +528,7 @@ constant along an orbit, so any time-invariant function of the vertical action i
 constant along an orbit.
 
 With a suitably large sample of stars, this provides a means to measure the orbital
-structure the acceleration field of the Galaxy directly, without having to assume a form
+structure and acceleration field of the Galaxy directly, without having to assume a form
 for the potential and without needing to compute the actions.
 As long as the gradient in stellar labels as a function of vertical action
 $\deriv{Y}{J_z}$ is non-zero (i.e. not flat), we can use the level sets of constant
@@ -744,7 +744,7 @@ as
 \begin{equation}
     \rzp = \sqrt{z^2 \, \freqzero + v_z^2 \, \freqzero^{-1}} \label{eq:rzp}
 \end{equation}
-for all values of the corresponding ellipsoidal angle \thzp,
+for all values of the corresponding elliptical angle \thzp,
 \begin{equation}
     \tan (\thzp) = \left(\frac{z}{v_z}\right) \, \freqzero \quad .
     \label{eq:thetazp}
@@ -755,23 +755,23 @@ For orbits near the midplane (i.e. with small $J_z$), $\rzp \approx \sqrt{2\,J_z
 Away from the midplane, the shapes of orbits have steadily decreasing frequencies with
 increasing maximum height $z_{\textrm{max}}$, which leads to, to first order, a changing
 aspect ratio of the contours.
-For example, the orbits in the left panel of Figure~\ref{fig:mgfe-zvz} start as
-horizontal ellipses for the lowest values of \zmax\ and transition to vertical ellipses
-for the largest values of \zmax.
+For example, the orbits in the left panels of Figure~\ref{fig:mgfe-zvz} and
+Figure~\ref{fig:fourier-contours} start as horizontal ellipses for the lowest values of
+\zmax\ and transition to vertical ellipses for the largest values of \zmax.
 For contours with sufficiently large $z_{\textrm{max}}$ values (i.e. orbits that reach
 many scale heights above the disk), the decreasing density of the disk and the influence
 of the dark matter halo's potential distorts the orbit shapes, and the contours of the
 DF are no longer well-approximated by ellipses (e.g., the orbits with $\zmax \gtrsim
-1~\kpc$ in Figure~\ref{fig:mgfe-zvz}).
-Orbits with $z_{\textrm{max}} \gtrsim 1~\kpc$ feel deform from ellipses to more
+1~\kpc$ in Figure~\ref{fig:fourier-contours}).
+Orbits with $z_{\textrm{max}} \gtrsim 1~\kpc$ deform from ellipses to more
 ``diamond-like'' shapes that are ``pinched'' near the midplane ($z=0$).
 This shape arises because the orbits feel a nearly uniform density at their vertical
 apocenter (i.e. near $v_z = 0$), but then feel a rapidly changing potential as they
 cross the midplane (i.e. near $z=0$) with large vertical velocities.
 
 To represent more general contour shapes (i.e. beyond ellipses), we use a low-order
-Fourier expansion in the ellipsoidal angle \thzp\ to distort the ellipsoidal radius
-\rzp\ into the distorted ellipsoidal radius \rz, defined as
+Fourier expansion in the elliptical angle \thzp\ to distort the elliptical radius
+\rzp\ (Equation~\ref{eq:rzp}) into the distorted elliptical radius \rz, defined as
 \begin{equation}
     \rz = \rzp \, \left[1 + \sum_m \epsilon_m(\rzp) \, \cos{\left(m\,\thzp\right)}\right] \label{eq:rz}
 \end{equation}
@@ -835,7 +835,7 @@ Appendix~\ref{sec:appendix-az}), we find that
 where $\mmax$ is the maximum (even) order of the Fourier expansion of the distorted
 radius, and the expression is evaluated at $\rzp = \sqrt{\freqzero}\,z$.
 Note that when $e_m = 0$ for all $m$ (i.e. when there is no distortion of the
-ellipsoidal radius), this reduces to the expected expression for the simple harmonic
+elliptical radius), this reduces to the expected expression for the simple harmonic
 oscillator.
 
 We obtain the expression above for $a_z(z)$ (Equation~\ref{eq:az-ugly}) by taking the
@@ -877,7 +877,7 @@ We can therefore use a fitted model of the contours of constant stellar label to
 empirical values of the action, conjugate angle, and frequency for a given phase-space
 position $(z, v_z)^*$.
 We compute these dynamical quantities using the integrals in
-Equations~\ref{eq:Jz}--\ref{eq:Tz} by integrating over the ellipsoidal angle $\thzp$
+Equations~\ref{eq:Jz}--\ref{eq:Tz} by integrating over the elliptical angle $\thzp$
 along a contour of constant $\rz$:
 \begin{align}
     J_z &= \frac{2}{\pi} \, \int_0^{\pi/2} \dd \thzp \, v_z(\thzp)
@@ -916,13 +916,15 @@ Note that, as input to OTI, we bin the data into pixels of vertical position $z$
 velocity $v_z$ and compute the mean abundance value in each pixel, but we do not
 simulate uncertainties on the phase-space coordinates.
 This is not a requirement of OTI: We could also use the individual particle positions
-and simultaneously handle the uncertainties on the phase-space coordinates.
+and simultaneously handle the uncertainties on the phase-space coordinates by
+parameterizing the full distribution $p_Y(Y \given z, v_z)$ (Equation~\ref{eq:cbe-py}).
 However, we have found that near the solar neighborhood with modern \gaia\ data, the
 uncertainty on the vertical position and velocity is typically comparable to our adopted
-pixel size, so we bin the data to speed up the evaluation of the likelihood.
-In all cases below, we set the maximum bin edge in each coordinate as three times the
-90th percentile value of the distributions of $z$ and $v_z$ for each simulated sample,
-and use 151 bins for each coordinate.
+pixel size, so we bin the data and work with moments of $p_Y$ to speed up the evaluation
+of the likelihood.
+In the example cases below, we set the maximum bin edge in each coordinate as three
+times the 90th percentile value of the distributions of $z$ and $v_z$ for each simulated
+sample, and use 151 bins for each coordinate.
 These choices are arbitrary, but we have verified that the results are not sensitive to
 reasonable changes of these values.
 In the following subsections, we demonstrate that OTI can recover the true vertical
@@ -1008,10 +1010,9 @@ Our input data are the mean label values in each pixel $j$ computed as
 \end{equation}
 where $Y_n$ and $\sigma_{Y, n}$ are the individual stellar abundance measurements and
 their uncertainties for the $N_j$ stars (indexed by $n$) within a given pixel $j$.
-To represent this data, we need to decide on functional forms for both the label
-function, $Y(\rz)$, which will serve as our model prediction for the mean abundance in
-each pixel, and for the Fourier coefficient functions, $e_m(\rzp)$, which here is just
-$e_2(\rzp)$.
+To represent this data, we must decide on functional forms for both the label function,
+$Y(\rz)$, which will serve as our model prediction for the mean abundance in each pixel,
+and for the Fourier coefficient functions, $e_m(\rzp)$, which here is just $e_2(\rzp)$.
 For both of these functions, $Y(\rz)$ and $e_2(\rzp)$, we use monotonic quadratic spline
 functions defined such that the function is always monotonically increasing or
 decreasing, which must be set before optimization.
@@ -1047,8 +1048,10 @@ coefficients as a trick to control the sign of the parameter values.
 
 Our framework is implemented with \jax\ so that our objective function is just-in-time
 compiled and we can use automatic differentiation to compute the gradients of the
-objective function with respect to the, in this case, 17 model parameters.
-% TODO: what are they?
+objective function with respect to the, in this case, 18 model parameters: 8 spline
+knots for the label function, 7 spline knots for the $e_2$ function (there are 8 knots,
+but the value at zero is fixed to zero, so only 7 free values), 2 parameters for
+centering $z_0$ and $v_{z, 0}$, and the asymptotic midplane frequency $\freqzero$.
 We use a Gaussian log-likelihood for the mean \abun{Mg}{Fe} abundance data in each pixel
 of phase space.
 That is, the log likelihood of the data, $\ln \mathcal{L}$, is computed as
@@ -1609,7 +1612,7 @@ component, we can build the phase-dependence of the stellar labels directly into
 model.
 In what we have done in this work, in terms of the vertical phase space, we have assumed
 that the stellar labels $Y$ or moments of the stellar labels $\langle Y \rangle$ only
-depend on the distorted ellipsoidal radius $\rz$ (Equation~\ref{eq:rz}) such that, e.g.,
+depend on the distorted elliptical radius $\rz$ (Equation~\ref{eq:rz}) such that, e.g.,
 $Y = Y(\rz)$.
 We can generalize this to allow for a phase-coherent component by instead making $Y =
 Y(\rz, \theta_z)$, where $\theta_z$ is the vertical angle (Equation~\ref{eq:thz-ell}),
