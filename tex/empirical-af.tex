@@ -856,7 +856,6 @@ We have implemented this new Orbital Torus Imaging (OTI) framework in \python\ u
 \jax\ \citep{jax:2018} to accelerate the model evaluation and to use automatic
 differentiation to compute the gradients of the model with respect to the (many) model
 parameters.
-% TODO: zenodo link
 We release a software package, \texttt{torusimaging}
 \citep{torusimaging:zenodo}\footnote{\url{https://github.com/adrn/torusimaging}}, along
 with this Article that contains our implementation.
@@ -1548,9 +1547,6 @@ Orbital Torus Imaging (OTI) framework.
 
 \subsection{The Tradeoff of Flexibility and Physicality} \label{sec:disc-tradeoff}
 
-% TODO: is it worth explicitly mentioning the point that the az and density can end up
-% depending on vz?
-% TODO: here or somewhere in discussion, discuss the robustness to selection effects
 The OTI framework provides a flexible means for inferring the orbit structure and,
 therefore, the mass distribution underlying phase-mixed, tracer stellar populations.
 It works by parameterizing and modeling the shapes of contours of constant stellar
@@ -1757,7 +1753,8 @@ Research Council of Canada.
     matplotlib \citep{Hunter:2007},
     numpy \citep{numpy},
     pyia \citep{pyia},
-    scipy \citep{scipy}.
+    scipy \citep{scipy},
+    torusimaging \citep{torusimaging:zenodo}.
 }
 
 \appendix
